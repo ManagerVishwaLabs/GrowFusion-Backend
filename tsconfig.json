@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "commonjs",
     "rootDir": "./server",
     "outDir": "./dist",
     "strict": true,

@@ -17,18 +17,32 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/ManagerVishwaLabs/GlowFusion-Backend/issues"
   },
   "homepage": "https://github.com/ManagerVishwaLabs/GlowFusion-Backend#readme",
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@types/compression": "1.8.1",
+    "@types/cors": "2.8.19",
+    "@types/hpp": "0.2.7",
     "@types/node": "25.6.2",
     "eslint": "10.3.0",
     "globals": "17.6.0",
+    "jiti": "2.7.0",
     "tsx": "4.21.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.2"
+  },
+  "dependencies": {
+    "@types/express": "5.0.6",
+    "compression": "1.8.1",
+    "cors": "2.8.6",
+    "dotenv": "17.4.2",
+    "express": "5.2.1",
+    "express-rate-limit": "8.5.1",
+    "helmet": "8.1.0",
+    "hpp": "0.2.3"
   }
 }
