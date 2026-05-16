@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ErrorCode } from "./errors";
 
 export class AppError extends Error {
@@ -14,3 +15,5 @@ export interface SuccessResponse<T = unknown> {
 export type ControllerResponse<T = unknown> = ErrorCode | SuccessResponse<T>;
 
 export type ValidatorResponse = ErrorCode | undefined;
+
+export type DocumentId = string | mongoose.Types.ObjectId;
