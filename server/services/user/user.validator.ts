@@ -1,6 +1,6 @@
 import { ValidatorResponse } from "../../core/types";
 
-import { CreateUserType } from "../../models/user.model";
+import { CreateUserType } from "../../database/models/user.model";
 
 class UserValidator {
   public validateCreateUser({

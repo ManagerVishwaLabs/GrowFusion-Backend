@@ -3,7 +3,7 @@ import { ControllerResponse,DocumentId } from "../../core/types";
 
 import DBModule from "../../database/db.module";
 
-import { CreateUserType } from "../../models/user.model";
+import { CreateUserType } from "../../database/models/user.model";
 
 class UserController {
   private userModel;

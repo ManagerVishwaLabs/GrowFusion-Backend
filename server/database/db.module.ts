@@ -11,7 +11,7 @@ import mongoose, {
 } from "mongoose";
 
 import { DBResponse } from "./db.types";
-import { ModelRegistry, models } from "../models";
+import { ModelRegistry, models } from "./models";
 
 type Doc<T> = HydratedDocument<T>;
 

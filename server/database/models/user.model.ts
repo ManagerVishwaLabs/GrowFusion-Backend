@@ -1,6 +1,6 @@
 import { Schema, InferSchemaType, model } from "mongoose";
 
-import { UserRole } from "../utils/commonConstants";
+import { UserRole } from "../../utils/commonConstants";
 
 const UserSchema = new Schema(
   {
