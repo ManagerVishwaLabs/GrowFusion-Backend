@@ -2,12 +2,12 @@ import User, { UserType, CreateUserType } from "../models/user.model";
 
 import Company, { CompanyType, CreateCompanyType } from "./company.model";
 
-export const models = {
+const models = {
   User,
   Company,
 };
 
-export interface ModelRegistry {
+interface ModelRegistry {
   User: {
     schema: UserType;
     create: CreateUserType;
@@ -18,3 +18,5 @@ export interface ModelRegistry {
     create: CreateCompanyType;
   };
 }
+
+export { models, ModelRegistry };

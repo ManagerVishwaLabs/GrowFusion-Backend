@@ -1,4 +1,4 @@
-import  { Schema, Document, InferSchemaType, model } from "mongoose";
+import { Schema, Document, InferSchemaType, model } from "mongoose";
 
 export interface ICompany extends Document {
   name: string;
@@ -48,9 +48,9 @@ const CompanySchema: Schema = new Schema(
   },
 );
 
-export type CompanyType = InferSchemaType<typeof CompanySchema>;
+type CompanyType = InferSchemaType<typeof CompanySchema>;
 
-export type CreateCompanyType = Omit<
+type CreateCompanyType = Omit<
   CompanyType,
   "contactPhone" | "createdAt" | "updatedAt"
 > & {
@@ -61,4 +61,5 @@ export type CreateCompanyType = Omit<
 
 const Company = model("Company", CompanySchema, "companies");
 
+export { CompanyType, CreateCompanyType };
 export default Company;

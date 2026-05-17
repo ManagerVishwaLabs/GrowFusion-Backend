@@ -1,33 +1,14 @@
 import mongoose, {
   QueryFilter,
-  HydratedDocument,
   Model,
   PipelineStage,
   QueryOptions,
   UpdateQuery,
   ProjectionFields,
-  SortOrder,
-  ProjectionType,
 } from "mongoose";
 
-import { DBResponse } from "./db.types";
+import { DBResponse, Doc, UpdateOptions, FindOptions } from "./db.types";
 import { ModelRegistry, models } from "./models";
-
-type Doc<T> = HydratedDocument<T>;
-
-interface UpdateOptions extends QueryOptions {
-  upsert?: boolean;
-}
-
-interface FindOptions<TSchema> extends QueryOptions {
-  sort?: Record<string, SortOrder>;
-
-  limit?: number;
-
-  skip?: number;
-
-  select?: ProjectionType<TSchema>;
-}
 
 class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
   constructor(private readonly model: Model<TSchema>) {}

@@ -58,9 +58,9 @@ const UserSchema = new Schema(
   },
 );
 
-export type UserType = InferSchemaType<typeof UserSchema>;
+type UserType = InferSchemaType<typeof UserSchema>;
 
-export type CreateUserType = Omit<
+type CreateUserType = Omit<
   UserType,
   "lastName" | "userRole" | "isActive" | "createdAt" | "updatedAt"
 > & {
@@ -77,4 +77,5 @@ UserSchema.index({ username: 1 }, { unique: true });
 
 const User = model("User", UserSchema, "users");
 
+export { UserType, CreateUserType };
 export default User;
