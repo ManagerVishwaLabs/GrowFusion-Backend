@@ -1,29 +1,30 @@
-import { Document, InferSchemaType, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface ICompany extends Document {
-  name: string;
-  address: string;
+interface CompanyType {
+  company: string;
+  companyName: string;
   contactEmail: string;
-  contactPhone: string;
+  companySize: number;
+
+  address?: string;
+  contactPhone?: string;
   companyLogoUrl?: string;
-  companySize?: number;
-  isActive: boolean;
+  isActive?: boolean;
 }
 
-const CompanySchema: Schema = new Schema(
+const CompanySchema = new Schema<CompanyType>(
   {
     company: {
       type: String,
       required: true,
       unique: true,
     },
-    name: {
+    companyName: {
       type: String,
       required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     contactEmail: {
       type: String,
@@ -37,6 +38,7 @@ const CompanySchema: Schema = new Schema(
     },
     companySize: {
       type: Number,
+      required: true,
     },
     isActive: {
       type: Boolean,
@@ -48,18 +50,7 @@ const CompanySchema: Schema = new Schema(
   },
 );
 
-type CompanyType = InferSchemaType<typeof CompanySchema>;
+const Company = model<CompanyType>("Company", CompanySchema, "companies");
 
-type CreateCompanyType = Omit<
-  CompanyType,
-  "contactPhone" | "createdAt" | "updatedAt"
-> & {
-  contactPhone?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
-
-const Company = model("Company", CompanySchema, "companies");
-
-export { CompanyType, CreateCompanyType };
+export type { CompanyType };
 export default Company;

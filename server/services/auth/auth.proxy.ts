@@ -6,8 +6,8 @@ import AuthController from "./auth.controller";
 import { ResponseHandler } from "../../core/response.middleware";
 
 class AuthProxy {
-  public async login(req: Request, res: Response): Promise<void> {
-    const validationResponse = AuthValidator.validateLogin({
+  public async register(req: Request, res: Response): Promise<void> {
+    const validationResponse = AuthValidator.validateRegister({
       body: req.body,
     });
 
@@ -20,7 +20,7 @@ class AuthProxy {
       return;
     }
 
-    const controllerResponse = await AuthController.login({
+    const controllerResponse = await AuthController.register({
       body: req.body,
     });
 

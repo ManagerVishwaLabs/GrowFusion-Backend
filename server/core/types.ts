@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { ErrorCode } from "./errors";
+import { UserRole } from "../utils/commonConstants";
 
 class AppError extends Error {
   constructor(public code: ErrorCode) {
@@ -7,15 +8,31 @@ class AppError extends Error {
   }
 }
 
-interface SuccessResponse<T = unknown> {
-  code?: ErrorCode;
-  data?: T;
+interface ErrorResponse {
+  success: false;
+  code: ErrorCode;
 }
 
-type ControllerResponse<T = unknown> = ErrorCode | SuccessResponse<T>;
+interface SuccessResponse<T = unknown> {
+  success: true;
+  data: T;
+}
+
+type ControllerResponse<T = unknown> = ErrorResponse | SuccessResponse<T>;
+
+type LibraryResponse<T = unknown> = ErrorResponse | SuccessResponse<T>;
 
 type ValidatorResponse = ErrorCode | undefined;
 
 type DocumentId = string | mongoose.Types.ObjectId;
 
-export { AppError, ControllerResponse, ValidatorResponse, DocumentId };
+type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
+
+export {
+  AppError,
+  ControllerResponse,
+  LibraryResponse,
+  ValidatorResponse,
+  DocumentId,
+  UserRoleType,
+};

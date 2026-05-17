@@ -7,15 +7,11 @@ const errors = {
   GF0010004: "Validation failed",
 
   /* -------- AUTH -------- */
-  GF0020001: "Username is required",
-  GF0020002: "Username must be a string",
-  GF0020003: "Username must be at least 3 characters",
-  GF0020004: "Password is required",
-  GF0020005: "Password must be a string",
-  GF0020006: "Password must be at least 4 characters",
-  GF0020007: "Invalid credentials",
-  GF0020008: "Internal server error",
-  GF0020009: "Login successful",
+  GF0020001: "Company already exists",
+  GF0020002: "User email already exists",
+  GF0020003: "Username already exists",
+  GF0020004: "Registration failed",
+  GF0020005: "Registration successful",
 
   /* -------- USER VALIDATION -------- */
   GF0030001: "First name is required",
@@ -67,9 +63,9 @@ const errors = {
   GF0040010: "Company is required",
   GF0040011: "Company must be a string",
   GF0040012: "Company must be at least 2 characters",
-  GF0040013: "Name is required",
-  GF0040014: "Name must be a string",
-  GF0040015: "Name must be at least 2 characters",
+  GF0040013: "Company Name is required",
+  GF0040014: "Company Name must be a string",
+  GF0040015: "Company Name must be at least 2 characters",
   GF0040016: "Address is required",
   GF0040017: "Address must be a string",
   GF0040018: "Address must be at least 5 characters",
@@ -95,6 +91,10 @@ const errors = {
   GF0040038: "Company size must be a number",
   GF0040039: "Company size must be greater than 0",
   GF0040040: "isActive must be a boolean",
+  GF0040041: "Company already exists",
+
+  /* -------- GENERAL -------- */
+  GF5000000: "Internal server error",
 };
 export default errors;
 export type ErrorCode = keyof typeof errors;

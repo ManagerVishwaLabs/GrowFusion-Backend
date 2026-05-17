@@ -1,12 +1,12 @@
 import { QueryFilter } from "mongoose";
 
-import { ControllerResponse, DocumentId } from "../../core/types";
+import { DocumentId, LibraryResponse } from "../core/types";
 
-import DBModule from "../../database/db.module";
+import DBModule from "../database/db.module";
 
-import { CreateCompanyType } from "../../database/models/company.model";
+import { CompanyType } from "../database/models/company.model";
 
-class CompanyController {
+class CompanyLibrary {
   private companyModel;
 
   constructor() {
@@ -14,151 +14,172 @@ class CompanyController {
   }
 
   public async createCompany(
-    companyData: CreateCompanyType,
-  ): Promise<ControllerResponse> {
+    companyData: CompanyType,
+  ): Promise<LibraryResponse> {
+    if (companyData.company) {
+      const existingCompany = await this.getCompanyByCompany(
+        companyData.company,
+      );
+
+      if (existingCompany.success && existingCompany.data) {
+        return {
+          success: false,
+          code: "GF0040041",
+        };
+      }
+    }
     const company = await this.companyModel.insertOne(companyData);
 
     return {
+      success: true,
       data: company,
     };
   }
 
-  public async getCompanyById(
-    companyId: DocumentId,
-  ): Promise<ControllerResponse> {
+  public async getCompanyById(companyId: DocumentId): Promise<LibraryResponse> {
     const company = await this.companyModel.findById(companyId);
 
     return {
+      success: true,
       data: company,
     };
   }
 
   public async getCompaniesByIds(
     companyIds: DocumentId[],
-  ): Promise<ControllerResponse> {
+  ): Promise<LibraryResponse> {
     const companies = await this.companyModel.findByIds(companyIds);
 
     return {
+      success: true,
       data: companies,
     };
   }
 
-  public async getCompanyByCompany(
-    company: string,
-  ): Promise<ControllerResponse> {
+  public async getCompanyByCompany(company: string): Promise<LibraryResponse> {
     const foundCompany = await this.companyModel.findOne({
       company,
     });
 
     return {
-      data: foundCompany,
+      success: true,
+      data: foundCompany.data,
     };
   }
 
   public async updateCompanyById(
     companyId: DocumentId,
-    updateData: Partial<CreateCompanyType>,
-  ): Promise<ControllerResponse> {
+    updateData: Partial<CompanyType>,
+  ): Promise<LibraryResponse> {
     const company = await this.companyModel.updateById(companyId, updateData);
 
     return {
+      success: true,
       data: company,
     };
   }
 
   public async updateCompaniesByIds(
     companyIds: DocumentId[],
-    updateData: Partial<CreateCompanyType>,
-  ): Promise<ControllerResponse> {
+    updateData: Partial<CompanyType>,
+  ): Promise<LibraryResponse> {
     const companies = await this.companyModel.updateByIds(
       companyIds,
       updateData,
     );
 
     return {
+      success: true,
       data: companies,
     };
   }
 
   public async updateCompany(
-    filterConditions: QueryFilter<CreateCompanyType>,
-    updateData: Partial<CreateCompanyType>,
-  ): Promise<ControllerResponse> {
+    filterConditions: QueryFilter<CompanyType>,
+    updateData: Partial<CompanyType>,
+  ): Promise<LibraryResponse> {
     const company = await this.companyModel.updateOne(
       filterConditions,
       updateData,
     );
 
     return {
+      success: true,
       data: company,
     };
   }
 
   public async updateCompanies(
-    filterConditions: QueryFilter<CreateCompanyType>,
-    updateData: Partial<CreateCompanyType>,
-  ): Promise<ControllerResponse> {
+    filterConditions: QueryFilter<CompanyType>,
+    updateData: Partial<CompanyType>,
+  ): Promise<LibraryResponse> {
     const companies = await this.companyModel.updateMany(
       filterConditions,
       updateData,
     );
 
     return {
+      success: true,
       data: companies,
     };
   }
 
   public async deleteCompanyById(
     companyId: DocumentId,
-  ): Promise<ControllerResponse> {
+  ): Promise<LibraryResponse> {
     const company = await this.companyModel.deleteById(companyId);
 
     return {
+      success: true,
       data: company,
     };
   }
 
   public async deleteCompaniesByIds(
     companyIds: DocumentId[],
-  ): Promise<ControllerResponse> {
+  ): Promise<LibraryResponse> {
     const companies = await this.companyModel.deleteByIds(companyIds);
 
     return {
+      success: true,
       data: companies,
     };
   }
 
   public async deleteCompany(
-    filterConditions: QueryFilter<CreateCompanyType>,
-  ): Promise<ControllerResponse> {
+    filterConditions: QueryFilter<CompanyType>,
+  ): Promise<LibraryResponse> {
     const company = await this.companyModel.deleteOne(filterConditions);
 
     return {
+      success: true,
       data: company,
     };
   }
 
   public async deleteCompanies(
-    filterConditions: QueryFilter<CreateCompanyType>,
-  ): Promise<ControllerResponse> {
+    filterConditions: QueryFilter<CompanyType>,
+  ): Promise<LibraryResponse> {
     const companies = await this.companyModel.deleteMany(filterConditions);
 
     return {
+      success: true,
       data: companies,
     };
   }
 
   public async deleteCompanyByCompany(
     company: string,
-  ): Promise<ControllerResponse> {
+  ): Promise<LibraryResponse> {
     const deletedCompany = await this.companyModel.deleteOne({
       company,
     });
 
     return {
+      success: true,
       data: deletedCompany,
     };
   }
 }
 
-export default new CompanyController();
+export default new CompanyLibrary();
