@@ -1,4 +1,4 @@
-import { ValidatorResponse } from "../../core/types";
+import { ValidatorResponse } from "../../utils/types";
 
 import { isEmailAddress } from "../../utils/helperFunctions";
 import { RegisterType } from "./auth.types";

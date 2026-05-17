@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { ErrorCode } from "./errors";
-import { UserRole } from "../utils/commonConstants";
+import { UserRole } from "./constants";
 
 class AppError extends Error {
   constructor(public code: ErrorCode) {

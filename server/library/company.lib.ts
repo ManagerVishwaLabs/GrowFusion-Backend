@@ -1,6 +1,6 @@
 import { QueryFilter } from "mongoose";
 
-import { DocumentId, LibraryResponse } from "../core/types";
+import { DocumentId, LibraryResponse } from "../utils/types";
 
 import DBModule from "../database/db.module";
 

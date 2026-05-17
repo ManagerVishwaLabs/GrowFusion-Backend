@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
-import { UserRole } from "../../utils/commonConstants";
-import { UserRoleType } from "../../core/types";
+import { UserRole } from "../../utils/constants";
+import { UserRoleType } from "../../utils/types";
 
 interface UserType {
   firstName: string;

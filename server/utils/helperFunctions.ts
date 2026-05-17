@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { DocumentId } from "../core/types";
+import { DocumentId } from "./types";
 
 const isEmailAddress = (email: string): boolean => {
   try {

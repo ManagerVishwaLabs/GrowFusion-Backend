@@ -1,13 +1,13 @@
 import bcrypt from "bcryptjs";
 
-import { ControllerResponse } from "../../core/types";
+import { ControllerResponse } from "../../utils/types";
 import { RegisterType } from "./auth.types";
 
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
 
 import { env } from "../../config/env";
-import { UserRole } from "../../utils/commonConstants";
+import { UserRole } from "../../utils/constants";
 
 class AuthController {
   public async register({
