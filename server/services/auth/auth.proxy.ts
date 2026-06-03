@@ -6,6 +6,29 @@ import AuthController from "./auth.controller";
 import { ResponseHandler } from "../../core/response.middleware";
 
 class AuthProxy {
+  public async register(req: Request, res: Response): Promise<void> {
+    const validationResponse = AuthValidator.validateRegister({
+      body: req.body,
+    });
+
+    if (validationResponse) {
+      ResponseHandler.send({
+        response: validationResponse,
+        res,
+      });
+
+      return;
+    }
+
+    const controllerResponse = await AuthController.register({
+      body: req.body,
+    });
+
+    ResponseHandler.send({
+      response: controllerResponse,
+      res,
+    });
+  }
   public async login(req: Request, res: Response): Promise<void> {
     const validationResponse = AuthValidator.validateLogin({
       body: req.body,

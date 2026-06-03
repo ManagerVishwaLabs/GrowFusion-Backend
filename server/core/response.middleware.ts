@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-import errors, { ErrorCode } from "./errors";
+import errors, { ErrorCode } from "../utils/errors";
 
 export class ResponseHandler {
   public static send({

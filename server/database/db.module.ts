@@ -1,35 +1,16 @@
 import mongoose, {
-  QueryFilter,
-  HydratedDocument,
   Model,
   PipelineStage,
+  ProjectionFields,
+  QueryFilter,
   QueryOptions,
   UpdateQuery,
-  ProjectionFields,
-  SortOrder,
-  ProjectionType,
 } from "mongoose";
 
-import { DBResponse } from "./db.types";
-import { ModelRegistry, models } from "../models";
+import { DBResponse, Doc, FindOptions, UpdateOptions } from "./db.types";
+import { ModelRegistry, models } from "./models";
 
-type Doc<T> = HydratedDocument<T>;
-
-interface UpdateOptions extends QueryOptions {
-  upsert?: boolean;
-}
-
-interface FindOptions<TSchema> extends QueryOptions {
-  sort?: Record<string, SortOrder>;
-
-  limit?: number;
-
-  skip?: number;
-
-  select?: ProjectionType<TSchema>;
-}
-
-class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
+class ModelWrapper<TSchema extends object> {
   constructor(private readonly model: Model<TSchema>) {}
 
   private handleError(error: unknown): DBResponse<null> {
@@ -49,6 +30,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
 
       return {
         success: false,
+        code: "GF0010002",
         message: `${field} already exists`,
         error,
       };
@@ -64,6 +46,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
 
       return {
         success: false,
+        code: "GF0010004",
         message: validationError.message,
         error,
       };
@@ -71,6 +54,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
 
     return {
       success: false,
+      code: "GF0010001",
       message:
         error instanceof Error ? error.message : "Database operation failed",
 
@@ -78,7 +62,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     };
   }
   async insertOne(
-    insertData: TCreate,
+    insertData: TSchema,
   ): Promise<DBResponse<Doc<TSchema> | null>> {
     try {
       const data = await this.model.create(insertData);
@@ -93,7 +77,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
   }
 
   async insertMany(
-    insertData: TCreate[],
+    insertData: TSchema[],
     options?: {
       ordered?: boolean;
     },
@@ -116,9 +100,18 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     id: string | mongoose.Types.ObjectId,
     projection?: ProjectionFields<TSchema> | null,
     options?: FindOptions<TSchema>,
+    includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema> | null>> {
     try {
-      const data = await this.model.findById(id, projection, options);
+      const query: Record<string, unknown> = {
+        _id: id,
+      };
+
+      if (!includeInactive) {
+        query.isActive = true;
+      }
+
+      const data = await this.model.findOne(query, projection, options);
 
       return {
         success: true,
@@ -133,9 +126,15 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     filter: QueryFilter<TSchema>,
     projection?: ProjectionFields<TSchema> | null,
     options?: FindOptions<TSchema>,
+    includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema> | null>> {
     try {
-      const data = await this.model.findOne(filter, projection, options);
+      const query: Record<string, unknown> = { ...filter };
+
+      if (!includeInactive) {
+        query.isActive = true;
+      }
+      const data = await this.model.findOne(query, projection, options);
 
       return {
         success: true,
@@ -150,17 +149,20 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     ids: (string | mongoose.Types.ObjectId)[],
     projection?: ProjectionFields<TSchema> | null,
     options?: FindOptions<TSchema>,
+    includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema>[] | null>> {
     try {
-      const data = await this.model.find(
-        {
-          _id: {
-            $in: ids,
-          },
+      const query: Record<string, unknown> = {
+        _id: {
+          $in: ids,
         },
-        projection,
-        options,
-      );
+      };
+
+      if (!includeInactive) {
+        query.isActive = true;
+      }
+
+      const data = await this.model.find(query, projection, options);
 
       return {
         success: true,
@@ -175,9 +177,15 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     filter: QueryFilter<TSchema> = {},
     projection?: ProjectionFields<TSchema> | null,
     options?: FindOptions<TSchema>,
+    includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema>[] | null>> {
     try {
-      const query = this.model.find(filter);
+      const finalFilter = {
+        ...filter,
+        ...(!includeInactive && { isActive: true }),
+      };
+
+      const query = this.model.find(finalFilter);
 
       if (options?.sort) query.sort(options.sort);
 
@@ -199,15 +207,15 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
       return this.handleError(error);
     }
   }
-
   async updateById(
     id: string | mongoose.Types.ObjectId,
     updateData: UpdateQuery<TSchema>,
     options?: QueryOptions,
+    includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema> | null>> {
     try {
-      const data = await this.model.findByIdAndUpdate(
-        id,
+      const data = await this.model.findOneAndUpdate(
+        { _id: id, ...(includeInactive ? {} : { isActive: true }) },
         { $set: updateData },
         {
           new: true,
@@ -229,10 +237,11 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     filter: QueryFilter<TSchema>,
     updateData: UpdateQuery<TSchema>,
     options?: UpdateOptions,
+    includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema> | null>> {
     try {
       const data = await this.model.findOneAndUpdate(
-        filter,
+        { ...filter, ...(includeInactive ? {} : { isActive: true }) },
         { $set: updateData },
         {
           new: true,
@@ -255,6 +264,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     ids: (string | mongoose.Types.ObjectId)[],
     updateData: UpdateQuery<TSchema>,
     options?: QueryOptions,
+    includeInactive = false,
   ): Promise<
     DBResponse<{
       matchedCount: number;
@@ -268,6 +278,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
           _id: {
             $in: ids,
           },
+          ...(includeInactive ? {} : { isActive: true }),
         },
         { $set: updateData },
         {
@@ -296,6 +307,7 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     filter: QueryFilter<TSchema>,
     updateData: UpdateQuery<TSchema>,
     options?: UpdateOptions,
+    includeInactive = false,
   ): Promise<
     DBResponse<{
       matchedCount: number;
@@ -304,8 +316,13 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     } | null>
   > {
     try {
+      const finalFilter = {
+        ...filter,
+        ...(!includeInactive && { isActive: true }),
+      };
+
       const data = await this.model.updateMany(
-        filter,
+        finalFilter,
         { $set: updateData },
         {
           runValidators: true,
@@ -526,13 +543,11 @@ class ModelWrapper<TSchema extends object, TCreate extends Partial<TSchema>> {
     }
   }
 }
-
 class DBModule {
   static createModel<K extends keyof ModelRegistry>(modelName: K) {
-    return new ModelWrapper<
-      ModelRegistry[K]["schema"],
-      ModelRegistry[K]["create"]
-    >(models[modelName] as unknown as Model<ModelRegistry[K]["schema"]>);
+    return new ModelWrapper<ModelRegistry[K]>(
+      models[modelName] as unknown as Model<ModelRegistry[K]>,
+    );
   }
 }
 

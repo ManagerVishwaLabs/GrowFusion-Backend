@@ -9,9 +9,9 @@ import routes from "./routes";
 import { env } from "./config/env";
 
 import {
+  notFoundMiddleware,
   requestLogger,
   responseLogger,
-  notFoundMiddleware,
 } from "./config/middlewares";
 import connectDB from "./config/db";
 
