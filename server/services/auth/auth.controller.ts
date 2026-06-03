@@ -1,13 +1,14 @@
 import bcrypt from "bcryptjs";
 
 import { ControllerResponse } from "../../utils/types";
-import { RegisterType } from "./auth.types";
+import { InstagramOauthRedirect, RegisterType } from "./auth.types";
 
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
 
 import { env } from "../../config/env";
 import { UserRole } from "../../utils/constants";
+import instagramLib from "../../core/lib/instagram/";
 
 class AuthController {
   public async register({
@@ -99,6 +100,7 @@ class AuthController {
       };
     }
   }
+
   public async login({
     body,
   }: {
@@ -155,6 +157,68 @@ class AuthController {
         code: "GF0020009",
       };
     }
+  }
+
+  public async instagramOauthRedirect({
+    params,
+  }: InstagramOauthRedirect): Promise<ControllerResponse> {
+    const response = await instagramLib.generateOAuthUrl({
+      scopes: params.scopes,
+      state: params.state,
+    });
+
+    if (!response.data) {
+      return {
+        success: false,
+        code: "IG00010006",
+      };
+    }
+
+    return {
+      success: true,
+      redirectUrl: response.data.url,
+    };
+  }
+
+  public async instagramOauthCallback({
+    query,
+  }: {
+    query: {
+      code?: string;
+      state?: string;
+      error?: string;
+      error_description?: string;
+    };
+  }): Promise<ControllerResponse> {
+    const { code, state, error, error_description } = query;
+
+    if (error) {
+      return {
+        success: false,
+        code: "IG00020001",
+      };
+    }
+
+    if (!code) {
+      return {
+        success: false,
+        code: "IG00020002",
+      };
+    }
+
+    const response = await instagramLib.exchangeCode(code);
+
+    if (!response.success) {
+      return {
+        success: false,
+        code: "IG00020012",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
   }
 }
 

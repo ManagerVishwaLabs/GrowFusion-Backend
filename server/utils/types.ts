@@ -15,7 +15,8 @@ interface ErrorResponse {
 
 interface SuccessResponse<T = unknown> {
   success: true;
-  data: T;
+  data?: T;
+  redirectUrl?: string;
 }
 
 type ControllerResponse<T = unknown> = ErrorResponse | SuccessResponse<T>;

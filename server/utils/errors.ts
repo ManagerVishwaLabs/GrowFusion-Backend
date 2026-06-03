@@ -1,4 +1,24 @@
 const errors = {
+  /* -------- INSTAGRAM AUTHENTICATION -------- */
+  IG00010001: "Scopes must be an array",
+  IG00010002: "Scopes array cannot be empty",
+  IG00010003: "All scopes must be strings",
+  IG00010004: "State must be a string",
+  IG00010005: "State cannot be empty",
+  IG00010006: "Instagram OAuth URL generation failed",
+  IG00020001: "Error is required",
+  IG00020002: "Error cannot be empty",
+  IG00020003: "Error description must be a string",
+  IG00020004: "Error description cannot be empty",
+  IG00020005: "Instagram OAuth callback failed",
+  IG00020006: "Code is required",
+  IG00020007: "Code must be a string",
+  IG00020008: "Code cannot be empty",
+  IG00020009: "State must be a string",
+  IG00020010: "State cannot be empty",
+  IG00020011: "Instagram OAuth callback failed",
+  IG00020012: "Failed to generate access token",
+
   /* -------- DATABASE -------- */
 
   GF0010001: "Database operation failed",
