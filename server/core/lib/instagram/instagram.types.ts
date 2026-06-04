@@ -1,6 +1,4 @@
-import { INSTAGRAM_SCOPES } from "../constants.lib";
-
-type InstagramScope = (typeof INSTAGRAM_SCOPES)[keyof typeof INSTAGRAM_SCOPES];
+import { PROFILE_FIELDS } from "./instagram.constants";
 
 type InstagramResponse<T, E = string> =
   | {
@@ -12,28 +10,8 @@ type InstagramResponse<T, E = string> =
       message: E;
     };
 
-interface InstagramOAuthUrl {
-  url?: string;
-  scopes: string[];
-}
-
-interface GenerateOAuthUrlParams {
-  scopes?: InstagramScope[];
-  state?: string;
-}
-
-interface InstagramShortLivedToken {
-  access_token: string;
-  user_id: string;
-  permissions?: string[];
-}
-
-interface InstagramLongLivedToken {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-}
-
+type ProfileField = (typeof PROFILE_FIELDS)[number];
+type ProfileFields = ProfileField[];
 interface InstagramProfile {
   id: string;
   username: string;
@@ -41,12 +19,4 @@ interface InstagramProfile {
   media_count: number;
 }
 
-export {
-  InstagramResponse,
-  InstagramScope,
-  GenerateOAuthUrlParams,
-  InstagramOAuthUrl,
-  InstagramShortLivedToken,
-  InstagramLongLivedToken,
-  InstagramProfile,
-};
+export { InstagramResponse, ProfileField, ProfileFields, InstagramProfile };

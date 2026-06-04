@@ -1,71 +1,23 @@
-import { InstagramResponse } from "./instagram.types";
+import { PROFILE_FIELDS } from "./instagram.constants";
+import { InstagramResponse, ProfileFields } from "./instagram.types";
 
-class InstagramValidator {
-  public generateOAuthUrl(scopes?: string[]): InstagramResponse<void> {
-    if (scopes && (!Array.isArray(scopes) || !scopes.length)) {
+class InstagramAuthValidator {
+  public getProfile(selectedFields?: ProfileFields): InstagramResponse<void> {
+    if (!selectedFields) {
       return {
-        success: false,
-        message: "Invalid scopes",
+        success: true,
+        data: undefined,
       };
     }
 
-    return {
-      success: true,
-      data: undefined,
-    };
-  }
+    const hasInvalidFields = selectedFields.some(
+      (field) => !PROFILE_FIELDS.includes(field),
+    );
 
-  public exchangeCode(code: string): InstagramResponse<void> {
-    if (!code?.trim()) {
+    if (hasInvalidFields) {
       return {
         success: false,
-        message: "Authorization code required",
-      };
-    }
-
-    return {
-      success: true,
-      data: undefined,
-    };
-  }
-
-  public exchangeShortLivedToken(
-    shortLivedToken: string,
-  ): InstagramResponse<void> {
-    if (!shortLivedToken?.trim()) {
-      return {
-        success: false,
-        message: "Short lived token required",
-      };
-    }
-
-    return {
-      success: true,
-      data: undefined,
-    };
-  }
-
-  public refreshLongLivedToken(
-    longLivedToken: string,
-  ): InstagramResponse<void> {
-    if (!longLivedToken?.trim()) {
-      return {
-        success: false,
-        message: "Long lived token required",
-      };
-    }
-
-    return {
-      success: true,
-      data: undefined,
-    };
-  }
-
-  public getProfile(accessToken: string): InstagramResponse<void> {
-    if (!accessToken?.trim()) {
-      return {
-        success: false,
-        message: "Access token required",
+        message: "Invalid fields",
       };
     }
 
@@ -76,4 +28,4 @@ class InstagramValidator {
   }
 }
 
-export default new InstagramValidator();
+export default new InstagramAuthValidator();

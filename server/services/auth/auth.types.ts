@@ -14,11 +14,4 @@ type RegisterType = {
   lastName?: string;
 };
 
-type InstagramOauthRedirect = {
-  params: {
-    scopes?: string[];
-    state?: string;
-  };
-};
-
-export { RegisterType, InstagramOauthRedirect };
+export { RegisterType };

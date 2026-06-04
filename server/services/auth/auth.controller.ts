@@ -1,15 +1,13 @@
 import bcrypt from "bcryptjs";
 
 import { ControllerResponse } from "../../utils/types";
-import { InstagramOauthRedirect, RegisterType } from "./auth.types";
+import { RegisterType } from "./auth.types";
 
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
 
 import { env } from "../../config/env";
 import { UserRole } from "../../utils/constants";
-import instagramLib from "../../core/lib/instagram/";
-
 class AuthController {
   public async register({
     body,
@@ -157,91 +155,6 @@ class AuthController {
         code: "GF0020009",
       };
     }
-  }
-
-  public async instagramOauthRedirect({
-    params,
-  }: InstagramOauthRedirect): Promise<ControllerResponse> {
-    const response = await instagramLib.generateOAuthUrl({
-      scopes: params.scopes,
-      state: params.state,
-    });
-
-    if (!response.success || !response.data) {
-      return {
-        success: false,
-        code: "IG00010006",
-      };
-    }
-
-    return {
-      success: true,
-      redirectUrl: response.data.url,
-    };
-  }
-
-  public async instagramOauthCallback({
-    query,
-  }: {
-    query: {
-      code?: string;
-      state?: string;
-      error?: string;
-      error_description?: string;
-    };
-  }): Promise<ControllerResponse> {
-    const { code, error, error_description } = query;
-
-    if (error) {
-      return {
-        success: false,
-        code: "IG00020001",
-        message: error_description,
-      };
-    }
-
-    if (!code) {
-      return {
-        success: false,
-        code: "IG00020002",
-      };
-    }
-
-    const response = await instagramLib.exchangeCodeToLongLivedToken(code);
-
-    if (!response.success) {
-      return {
-        success: false,
-        code: "IG00020012",
-      };
-    }
-
-    return {
-      success: true,
-      data: response.data,
-    };
-  }
-
-  public async getInstagramProfile({
-    params,
-  }: {
-    params: {
-      accessToken: string;
-    };
-  }): Promise<ControllerResponse> {
-    const response = await instagramLib.getProfile(params.accessToken);
-
-    if (!response.success || !response.data) {
-      return {
-        success: false,
-        code: "IG00020009",
-      };
-    }
-
-    return {
-      success: true,
-      data: response.data,
-    };
   }
 }
 

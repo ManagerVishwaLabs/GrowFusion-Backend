@@ -16,10 +16,23 @@ const DEFAULT_SCOPES = [
   INSTAGRAM_SCOPES.CONTENT_PUBLISH,
 ];
 
+const PROFILE_FIELDS = [
+  "id",
+  "user_id",
+  "name",
+  "username",
+  "account_type",
+  "profile_picture_url",
+  "followers_count",
+  "follows_count",
+  "media_count",
+];
+
 export {
   INSTAGRAM_OAUTH_URL,
   INSTAGRAM_CODE_EXCHANGE_URL,
   INSTAGRAM_GRAPH_API_URL,
   INSTAGRAM_SCOPES,
   DEFAULT_SCOPES,
+  PROFILE_FIELDS,
 };
