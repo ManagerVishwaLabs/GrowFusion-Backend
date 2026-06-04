@@ -250,9 +250,7 @@ class AuthValidator {
     }
 
     return;
-  } 
+  }
 }
-
-
 
 export default new AuthValidator();

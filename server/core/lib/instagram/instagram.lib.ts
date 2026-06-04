@@ -1,12 +1,27 @@
+import axios from "../../axios";
 import { env } from "../../../config/env";
-import { DEFAULT_SCOPES, INSTAGRAM_AUTH_URL } from "../constants.lib";
-import { GenerateOAuthUrlParams, InstagramLibType } from "./instagram.types";
+import {
+  DEFAULT_SCOPES,
+  INSTAGRAM_CODE_EXCHANGE_URL,
+  INSTAGRAM_GRAPH_API_URL,
+  INSTAGRAM_OAUTH_URL,
+} from "../constants.lib";
+import {
+  GenerateOAuthUrlParams,
+  InstagramLongLivedToken,
+  InstagramOAuthUrl,
+  InstagramProfile,
+  InstagramResponse,
+  InstagramShortLivedToken,
+} from "./instagram.types";
 
 class InstagramLib {
   public async generateOAuthUrl({
     scopes,
     state,
-  }: GenerateOAuthUrlParams = {}): Promise<InstagramLibType> {
+  }: GenerateOAuthUrlParams = {}): Promise<
+    InstagramResponse<InstagramOAuthUrl>
+  > {
     const selectedScopes = scopes?.length ? scopes : DEFAULT_SCOPES;
 
     const params = new URLSearchParams({
@@ -14,7 +29,7 @@ class InstagramLib {
       redirect_uri: env.INSTAGRAM_REDIRECT_URI,
       response_type: "code",
       scope: selectedScopes.join(","),
-      force_reauth: "true",
+      force_reauth: env.INSTAGRAM_FORCE_RE_AUTH || "true",
     });
 
     if (state) {
@@ -24,53 +39,159 @@ class InstagramLib {
     return {
       success: true,
       data: {
-        url: `${INSTAGRAM_AUTH_URL}?${params.toString()}`,
+        url: `${INSTAGRAM_OAUTH_URL}?${params.toString()}`,
         scopes: selectedScopes,
       },
     };
   }
 
-  public async exchangeCode(code: string) {
-    const response = await fetch(
-      "https://api.instagram.com/oauth/access_token",
+  public async exchangeCode(
+    code: string,
+  ): Promise<InstagramResponse<InstagramShortLivedToken>> {
+    const form = new URLSearchParams({
+      client_id: env.INSTAGRAM_CLIENT_ID,
+      client_secret: env.INSTAGRAM_CLIENT_SECRET,
+      grant_type: "authorization_code",
+      redirect_uri: env.INSTAGRAM_REDIRECT_URI,
+      code,
+    });
+
+    const response = await axios.post<InstagramShortLivedToken>(
+      INSTAGRAM_CODE_EXCHANGE_URL,
+      form,
       {
-        method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({
-          client_id: env.INSTAGRAM_CLIENT_ID,
-          grant_type: "authorization_code",
-          redirect_uri: env.INSTAGRAM_REDIRECT_URI,
-          code,
-        }),
       },
     );
 
-    const data = await response.json();
-
-    if (!response.ok) {
+    if (!response.success || !response.data) {
       return {
         success: false,
-        data,
+        message: response.message || "Failed to exchange code for token",
       };
     }
 
     return {
       success: true,
-      data: {
-        accessToken: data.access_token,
-        userId: data.user_id,
-        permissions: data.permissions,
-      },
+      data: response.data,
     };
   }
 
-  public async getProfile(_accessToken: string) {}
+  public async exchangeShortLivedToken(
+    shortLivedToken: string,
+  ): Promise<InstagramResponse<InstagramLongLivedToken>> {
+    const response = await axios.get<InstagramLongLivedToken>(
+      INSTAGRAM_GRAPH_API_URL + "/access_token",
+      {
+        params: {
+          grant_type: "ig_exchange_token",
+          client_secret: env.INSTAGRAM_CLIENT_SECRET,
+          access_token: shortLivedToken,
+        },
+      },
+    );
 
-  public async publishImage() {}
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to exchange token for token",
+      };
+    }
 
-  public async publishReel() {}
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
+  public async refreshLongLivedToken(
+    longLivedToken: string,
+  ): Promise<InstagramResponse<InstagramLongLivedToken>> {
+    const response = await axios.get<InstagramLongLivedToken>(
+      INSTAGRAM_GRAPH_API_URL + "/refresh_access_token",
+      {
+        params: {
+          grant_type: "ig_refresh_token",
+          access_token: longLivedToken,
+        },
+      },
+    );
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to refresh token",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
+  public async getProfile(
+    accessToken: string,
+  ): Promise<InstagramResponse<InstagramProfile>> {
+    const response = await axios.get<InstagramProfile>(
+      INSTAGRAM_GRAPH_API_URL + "/me",
+      {
+        params: {
+          fields: "id,username,account_type,media_count",
+          access_token: accessToken,
+        },
+      },
+    );
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to get profile",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
+  // public async getMe<T>(accessToken: string, fields: string[]): Promise<InstagramResponse<T>> {
+  //   const response = await axios.get<T>(
+  //     "https://graph.instagram.com/me",
+  //     {
+  //       params: {
+  //         fields: fields.join(","),
+  //         access_token: accessToken,
+  //       },
+  //     },
+  //   );
+
+  //   return response.data;
+  // }
+
+  // public async validateToken(accessToken: string): Promise<boolean> {
+  //   try {
+  //     await this.getProfile(accessToken);
+  //     return true;
+  //   } catch {
+  //     return false;
+  //   }
+  // }
+
+  // public async publishImage() {
+  //   throw new Error(
+  //     "Not implemented. Requires Instagram Graph API publishing endpoints.",
+  //   );
+  // }
+
+  // public async publishReel() {
+  //   throw new Error(
+  //     "Not implemented. Requires Instagram Graph API publishing endpoints.",
+  //   );
+  // }
 }
 
 export default new InstagramLib();

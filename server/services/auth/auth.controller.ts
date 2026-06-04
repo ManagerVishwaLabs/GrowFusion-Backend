@@ -167,7 +167,7 @@ class AuthController {
       state: params.state,
     });
 
-    if (!response.data) {
+    if (!response.success || !response.data) {
       return {
         success: false,
         code: "IG00010006",
@@ -206,12 +206,34 @@ class AuthController {
       };
     }
 
-    const response = await instagramLib.exchangeCode(code);
+    const response = await instagramLib.exchangeCodeToLongLivedToken(code);
 
     if (!response.success) {
       return {
         success: false,
         code: "IG00020012",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
+  public async getInstagramProfile({
+    params,
+  }: {
+    params: {
+      accessToken: string;
+    };
+  }): Promise<ControllerResponse> {
+    const response = await instagramLib.getProfile(params.accessToken);
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        code: "IG00020009",
       };
     }
 

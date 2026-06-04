@@ -15,6 +15,9 @@ export const env = {
 
   CLIENT_URL: process.env.CLIENT_URL || "",
   LOG_LEVEL: process.env.LOG_LEVEL || "info",
+
+  INSTAGRAM_CLIENT_SECRET: process.env.INSTAGRAM_CLIENT_SECRET || "",
+  INSTAGRAM_FORCE_RE_AUTH: process.env.INSTAGRAM_FORCE_RE_AUTH || "true",
   INSTAGRAM_CLIENT_ID: process.env.INSTAGRAM_CLIENT_ID || "",
   INSTAGRAM_REDIRECT_URI: process.env.INSTAGRAM_REDIRECT_URI || "",
 };

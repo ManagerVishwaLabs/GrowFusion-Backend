@@ -1,4 +1,7 @@
-const INSTAGRAM_AUTH_URL = "https://www.instagram.com/oauth/authorize/";
+const INSTAGRAM_OAUTH_URL = "https://www.instagram.com/oauth/authorize/";
+const INSTAGRAM_CODE_EXCHANGE_URL =
+  "https://api.instagram.com/oauth/access_token";
+const INSTAGRAM_GRAPH_API_URL = "https://graph.instagram.com";
 
 const INSTAGRAM_SCOPES = {
   BASIC: "instagram_business_basic",
@@ -13,4 +16,10 @@ const DEFAULT_SCOPES = [
   INSTAGRAM_SCOPES.CONTENT_PUBLISH,
 ];
 
-export { INSTAGRAM_AUTH_URL, INSTAGRAM_SCOPES, DEFAULT_SCOPES };
+export {
+  INSTAGRAM_OAUTH_URL,
+  INSTAGRAM_CODE_EXCHANGE_URL,
+  INSTAGRAM_GRAPH_API_URL,
+  INSTAGRAM_SCOPES,
+  DEFAULT_SCOPES,
+};
