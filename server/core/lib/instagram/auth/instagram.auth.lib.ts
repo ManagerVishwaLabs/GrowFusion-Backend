@@ -10,7 +10,6 @@ import {
   GenerateOAuthUrlParams,
   InstagramLongLivedToken,
   InstagramOAuthUrl,
-  InstagramProfile,
   InstagramResponse,
   InstagramShortLivedToken,
 } from "./instagram.auth.types";
