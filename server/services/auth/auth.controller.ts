@@ -190,12 +190,13 @@ class AuthController {
       error_description?: string;
     };
   }): Promise<ControllerResponse> {
-    const { code, state, error, error_description } = query;
+    const { code, error, error_description } = query;
 
     if (error) {
       return {
         success: false,
         code: "IG00020001",
+        message: error_description,
       };
     }
 
