@@ -2,12 +2,20 @@ import DBModule from "../../../database/db.module";
 import { Doc } from "../../../database/db.types";
 import { SocialMediaAccountType } from "../../../database/models/socialAccount.model";
 import axios from "../../axios";
-import { INSTAGRAM_GRAPH_API_URL, PROFILE_FIELDS } from "./instagram.constants";
+import {
+  INSTAGRAM_GRAPH_API_URL,
+  MEDIA_FIELDS,
+  PROFILE_FIELDS,
+} from "./instagram.constants";
 import {
   CarouselItem,
-  InstagramProfile,
+  ContainerStatusResponse,
   InstagramResponse,
+  MediaDetailsResponse,
+  MediaIDResponse,
+  MediaListResponse,
   ProfileFields,
+  UserProfile,
 } from "./instagram.types";
 
 class InstagramLib {
@@ -29,7 +37,7 @@ class InstagramLib {
     }
 
     const account = await this.socialAccountModel.findOne(
-      { mediaName: "instagram" }, //change to username
+      { username: "testUser" },
       { accessToken: 1 },
     );
 
@@ -43,7 +51,7 @@ class InstagramLib {
 
   private async getAccountDetails(): Promise<Doc<SocialMediaAccountType>> {
     const account = await this.socialAccountModel.findOne(
-      { mediaName: "instagram" }, //change to username
+      { username: "testUser" }, //change to username
     );
 
     if (!account.success || !account.data) {
@@ -56,19 +64,16 @@ class InstagramLib {
 
   public async getProfile(
     selectedFields?: ProfileFields,
-  ): Promise<InstagramResponse<InstagramProfile>> {
+  ): Promise<InstagramResponse<UserProfile>> {
     const access_token = await this.getAccessToken();
-    const response = await this.instagramGraphClient.get<InstagramProfile>(
-      "/me",
-      {
-        params: {
-          fields: selectedFields
-            ? selectedFields.join(",")
-            : PROFILE_FIELDS.join(","),
-          access_token: access_token,
-        },
+    const response = await this.instagramGraphClient.get<UserProfile>("/me", {
+      params: {
+        fields: selectedFields
+          ? selectedFields.join(",")
+          : PROFILE_FIELDS.join(","),
+        access_token: access_token,
       },
-    );
+    });
 
     if (!response.success || !response.data) {
       return {
@@ -114,7 +119,10 @@ class InstagramLib {
     };
   }
 
-  public async createImagePost(imageUrl: string, caption?: string) {
+  public async createImagePost(
+    imageUrl: string,
+    caption?: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const access_token = await this.getAccessToken();
 
     const account = await this.getAccountDetails();
@@ -123,7 +131,7 @@ class InstagramLib {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
 
-    const response = await this.instagramGraphClient.post<{ id: string }>(
+    const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
@@ -145,11 +153,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
+        username: "testUser",
+        company: "testCompany",
         socialAccountId,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "IMAGE",
-        mediaUrls: [imageUrl],
+        mediaUrl: imageUrl,
         caption,
       });
     } catch (error) {
@@ -168,14 +178,17 @@ class InstagramLib {
     };
   }
 
-  public async createReel(videoUrl: string, caption?: string) {
+  public async createReel(
+    videoUrl: string,
+    caption?: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const access_token = await this.getAccessToken();
 
     const account = await this.getAccountDetails();
     if (!this.instagramBusinessAccountId) {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
-    const response = await this.instagramGraphClient.post<{ id: string }>(
+    const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
@@ -197,11 +210,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
+        username: "testUser",
+        company: "testCompany",
         socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "REELS",
-        mediaUrls: [videoUrl],
+        mediaUrl: videoUrl,
         caption,
       });
     } catch (error) {
@@ -220,7 +235,10 @@ class InstagramLib {
     };
   }
 
-  public async createCarousel(mediaUrls: CarouselItem[], caption?: string) {
+  public async createCarousel(
+    mediaUrls: CarouselItem[],
+    caption?: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const access_token = await this.getAccessToken();
 
     const account = await this.getAccountDetails();
@@ -246,7 +264,7 @@ class InstagramLib {
               access_token,
             };
 
-      const child = await this.instagramGraphClient.post<{ id: string }>(
+      const child = await this.instagramGraphClient.post<MediaIDResponse>(
         `/${this.instagramBusinessAccountId}/media`,
         null,
         {
@@ -271,12 +289,12 @@ class InstagramLib {
       }
     }
 
-    const carousel = await this.instagramGraphClient.post<{ id: string }>(
+    const carousel = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
         params: {
-          media_type: "CAROUSEL",
+          media_type: "CAROUSEL_ALBUM",
           children: children.join(","),
           caption,
           access_token,
@@ -293,12 +311,14 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
+        username: "testUser",
+        company: "testCompany",
         socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: carousel.data.id,
         childCreationIds: children,
-        mediaType: "CAROUSEL",
-        mediaUrls: mediaUrls.map((item) => item.url),
+        mediaType: "CAROUSEL_ALBUM",
+        childMediaUrls: mediaUrls.slice(1).map((item) => item.url),
         caption,
       });
     } catch (error) {
@@ -315,7 +335,9 @@ class InstagramLib {
     };
   }
 
-  public async createImageStory(imageUrl: string) {
+  public async createImageStory(
+    imageUrl: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const access_token = await this.getAccessToken();
 
     const account = await this.getAccountDetails();
@@ -324,7 +346,7 @@ class InstagramLib {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
 
-    const response = await this.instagramGraphClient.post<{ id: string }>(
+    const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
@@ -345,11 +367,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
+        username: "testUser",
+        company: "testCompany",
         socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "STORY",
-        mediaUrls: [imageUrl],
+        mediaUrl: imageUrl,
       });
     } catch (error) {
       return {
@@ -367,7 +391,9 @@ class InstagramLib {
     };
   }
 
-  public async createVideoStory(videoUrl: string) {
+  public async createVideoStory(
+    videoUrl: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const access_token = await this.getAccessToken();
 
     const account = await this.getAccountDetails();
@@ -376,7 +402,7 @@ class InstagramLib {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
 
-    const response = await this.instagramGraphClient.post<{ id: string }>(
+    const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
@@ -397,11 +423,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
+        username: "testUser",
+        company: "testCompany",
         socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data?.id,
         mediaType: "STORY",
-        mediaUrls: [videoUrl],
+        mediaUrl: videoUrl,
       });
     } catch (error) {
       return {
@@ -419,17 +447,21 @@ class InstagramLib {
     };
   }
 
-  public async getContainerStatus(creationId: string) {
+  public async getContainerStatus(
+    creationId: string,
+  ): Promise<InstagramResponse<ContainerStatusResponse>> {
     const access_token = await this.getAccessToken();
 
-    const response = await this.instagramGraphClient.get<{
-      status_code: "IN_PROGRESS" | "FINISHED" | "ERROR" | "EXPIRED";
-    }>(`/${creationId}`, {
-      params: {
-        fields: "status_code",
-        access_token,
-      },
-    });
+    const response =
+      await this.instagramGraphClient.get<ContainerStatusResponse>(
+        `/${creationId}`,
+        {
+          params: {
+            fields: "status_code",
+            access_token,
+          },
+        },
+      );
 
     if (!response.success || !response.data) {
       return {
@@ -444,46 +476,110 @@ class InstagramLib {
     };
   }
 
-  private async waitForContainerReady(
-    creationId: string,
-    maxAttempts = 30,
-  ): Promise<InstagramResponse<void>> {
-    for (let i = 0; i < maxAttempts; i++) {
-      const status = await this.getContainerStatus(creationId);
+  public async getMediaList(
+    cursor?: string,
+  ): Promise<InstagramResponse<MediaListResponse>> {
+    const access_token = await this.getAccessToken();
 
-      if (!status.success || !status.data) {
-        return {
-          success: false,
-          message: status.message || "Failed to get container status",
-        };
-      }
+    if (!this.instagramBusinessAccountId) {
+      const account = await this.getAccountDetails();
+      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
+    }
 
-      const statusCode = status.data.status_code;
+    const response = await this.instagramGraphClient.get<MediaListResponse>(
+      `/${this.instagramBusinessAccountId}/media`,
+      {
+        params: {
+          access_token,
+          cursor,
+        },
+      },
+    );
 
-      if (statusCode === "FINISHED") {
-        return {
-          success: true,
-          data: undefined,
-        };
-      }
-
-      if (statusCode === "ERROR" || statusCode === "EXPIRED") {
-        return {
-          success: false,
-          message: `Container status: ${statusCode}`,
-        };
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to get media list",
+      };
     }
 
     return {
-      success: false,
-      message: "Container processing timeout",
+      success: true,
+      data: response.data,
     };
   }
 
-  public async publishContent(creationId: string) {
+  public async getMedia(
+    mediaId: string,
+  ): Promise<InstagramResponse<MediaDetailsResponse>> {
+    const access_token = await this.getAccessToken();
+
+    const response = await this.instagramGraphClient.get<MediaDetailsResponse>(
+      `/${mediaId}`,
+      {
+        params: {
+          fields: MEDIA_FIELDS.join(","),
+          access_token,
+        },
+      },
+    );
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to get media",
+      };
+    }
+
+    try {
+      await this.instagramContentModel.updateOne(
+        {
+          instagramMediaId: mediaId,
+        },
+        {
+          instagramMediaId: mediaId,
+          mediaType: response.data.media_type ?? undefined,
+          instagramMediaUrl: response.data.media_url,
+          instagramChildMediaUrls: response.data?.children?.data.map(
+            (item) => item.media_url,
+          ),
+          permalink: response.data.permalink,
+          caption: response.data?.caption ?? undefined,
+          status: "published",
+          mediaProductType: response.data?.media_product_type,
+          thumbnailUrl: response.data?.thumbnail_url,
+          shortcode: response.data?.shortcode,
+          commentsCount: response.data.comments_count,
+          likeCount: response.data.like_count,
+          isCommentEnabled: response.data.is_comment_enabled,
+          publishedAt: response.data.timestamp
+            ? new Date(response.data.timestamp)
+            : undefined,
+        },
+        { upsert: true },
+        {
+          source: "SYNCED",
+        },
+      );
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to save social account",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
+  public async publishContent(
+    creationId: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const access_token = await this.getAccessToken();
 
     if (!this.instagramBusinessAccountId) {
@@ -493,7 +589,7 @@ class InstagramLib {
 
     await this.waitForContainerReady(creationId);
 
-    const response = await this.instagramGraphClient.post<{ id: string }>(
+    const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media_publish`,
       null,
       {
@@ -534,6 +630,45 @@ class InstagramLib {
     return {
       success: true,
       data: response.data,
+    };
+  }
+
+  private async waitForContainerReady(
+    creationId: string,
+    maxAttempts = 30,
+  ): Promise<InstagramResponse<void>> {
+    for (let i = 0; i < maxAttempts; i++) {
+      const status = await this.getContainerStatus(creationId);
+
+      if (!status.success) {
+        return {
+          success: false,
+          message: status.message || "Failed to get container status",
+        };
+      }
+
+      const statusCode = status.data.status_code;
+
+      if (statusCode === "FINISHED") {
+        return {
+          success: true,
+          data: undefined,
+        };
+      }
+
+      if (statusCode === "ERROR" || statusCode === "EXPIRED") {
+        return {
+          success: false,
+          message: `Container status: ${statusCode}`,
+        };
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+
+    return {
+      success: false,
+      message: "Container processing timeout",
     };
   }
 }

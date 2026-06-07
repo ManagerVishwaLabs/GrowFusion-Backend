@@ -13,7 +13,7 @@ type InstagramResponse<T, E = string> =
 type ProfileField = (typeof PROFILE_FIELDS)[number];
 type ProfileFields = ProfileField[];
 
-interface InstagramProfile {
+interface UserProfile {
   id: string;
   user_id: string;
   name: string;
@@ -30,10 +30,54 @@ type CarouselItem = {
   url: string;
 };
 
+type MediaIDResponse = {
+  id: string;
+};
+
+type ContainerStatusResponse = {
+  status_code: "IN_PROGRESS" | "FINISHED" | "ERROR" | "EXPIRED";
+};
+
+type MediaListResponse = {
+  data: {
+    id: string;
+  }[];
+  paging?: {
+    cursors?: {
+      after?: string;
+      before?: string;
+    };
+  };
+};
+
+type MediaDetailsResponse = {
+  id: string;
+  caption: string;
+  media_type: string;
+  media_product_type: string;
+  media_url: string;
+  thumbnail_url: string;
+  permalink: string;
+  shortcode: string;
+  timestamp: string;
+  username: string;
+  owner: string;
+  children: {
+    data: [{ id: string; media_type: string; media_url: string }];
+  };
+  comments_count: number;
+  like_count: number;
+  is_comment_enabled: boolean;
+};
+
 export {
   InstagramResponse,
   ProfileField,
   ProfileFields,
-  InstagramProfile,
+  UserProfile,
   CarouselItem,
+  MediaIDResponse,
+  ContainerStatusResponse,
+  MediaListResponse,
+  MediaDetailsResponse,
 };

@@ -52,6 +52,28 @@ class TestProxy {
     res.send(controllerResponse);
   }
 
+  public async getMediaList(req: Request, res: Response): Promise<void> {
+    const controllerResponse = await instagramLib.getMediaList(
+      req.query.cursor as string,
+    );
+
+    res.send(controllerResponse);
+  }
+
+  public async getMedia(req: Request, res: Response): Promise<void> {
+    const controllerResponse = await instagramLib.getMedia(
+      req.query.mediaId as string,
+    );
+
+    res.send(controllerResponse);
+  }
+
+  public async syncAllMedia(req: Request, res: Response): Promise<void> {
+    const controllerResponse = await instagramLib.syncAllMedia();
+
+    res.send(controllerResponse);
+  }
+
   public async publishContent(req: Request, res: Response): Promise<void> {
     const controllerResponse = await instagramLib.publishContent(
       req.body.creationId,

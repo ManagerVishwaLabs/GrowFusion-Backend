@@ -114,6 +114,8 @@ class InstagramLib {
           tokenApiUserId,
         },
         {
+          username: "testUser",
+          company: "testCompany",
           mediaName: "instagram",
           accessToken: response.data.access_token,
           tokenExpiresAt: new Date(

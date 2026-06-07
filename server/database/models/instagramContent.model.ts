@@ -9,15 +9,26 @@ enum InstagramContentStatus {
 }
 
 interface InstagramContentType {
+  username: string;
+  company: string;
   socialAccountId: Types.ObjectId;
   instagramBusinessAccountId: string;
   instagramCreationId?: string;
   instagramMediaId?: string;
   childCreationIds?: string[];
   caption?: string;
-  mediaType: "IMAGE" | "VIDEO" | "REELS" | "CAROUSEL" | "STORY";
-  mediaUrls: string[];
+  mediaType: "IMAGE" | "VIDEO" | "REELS" | "CAROUSEL_ALBUM" | "STORY";
+  source?: "USER" | "SYNCED";
+  mediaUrl?: string;
+  childMediaUrls?: string[];
+  instagramMediaUrl?: string;
+  instagramChildMediaUrls?: string[];
   permalink?: string;
+  mediaProductType?: string;
+  thumbnailUrl?: string;
+  commentsCount?: number;
+  likeCount?: number;
+  isCommentEnabled?: boolean;
   status?: InstagramContentStatus;
   publishedAt?: Date;
   isActive?: boolean;
@@ -27,6 +38,16 @@ interface InstagramContentType {
 
 const InstagramContentSchema = new Schema<InstagramContentType>(
   {
+    username: {
+      type: String,
+      ref: "User",
+      required: true,
+    },
+    company: {
+      type: String,
+      ref: "Company",
+      required: true,
+    },
     socialAccountId: {
       type: Schema.Types.ObjectId,
       ref: "SocialMediaAccount",
@@ -41,12 +62,26 @@ const InstagramContentSchema = new Schema<InstagramContentType>(
     instagramMediaId: String,
     childCreationIds: [String],
     caption: String,
+    mediaProductType: String,
+    thumbnailUrl: String,
+    commentsCount: Number,
+    likeCount: Number,
+    isCommentEnabled: Boolean,
     mediaType: {
       type: String,
-      enum: ["IMAGE", "VIDEO", "REELS", "CAROUSEL", "STORY"],
+      enum: ["IMAGE", "VIDEO", "REELS", "CAROUSEL_ALBUM", "STORY"],
       required: true,
     },
-    mediaUrls: [String],
+    source: {
+      type: String,
+      enum: ["USER", "SYNCED"],
+      default: "USER",
+      required: true,
+    },
+    mediaUrl: String,
+    childMediaUrls: [String],
+    instagramMediaUrl: String,
+    instagramChildMediaUrls: [String],
     permalink: String,
     status: {
       type: String,
@@ -60,6 +95,19 @@ const InstagramContentSchema = new Schema<InstagramContentType>(
   },
   {
     timestamps: true,
+  },
+);
+
+InstagramContentSchema.index(
+  {
+    username: 1,
+    company: 1,
+    instagramBusinessAccountId: 1,
+    instagramCreationId: 1,
+    instagramMediaId: 1,
+  },
+  {
+    unique: true,
   },
 );
 

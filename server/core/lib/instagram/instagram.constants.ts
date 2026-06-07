@@ -28,6 +28,24 @@ const PROFILE_FIELDS = [
   "media_count",
 ];
 
+const MEDIA_FIELDS = [
+  "id",
+  "caption",
+  "media_type",
+  "media_product_type",
+  "media_url",
+  "thumbnail_url",
+  "permalink",
+  "shortcode",
+  "timestamp",
+  "username",
+  "owner",
+  "children{id,media_type,media_url}",
+  "comments_count",
+  "like_count",
+  "is_comment_enabled",
+];
+
 export {
   INSTAGRAM_OAUTH_URL,
   INSTAGRAM_CODE_EXCHANGE_URL,
@@ -35,4 +53,5 @@ export {
   INSTAGRAM_SCOPES,
   DEFAULT_SCOPES,
   PROFILE_FIELDS,
+  MEDIA_FIELDS,
 };

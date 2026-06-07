@@ -132,27 +132,6 @@ class InstagramAuthValidator {
     };
   }
 
-  public publishContent(creationId: string): InstagramResponse<void> {
-    if (!creationId?.trim()) {
-      return {
-        success: false,
-        message: "Creation ID cannot be empty",
-      };
-    }
-
-    if (Number.isNaN(Number(creationId))) {
-      return {
-        success: false,
-        message: "Invalid creation ID",
-      };
-    }
-
-    return {
-      success: true,
-      data: undefined,
-    };
-  }
-
   public createImageStory(imageUrl: string): InstagramResponse<void> {
     if (!imageUrl?.trim()) {
       return {
@@ -186,6 +165,48 @@ class InstagramAuthValidator {
       return {
         success: false,
         message: "Invalid video URL",
+      };
+    }
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  }
+
+  public getMedia(mediaId: string): InstagramResponse<void> {
+    if (!mediaId?.trim()) {
+      return {
+        success: false,
+        message: "Media ID cannot be empty",
+      };
+    }
+
+    if (Number.isNaN(Number(mediaId))) {
+      return {
+        success: false,
+        message: "Invalid media ID",
+      };
+    }
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  }
+
+  public publishContent(creationId: string): InstagramResponse<void> {
+    if (!creationId?.trim()) {
+      return {
+        success: false,
+        message: "Creation ID cannot be empty",
+      };
+    }
+
+    if (Number.isNaN(Number(creationId))) {
+      return {
+        success: false,
+        message: "Invalid creation ID",
       };
     }
 

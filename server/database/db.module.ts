@@ -218,7 +218,7 @@ class ModelWrapper<TSchema extends object> {
         { _id: id, ...(includeInactive ? {} : { isActive: true }) },
         { $set: updateData },
         {
-          new: true,
+          returnDocument: "after",
           runValidators: true,
           upsert: options?.upsert ?? false,
         },
@@ -237,14 +237,15 @@ class ModelWrapper<TSchema extends object> {
     filter: QueryFilter<TSchema>,
     updateData: UpdateQuery<TSchema>,
     options?: UpdateOptions,
+    setOrUpdateData?: UpdateQuery<TSchema>,
     includeInactive = false,
   ): Promise<DBResponse<Doc<TSchema> | null>> {
     try {
       const data = await this.model.findOneAndUpdate(
         { ...filter, ...(includeInactive ? {} : { isActive: true }) },
-        { $set: updateData },
+        { $set: updateData, $setOnInsert: setOrUpdateData },
         {
-          new: true,
+          returnDocument: "after",
           runValidators: true,
           upsert: options?.upsert ?? false,
           ...options,
