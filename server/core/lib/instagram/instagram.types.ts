@@ -14,8 +14,13 @@ type ProfileField = (typeof PROFILE_FIELDS)[number];
 type ProfileFields = ProfileField[];
 interface InstagramProfile {
   id: string;
+  user_id: string;
+  name: string;
   username: string;
   account_type: string;
+  profile_picture_url: string;
+  followers_count: number;
+  follows_count: number;
   media_count: number;
 }
 

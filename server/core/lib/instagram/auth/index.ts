@@ -42,7 +42,7 @@ class InstagramAuth {
   }
 
   public async exchangeShortLivedToken(
-    mediaUserId: string,
+    tokenApiUserId: string,
     shortLivedToken: string,
     scopes?: string[],
   ): Promise<InstagramResponse<InstagramLongLivedToken>> {
@@ -53,14 +53,14 @@ class InstagramAuth {
     }
 
     return instagramAuthLib.exchangeShortLivedToken(
-      mediaUserId,
+      tokenApiUserId,
       shortLivedToken,
       scopes,
     );
   }
 
   public async refreshLongLivedToken(
-    mediaUserId: string,
+    tokenApiUserId: string,
     longLivedToken: string,
   ): Promise<InstagramResponse<InstagramLongLivedToken>> {
     const validation = validator.refreshLongLivedToken(longLivedToken);
@@ -69,7 +69,10 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.refreshLongLivedToken(mediaUserId, longLivedToken);
+    return instagramAuthLib.refreshLongLivedToken(
+      tokenApiUserId,
+      longLivedToken,
+    );
   }
 
   public async exchangeCodeToLongLivedToken(code: string): Promise<

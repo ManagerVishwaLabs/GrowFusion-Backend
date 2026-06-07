@@ -86,7 +86,7 @@ class InstagramLib {
   }
 
   public async exchangeShortLivedToken(
-    mediaUserId: string,
+    tokenApiUserId: string,
     shortLivedToken: string,
     scopes?: string[],
   ): Promise<InstagramResponse<InstagramLongLivedToken>> {
@@ -111,9 +111,10 @@ class InstagramLib {
     try {
       await this.socialAccountModel.updateOne(
         {
-          mediaUserId,
+          tokenApiUserId,
         },
         {
+          mediaName: "instagram",
           accessToken: response.data.access_token,
           tokenExpiresAt: new Date(
             Date.now() + response.data.expires_in * 1000,
@@ -141,7 +142,7 @@ class InstagramLib {
   }
 
   public async refreshLongLivedToken(
-    mediaUserId: string,
+    tokenApiUserId: string,
     longLivedToken: string,
   ): Promise<InstagramResponse<InstagramLongLivedToken>> {
     const response = await axios.get<InstagramLongLivedToken>(
@@ -164,7 +165,7 @@ class InstagramLib {
     try {
       this.socialAccountModel.updateOne(
         {
-          mediaUserId,
+          tokenApiUserId,
         },
         {
           accessToken: response.data.access_token,

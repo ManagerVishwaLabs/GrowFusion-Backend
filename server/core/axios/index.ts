@@ -1,9 +1,18 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
   success: boolean;
   message?: string;
   data?: T;
+  error?: ApiErrorResponse | unknown;
+}
+
+interface ApiErrorResponse {
+  error?: {
+    message?: string;
+    type?: string;
+    code?: number;
+  };
 }
 
 class HttpClient {
@@ -65,7 +74,7 @@ class HttpClient {
     this.setupInterceptors(this.client);
   }
 
-  static create(baseURL: string) {
+  static create(baseURL: string): HttpClient {
     return new HttpClient(baseURL);
   }
 
@@ -80,10 +89,22 @@ class HttpClient {
         data: res.data,
       };
     } catch (err) {
-      console.log(`[HTTP Client] Error:`, err);
+      console.error("[HTTP Client] Error:", err);
+
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+
+        return {
+          success: false,
+          message:
+            axiosError.response?.data?.error?.message ?? axiosError.message,
+          error: axiosError.response?.data,
+        };
+      }
       return {
         success: false,
-        message: "Request failed",
+        message: err instanceof Error ? err.message : "Unknown error",
+        error: err,
       };
     }
   }
@@ -189,3 +210,4 @@ class HttpClient {
 }
 
 export default HttpClient;
+export { AxiosInstance };

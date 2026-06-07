@@ -19,6 +19,36 @@ class Instagram {
 
     return instagramLib.getProfile(selectedFields);
   }
+
+  public async createImagePost(imageUrl: string, caption?: string) {
+    const validation = validator.createImagePost(imageUrl);
+
+    if (!validation.success) {
+      return validation;
+    }
+
+    return instagramLib.createImagePost(imageUrl, caption);
+  }
+
+  public async createReel(videoUrl: string, caption?: string) {
+    const validation = validator.createReel(videoUrl);
+
+    if (!validation.success) {
+      return validation;
+    }
+
+    return instagramLib.createReel(videoUrl, caption);
+  }
+
+  public async publishContent(creationId: string) {
+    const validation = validator.publishContent(creationId);
+
+    if (!validation.success) {
+      return validation;
+    }
+
+    return instagramLib.publishContent(creationId);
+  }
 }
 
 export default new Instagram();

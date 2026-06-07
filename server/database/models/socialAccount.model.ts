@@ -3,14 +3,17 @@ import { Schema, model } from "mongoose";
 interface SocialMediaAccountType {
   company: string;
   mediaName: "instagram";
-  mediaUserId?: string;
+  tokenApiUserId?: string;
+  appUserId?: string;
   mediaUsername?: string;
   username: string;
   displayName?: string;
   email?: string;
   profilePictureUrl?: string;
+  followersCount?: number;
+  followsCount?: number;
+  mediaCount?: number;
   accessToken: string;
-  refreshToken?: string;
   tokenExpiresAt?: Date;
   instagramBusinessAccountId?: string;
   scopes?: string[];
@@ -38,9 +41,13 @@ const SocialMediaAccountSchema = new Schema<SocialMediaAccountType>(
       enum: ["instagram"],
       required: true,
     },
-    mediaUserId: {
+    tokenApiUserId: {
       type: String,
       required: true,
+      trim: true,
+    },
+    appUserId: {
+      type: String,
       trim: true,
     },
     mediaUsername: {
@@ -61,12 +68,19 @@ const SocialMediaAccountSchema = new Schema<SocialMediaAccountType>(
       type: String,
       trim: true,
     },
+    followersCount: {
+      type: Number,
+      required: true,
+    },
+    followsCount: {
+      type: Number,
+    },
+    mediaCount: {
+      type: Number,
+    },
     accessToken: {
       type: String,
       required: true,
-    },
-    refreshToken: {
-      type: String,
     },
     tokenExpiresAt: {
       type: Date,
@@ -97,7 +111,7 @@ SocialMediaAccountSchema.index(
   {
     company: 1,
     mediaName: 1,
-    mediaUserId: 1,
+    tokenApiUserId: 1,
     username: 1,
   },
   {
@@ -110,5 +124,6 @@ const SocialAccount = model<SocialMediaAccountType>(
   SocialMediaAccountSchema,
   "socialMediaAccount",
 );
+
 export { SocialMediaAccountType };
 export default SocialAccount;
