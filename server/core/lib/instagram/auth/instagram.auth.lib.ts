@@ -13,8 +13,15 @@ import {
   InstagramResponse,
   InstagramShortLivedToken,
 } from "./instagram.auth.types";
+import DBModule from "../../../../database/db.module";
 
 class InstagramLib {
+  private socialAccountModel;
+
+  constructor() {
+    this.socialAccountModel = DBModule.createModel("SocialMediaAccount");
+  }
+
   public async generateOAuthUrl({
     scopes,
     state,
@@ -79,7 +86,9 @@ class InstagramLib {
   }
 
   public async exchangeShortLivedToken(
+    mediaUserId: string,
     shortLivedToken: string,
+    scopes?: string[],
   ): Promise<InstagramResponse<InstagramLongLivedToken>> {
     const response = await axios.get<InstagramLongLivedToken>(
       INSTAGRAM_GRAPH_API_URL + "/access_token",
@@ -99,6 +108,32 @@ class InstagramLib {
       };
     }
 
+    try {
+      await this.socialAccountModel.updateOne(
+        {
+          mediaUserId,
+        },
+        {
+          accessToken: response.data.access_token,
+          tokenExpiresAt: new Date(
+            Date.now() + response.data.expires_in * 1000,
+          ),
+          scopes: scopes,
+        },
+        {
+          upsert: true,
+        },
+      );
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to save social account",
+      };
+    }
+
     return {
       success: true,
       data: response.data,
@@ -106,6 +141,7 @@ class InstagramLib {
   }
 
   public async refreshLongLivedToken(
+    mediaUserId: string,
     longLivedToken: string,
   ): Promise<InstagramResponse<InstagramLongLivedToken>> {
     const response = await axios.get<InstagramLongLivedToken>(
@@ -125,46 +161,33 @@ class InstagramLib {
       };
     }
 
+    try {
+      this.socialAccountModel.updateOne(
+        {
+          mediaUserId,
+        },
+        {
+          accessToken: response.data.access_token,
+          tokenExpiresAt: new Date(
+            Date.now() + response.data.expires_in * 1000,
+          ),
+        },
+      );
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to save social account",
+      };
+    }
+
     return {
       success: true,
       data: response.data,
     };
   }
-
-  // public async getMe<T>(accessToken: string, fields: string[]): Promise<InstagramResponse<T>> {
-  //   const response = await axios.get<T>(
-  //     "https://graph.instagram.com/me",
-  //     {
-  //       params: {
-  //         fields: fields.join(","),
-  //         access_token: accessToken,
-  //       },
-  //     },
-  //   );
-
-  //   return response.data;
-  // }
-
-  // public async validateToken(accessToken: string): Promise<boolean> {
-  //   try {
-  //     await this.getProfile(accessToken);
-  //     return true;
-  //   } catch {
-  //     return false;
-  //   }
-  // }
-
-  // public async publishImage() {
-  //   throw new Error(
-  //     "Not implemented. Requires Instagram Graph API publishing endpoints.",
-  //   );
-  // }
-
-  // public async publishReel() {
-  //   throw new Error(
-  //     "Not implemented. Requires Instagram Graph API publishing endpoints.",
-  //   );
-  // }
 }
 
 export default new InstagramLib();

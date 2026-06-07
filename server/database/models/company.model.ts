@@ -10,6 +10,8 @@ interface CompanyType {
   contactPhone?: string;
   companyLogoUrl?: string;
   isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const CompanySchema = new Schema<CompanyType>(

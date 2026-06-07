@@ -12,9 +12,11 @@ interface UserType {
   passwordHash?: string;
   userRole?: UserRoleType;
   isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const UserSchema = new Schema(
+const UserSchema = new Schema<UserType>(
   {
     firstName: {
       type: String,
@@ -63,7 +65,7 @@ UserSchema.index({ email: 1 }, { unique: true });
 
 UserSchema.index({ username: 1 }, { unique: true });
 
-const User = model("User", UserSchema, "users");
+const User = model<UserType>("User", UserSchema, "users");
 
 export { UserType };
 export default User;
