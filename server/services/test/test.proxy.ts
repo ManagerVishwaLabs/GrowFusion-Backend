@@ -36,6 +36,22 @@ class TestProxy {
     res.send(controllerResponse);
   }
 
+  public async createImageStory(req: Request, res: Response): Promise<void> {
+    const controllerResponse = await instagramLib.createImageStory(
+      req.body.imageUrl,
+    );
+
+    res.send(controllerResponse);
+  }
+
+  public async createVideoStory(req: Request, res: Response): Promise<void> {
+    const controllerResponse = await instagramLib.createVideoStory(
+      req.body.videoUrl,
+    );
+
+    res.send(controllerResponse);
+  }
+
   public async publishContent(req: Request, res: Response): Promise<void> {
     const controllerResponse = await instagramLib.publishContent(
       req.body.creationId,

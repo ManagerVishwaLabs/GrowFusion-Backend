@@ -152,6 +152,48 @@ class InstagramAuthValidator {
       data: undefined,
     };
   }
+
+  public createImageStory(imageUrl: string): InstagramResponse<void> {
+    if (!imageUrl?.trim()) {
+      return {
+        success: false,
+        message: "Image URL cannot be empty",
+      };
+    }
+
+    if (!isValidMediaUrl(imageUrl)) {
+      return {
+        success: false,
+        message: "Invalid image URL",
+      };
+    }
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  }
+
+  public createVideoStory(videoUrl: string): InstagramResponse<void> {
+    if (!videoUrl?.trim()) {
+      return {
+        success: false,
+        message: "Video URL cannot be empty",
+      };
+    }
+
+    if (!isValidMediaUrl(videoUrl)) {
+      return {
+        success: false,
+        message: "Invalid video URL",
+      };
+    }
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  }
 }
 
 export default new InstagramAuthValidator();

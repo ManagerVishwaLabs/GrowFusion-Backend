@@ -51,6 +51,26 @@ class Instagram {
     return instagramLib.createCarousel(mediaUrls, caption);
   }
 
+  public async createImageStory(imageUrl: string) {
+    const validation = validator.createImageStory(imageUrl);
+
+    if (!validation.success) {
+      return validation;
+    }
+
+    return instagramLib.createImageStory(imageUrl);
+  }
+
+  public async createVideoStory(videoUrl: string) {
+    const validation = validator.createVideoStory(videoUrl);
+
+    if (!validation.success) {
+      return validation;
+    }
+
+    return instagramLib.createVideoStory(videoUrl);
+  }
+
   public async publishContent(creationId: string) {
     const validation = validator.publishContent(creationId);
 

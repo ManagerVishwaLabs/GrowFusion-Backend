@@ -1,18 +1,20 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 interface ApiResponse<T> {
   success: boolean;
   message?: string;
   data?: T;
-  error?: ApiErrorResponse | unknown;
+  error?: InstagramApiError;
 }
 
-interface ApiErrorResponse {
-  error?: {
-    message?: string;
-    type?: string;
-    code?: number;
-  };
+interface InstagramApiError {
+  message: string;
+  type: string;
+  code: number;
+  error_subcode?: number;
+  error_user_title?: string;
+  error_user_msg?: string;
+  fbtrace_id?: string;
 }
 
 class HttpClient {
@@ -91,20 +93,19 @@ class HttpClient {
     } catch (err) {
       console.error("[HTTP Client] Error:", err);
 
-      if (axios.isAxiosError(err)) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
+      if (axios.isAxiosError<ApiResponse<T>>(err)) {
+        const apiError = err.response?.data?.error;
 
         return {
           success: false,
-          message:
-            axiosError.response?.data?.error?.message ?? axiosError.message,
-          error: axiosError.response?.data,
+          message: apiError?.error_user_msg ?? apiError?.message ?? err.message,
+          error: apiError,
         };
       }
+
       return {
         success: false,
         message: err instanceof Error ? err.message : "Unknown error",
-        error: err,
       };
     }
   }

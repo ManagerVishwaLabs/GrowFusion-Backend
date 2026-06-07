@@ -315,6 +315,110 @@ class InstagramLib {
     };
   }
 
+  public async createImageStory(imageUrl: string) {
+    const access_token = await this.getAccessToken();
+
+    const account = await this.getAccountDetails();
+
+    if (!this.instagramBusinessAccountId) {
+      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
+    }
+
+    const response = await this.instagramGraphClient.post<{ id: string }>(
+      `/${this.instagramBusinessAccountId}/media`,
+      null,
+      {
+        params: {
+          media_type: "STORIES",
+          image_url: imageUrl,
+          access_token,
+        },
+      },
+    );
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to publish media",
+      };
+    }
+
+    try {
+      await this.instagramContentModel.insertOne({
+        socialAccountId: account._id,
+        instagramBusinessAccountId: this.instagramBusinessAccountId!,
+        instagramCreationId: response.data.id,
+        mediaType: "STORY",
+        mediaUrls: [imageUrl],
+      });
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to save social account",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
+  public async createVideoStory(videoUrl: string) {
+    const access_token = await this.getAccessToken();
+
+    const account = await this.getAccountDetails();
+
+    if (!this.instagramBusinessAccountId) {
+      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
+    }
+
+    const response = await this.instagramGraphClient.post<{ id: string }>(
+      `/${this.instagramBusinessAccountId}/media`,
+      null,
+      {
+        params: {
+          media_type: "STORIES",
+          video_url: videoUrl,
+          access_token,
+        },
+      },
+    );
+
+    if (!response.success || !response.data) {
+      return {
+        success: false,
+        message: response.message || "Failed to publish media",
+      };
+    }
+
+    try {
+      await this.instagramContentModel.insertOne({
+        socialAccountId: account._id,
+        instagramBusinessAccountId: this.instagramBusinessAccountId!,
+        instagramCreationId: response.data?.id,
+        mediaType: "STORY",
+        mediaUrls: [videoUrl],
+      });
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to save social account",
+      };
+    }
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  }
+
   public async getContainerStatus(creationId: string) {
     const access_token = await this.getAccessToken();
 
@@ -386,6 +490,8 @@ class InstagramLib {
       const account = await this.getAccountDetails();
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
+
+    await this.waitForContainerReady(creationId);
 
     const response = await this.instagramGraphClient.post<{ id: string }>(
       `/${this.instagramBusinessAccountId}/media_publish`,
