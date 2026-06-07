@@ -2,6 +2,7 @@ import validator from "./instagram.validator";
 import instagramLib from "./instagram.lib";
 
 import {
+  CarouselItem,
   InstagramProfile,
   InstagramResponse,
   ProfileFields,
@@ -38,6 +39,16 @@ class Instagram {
     }
 
     return instagramLib.createReel(videoUrl, caption);
+  }
+
+  public async createCarousel(mediaUrls: CarouselItem[], caption?: string) {
+    const validation = validator.createCarousel(mediaUrls);
+
+    if (!validation.success) {
+      return validation;
+    }
+
+    return instagramLib.createCarousel(mediaUrls, caption);
   }
 
   public async publishContent(creationId: string) {

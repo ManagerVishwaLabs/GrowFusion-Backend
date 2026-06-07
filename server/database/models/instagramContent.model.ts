@@ -13,6 +13,7 @@ interface InstagramContentType {
   instagramBusinessAccountId: string;
   instagramCreationId?: string;
   instagramMediaId?: string;
+  childCreationIds?: string[];
   caption?: string;
   mediaType: "IMAGE" | "VIDEO" | "REELS" | "CAROUSEL" | "STORY";
   mediaUrls: string[];
@@ -38,6 +39,7 @@ const InstagramContentSchema = new Schema<InstagramContentType>(
     },
     instagramCreationId: String,
     instagramMediaId: String,
+    childCreationIds: [String],
     caption: String,
     mediaType: {
       type: String,

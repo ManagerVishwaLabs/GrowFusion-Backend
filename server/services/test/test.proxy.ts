@@ -27,6 +27,15 @@ class TestProxy {
     res.send(controllerResponse);
   }
 
+  public async createCarousel(req: Request, res: Response): Promise<void> {
+    const controllerResponse = await instagramLib.createCarousel(
+      req.body.mediaUrls,
+      req.body.caption,
+    );
+
+    res.send(controllerResponse);
+  }
+
   public async publishContent(req: Request, res: Response): Promise<void> {
     const controllerResponse = await instagramLib.publishContent(
       req.body.creationId,

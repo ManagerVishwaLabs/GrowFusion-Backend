@@ -12,6 +12,7 @@ type InstagramResponse<T, E = string> =
 
 type ProfileField = (typeof PROFILE_FIELDS)[number];
 type ProfileFields = ProfileField[];
+
 interface InstagramProfile {
   id: string;
   user_id: string;
@@ -24,4 +25,15 @@ interface InstagramProfile {
   media_count: number;
 }
 
-export { InstagramResponse, ProfileField, ProfileFields, InstagramProfile };
+type CarouselItem = {
+  type: "IMAGE" | "VIDEO";
+  url: string;
+};
+
+export {
+  InstagramResponse,
+  ProfileField,
+  ProfileFields,
+  InstagramProfile,
+  CarouselItem,
+};
