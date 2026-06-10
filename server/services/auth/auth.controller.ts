@@ -17,28 +17,50 @@ class AuthController {
   }): Promise<ControllerResponse> {
     try {
       const {
-        company,
         companyName,
         address,
         contactPhone,
         companyLogoUrl,
         companyEmail,
         companySize,
-        firstName,
+        website,
+        industry,
+        country,
+        pincode,
+        aboutCompany,
+        visionMission,
+        foundedYear,
+        registrationNumber,
+        linkedin,
+        instagram,
+        facebook,
+        twitter,
+
+        fullName,
         userEmail,
-        username,
         password,
         lastName,
+        designation,
+        adminPhone,
       } = body;
 
       const createdCompany = await CompanyLibrary.createCompany({
-        company,
+        company: companyEmail,
         companyName,
         address,
         contactPhone,
         companyLogoUrl,
         contactEmail: companyEmail,
         companySize,
+        website,
+        industry,
+        country,
+        pincode,
+        aboutCompany,
+        visionMission,
+        foundedYear,
+        registrationNumber,
+        socialMedia: [linkedin, instagram, facebook, twitter],
       });
 
       if (!createdCompany.success) {
@@ -60,13 +82,15 @@ class AuthController {
       const hashedPassword = await bcrypt.hash(password + pepper, 10);
 
       const createdUser = await UserLibrary.createUser({
-        firstName,
+        fullName,
         lastName,
         email: userEmail,
-        username,
+        username: userEmail,
         passwordHash: hashedPassword,
-        company: company,
+        company: companyEmail,
         userRole: UserRole.ADMIN,
+        designation,
+        phoneNumber: adminPhone,
       });
 
       if (!createdUser.success) {

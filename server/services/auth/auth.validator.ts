@@ -9,27 +9,7 @@ class AuthValidator {
   }: {
     body: Partial<RegisterType>;
   }): ValidatorResponse {
-    const {
-      company,
-      companyName,
-      companyEmail,
-      companySize,
-      userEmail,
-      firstName,
-      password,
-      username,
-    } = body;
-    if (!company) {
-      return "GF0040010";
-    }
-
-    if (typeof company !== "string") {
-      return "GF0040011";
-    }
-
-    if (company.trim().length < 2) {
-      return "GF0040012";
-    }
+    const { companyName, companyEmail, userEmail, fullName, password } = body;
 
     if (!companyName) {
       return "GF0040013";
@@ -55,25 +35,15 @@ class AuthValidator {
       return "GF0040021";
     }
 
-    if (companySize !== undefined) {
-      if (typeof companySize !== "number") {
-        return "GF0040024";
-      }
-
-      if (companySize < 1) {
-        return "GF0040025";
-      }
-    }
-
-    if (!firstName) {
+    if (!fullName) {
       return "GF0030001";
     }
 
-    if (typeof firstName !== "string") {
+    if (typeof fullName !== "string") {
       return "GF0030002";
     }
 
-    if (firstName.trim().length < 2) {
+    if (fullName.trim().length < 2) {
       return "GF0030003";
     }
 
@@ -87,26 +57,6 @@ class AuthValidator {
 
     if (!isEmailAddress(userEmail.trim())) {
       return "GF0030006";
-    }
-
-    if (!username) {
-      return "GF0030007";
-    }
-
-    if (typeof username !== "string") {
-      return "GF0030008";
-    }
-
-    if (username.trim().length < 3) {
-      return "GF0030009";
-    }
-
-    if (!company) {
-      return "GF0030010";
-    }
-
-    if (typeof company !== "string") {
-      return "GF0030011";
     }
 
     if (!password) {
