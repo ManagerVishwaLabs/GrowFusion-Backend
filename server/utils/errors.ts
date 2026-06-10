@@ -96,6 +96,7 @@ const errors = {
   GF0040039: "Company size must be greater than 0",
   GF0040040: "isActive must be a boolean",
   GF0040041: "Company already exists",
+  GF0040042: "Company not found",
 
   /* -------- GENERAL -------- */
   GF5000000: "Internal server error",
