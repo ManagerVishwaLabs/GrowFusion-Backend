@@ -4,11 +4,19 @@ interface CompanyType {
   company: string;
   companyName: string;
   contactEmail: string;
-  companySize: number;
-
+  companySize: string;
+  aboutCompany?: string;
+  country?: string;
+  socialMedia?: string[];
   address?: string;
+  foundedYear?: string;
   contactPhone?: string;
+  pincode?: string;
+  registrationNumber?: string;
+  visionMission?: string;
+  website?: string;
   companyLogoUrl?: string;
+  industry?: string;
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,6 +33,15 @@ const CompanySchema = new Schema<CompanyType>(
       type: String,
       required: true,
     },
+    aboutCompany: String,
+    country: String,
+    socialMedia: [String],
+    foundedYear: String,
+    pincode: String,
+    registrationNumber: String,
+    visionMission: String,
+    website: String,
+    industry: String,
     address: {
       type: String,
     },
@@ -39,7 +56,7 @@ const CompanySchema = new Schema<CompanyType>(
       type: String,
     },
     companySize: {
-      type: Number,
+      type: String,
       required: true,
     },
     isActive: {

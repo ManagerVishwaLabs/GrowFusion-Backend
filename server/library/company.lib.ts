@@ -61,9 +61,15 @@ class CompanyLibrary {
       company,
     });
 
+    if (foundCompany.success && foundCompany.data === null) {
+      return { success: false, code: "GF0040042" };
+    }
+    if (!foundCompany.success) {
+      return { success: false, code: foundCompany.code };
+    }
     return {
       success: true,
-      data: foundCompany,
+      data: foundCompany.data,
     };
   }
 

@@ -4,12 +4,14 @@ import { UserRole } from "../../utils/constants";
 import { UserRoleType } from "../../utils/types";
 
 interface UserType {
-  firstName: string;
+  fullName: string;
   lastName?: string;
   username: string;
   company: string;
   email: string;
+  designation?: string;
   passwordHash?: string;
+  phoneNumber?: string;
   userRole?: UserRoleType;
   isActive?: boolean;
   createdAt?: Date;
@@ -18,7 +20,7 @@ interface UserType {
 
 const UserSchema = new Schema<UserType>(
   {
-    firstName: {
+    fullName: {
       type: String,
       required: true,
       trim: true,
@@ -37,6 +39,8 @@ const UserSchema = new Schema<UserType>(
       type: String,
       required: true,
     },
+    designation: String,
+    phoneNumber: String,
     email: {
       type: String,
       required: true,
