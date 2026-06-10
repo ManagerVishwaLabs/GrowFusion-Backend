@@ -10,6 +10,7 @@ export class ResponseHandler {
     response:
       | ErrorCode
       | {
+          success: boolean;
           code?: ErrorCode;
           data?: unknown;
         }
@@ -29,7 +30,7 @@ export class ResponseHandler {
       return;
     }
     res.status(200).json({
-      success: true,
+      success: response?.success ?? true,
       code: response?.code,
       message: response?.code ? errors[response.code] : undefined,
       data: response?.data ?? null,
