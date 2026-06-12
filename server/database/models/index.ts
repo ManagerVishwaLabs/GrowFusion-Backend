@@ -8,10 +8,10 @@ import SocialMediaAccount, {
 } from "./socialAccount.model";
 
 const models = {
-  User,
   Company,
-  SocialMediaAccount,
   InstagramContent,
+  SocialMediaAccount,
+  User,
 };
 
 interface ModelRegistry {
@@ -21,4 +21,4 @@ interface ModelRegistry {
   InstagramContent: InstagramContentType;
 }
 
-export { models, ModelRegistry };
+export { ModelRegistry, models };

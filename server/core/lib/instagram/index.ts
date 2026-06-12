@@ -1,6 +1,4 @@
-import validator from "./instagram.validator";
 import instagramLib from "./instagram.lib";
-
 import {
   CarouselItem,
   InstagramResponse,
@@ -8,6 +6,7 @@ import {
   ProfileFields,
   UserProfile,
 } from "./instagram.types";
+import validator from "./instagram.validator";
 
 class Instagram {
   public async getProfile(
@@ -127,17 +126,17 @@ class Instagram {
       console.error(error);
 
       return {
-        success: false,
         message:
           "An error occurred while syncing media" +
           "\nSynced media count before error: " +
           String(syncedMediaCount),
+        success: false,
       };
     }
 
     return {
-      success: true,
       message: "Synced media count: " + String(syncedMediaCount),
+      success: true,
     };
   }
 

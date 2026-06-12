@@ -64,4 +64,4 @@ const isValidMediaUrl = (url: string): boolean => {
   }
 };
 
-export { isEmailAddress, isObjectId, isValidUrl, isValidMediaUrl };
+export { isEmailAddress, isObjectId, isValidMediaUrl, isValidUrl };

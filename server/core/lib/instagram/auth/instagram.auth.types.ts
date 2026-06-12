@@ -42,11 +42,11 @@ interface InstagramProfile {
 }
 
 export {
+  GenerateOAuthUrlParams,
+  InstagramLongLivedToken,
+  InstagramOAuthUrl,
+  InstagramProfile,
   InstagramResponse,
   InstagramScope,
-  GenerateOAuthUrlParams,
-  InstagramOAuthUrl,
   InstagramShortLivedToken,
-  InstagramLongLivedToken,
-  InstagramProfile,
 };

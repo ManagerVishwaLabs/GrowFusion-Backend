@@ -5,10 +5,10 @@ const INSTAGRAM_GRAPH_API_URL = "https://graph.instagram.com";
 
 const INSTAGRAM_SCOPES = {
   BASIC: "instagram_business_basic",
-  MANAGE_MESSAGES: "instagram_business_manage_messages",
-  MANAGE_COMMENTS: "instagram_business_manage_comments",
   CONTENT_PUBLISH: "instagram_business_content_publish",
+  MANAGE_COMMENTS: "instagram_business_manage_comments",
   MANAGE_INSIGHTS: "instagram_business_manage_insights",
+  MANAGE_MESSAGES: "instagram_business_manage_messages",
 };
 
 const DEFAULT_SCOPES = [
@@ -47,11 +47,11 @@ const MEDIA_FIELDS = [
 ];
 
 export {
-  INSTAGRAM_OAUTH_URL,
+  DEFAULT_SCOPES,
   INSTAGRAM_CODE_EXCHANGE_URL,
   INSTAGRAM_GRAPH_API_URL,
+  INSTAGRAM_OAUTH_URL,
   INSTAGRAM_SCOPES,
-  DEFAULT_SCOPES,
-  PROFILE_FIELDS,
   MEDIA_FIELDS,
+  PROFILE_FIELDS,
 };

@@ -29,10 +29,10 @@ class ModelWrapper<TSchema extends object> {
       const field = Object.keys(duplicateError.keyPattern ?? {})[0];
 
       return {
-        success: false,
         code: "GF0010002",
-        message: `${field} already exists`,
         error,
+        message: `${field} already exists`,
+        success: false,
       };
     }
 
@@ -45,20 +45,20 @@ class ModelWrapper<TSchema extends object> {
       const validationError = error as Error;
 
       return {
-        success: false,
         code: "GF0010004",
-        message: validationError.message,
         error,
+        message: validationError.message,
+        success: false,
       };
     }
 
     return {
-      success: false,
       code: "GF0010001",
+      error,
       message:
         error instanceof Error ? error.message : "Database operation failed",
 
-      error,
+      success: false,
     };
   }
   async insertOne(
@@ -68,8 +68,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.create(insertData);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -88,8 +88,8 @@ class ModelWrapper<TSchema extends object> {
       });
 
       return {
-        success: true,
         data: data as unknown as Doc<TSchema>[],
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -114,8 +114,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.findOne(query, projection, options);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -137,8 +137,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.findOne(query, projection, options);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -165,8 +165,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.find(query, projection, options);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -200,8 +200,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await query.exec();
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -225,8 +225,8 @@ class ModelWrapper<TSchema extends object> {
       );
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -253,8 +253,8 @@ class ModelWrapper<TSchema extends object> {
       );
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -289,8 +289,6 @@ class ModelWrapper<TSchema extends object> {
       );
 
       return {
-        success: true,
-
         data: {
           matchedCount: data.matchedCount,
 
@@ -298,6 +296,8 @@ class ModelWrapper<TSchema extends object> {
 
           upsertedCount: data.upsertedCount,
         },
+
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -332,7 +332,6 @@ class ModelWrapper<TSchema extends object> {
       );
 
       return {
-        success: true,
         data: {
           matchedCount: data.matchedCount,
 
@@ -340,6 +339,7 @@ class ModelWrapper<TSchema extends object> {
 
           upsertedCount: data.upsertedCount,
         },
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -355,8 +355,8 @@ class ModelWrapper<TSchema extends object> {
       });
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -372,8 +372,8 @@ class ModelWrapper<TSchema extends object> {
       });
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -393,11 +393,11 @@ class ModelWrapper<TSchema extends object> {
         },
       );
       return {
-        success: true,
-
         data: {
           deletedCount: data.modifiedCount,
         },
+
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -415,10 +415,10 @@ class ModelWrapper<TSchema extends object> {
       });
 
       return {
-        success: true,
         data: {
           deletedCount: data.modifiedCount,
         },
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -432,8 +432,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.findByIdAndDelete(id);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -447,8 +447,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.findOneAndDelete(filter);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -468,11 +468,11 @@ class ModelWrapper<TSchema extends object> {
       });
 
       return {
-        success: true,
-
         data: {
           deletedCount: data.deletedCount,
         },
+
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -488,11 +488,11 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.deleteMany(filter);
 
       return {
-        success: true,
-
         data: {
           deletedCount: data.deletedCount,
         },
+
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -506,8 +506,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.countDocuments(filter);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -521,8 +521,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.exists(filter);
 
       return {
-        success: true,
         data: !!data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);
@@ -536,8 +536,8 @@ class ModelWrapper<TSchema extends object> {
       const data = await this.model.aggregate(pipeline);
 
       return {
-        success: true,
         data,
+        success: true,
       };
     } catch (error) {
       return this.handleError(error);

@@ -32,13 +32,13 @@ class HttpClient {
   private setupInterceptors(instance: AxiosInstance) {
     instance.interceptors.request.use((config) => {
       console.log("\n🚀 REQUEST:", {
-        method: config.method,
-        url: config.url,
         baseURL: config.baseURL,
         data:
           config.data instanceof URLSearchParams
             ? config.data.toString()
             : config.data,
+        method: config.method,
+        url: config.url,
       });
 
       return config;
@@ -56,9 +56,9 @@ class HttpClient {
 
         if (err.config) {
           console.log("\n🔥 FAILED REQUEST:", {
+            data: err.config.data,
             method: err.config.method,
             url: err.config.url,
-            data: err.config.data,
           });
         }
 
@@ -87,8 +87,8 @@ class HttpClient {
       const res = await this.client.request<T>(config);
 
       return {
-        success: true,
         data: res.data,
+        success: true,
       };
     } catch (err) {
       console.error("[HTTP Client] Error:", err);
@@ -97,15 +97,15 @@ class HttpClient {
         const apiError = err.response?.data?.error;
 
         return {
-          success: false,
-          message: apiError?.error_user_msg ?? apiError?.message ?? err.message,
           error: apiError,
+          message: apiError?.error_user_msg ?? apiError?.message ?? err.message,
+          success: false,
         };
       }
 
       return {
-        success: false,
         message: err instanceof Error ? err.message : "Unknown error",
+        success: false,
       };
     }
   }
@@ -116,8 +116,8 @@ class HttpClient {
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
-      url,
       method: "GET",
+      url,
     });
   }
 
@@ -128,9 +128,9 @@ class HttpClient {
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
-      url,
-      method: "POST",
       data,
+      method: "POST",
+      url,
     });
   }
 
@@ -141,9 +141,9 @@ class HttpClient {
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
-      url,
-      method: "PUT",
       data,
+      method: "PUT",
+      url,
     });
   }
 
@@ -154,9 +154,9 @@ class HttpClient {
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
-      url,
-      method: "PATCH",
       data,
+      method: "PATCH",
+      url,
     });
   }
 
@@ -166,8 +166,8 @@ class HttpClient {
   ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
-      url,
       method: "DELETE",
+      url,
     });
   }
 

@@ -1,10 +1,8 @@
 import { QueryFilter } from "mongoose";
 
-import { DocumentId, LibraryResponse } from "../utils/types";
-
 import DBModule from "../database/db.module";
-
 import { CompanyType } from "../database/models/company.model";
+import { DocumentId, LibraryResponse } from "../utils/types";
 
 class CompanyLibrary {
   private companyModel;
@@ -23,16 +21,16 @@ class CompanyLibrary {
 
       if (existingCompany.success && existingCompany.data) {
         return {
-          success: false,
           code: "GF0040041",
+          success: false,
         };
       }
     }
     const company = await this.companyModel.insertOne(companyData);
 
     return {
-      success: true,
       data: company,
+      success: true,
     };
   }
 
@@ -40,8 +38,8 @@ class CompanyLibrary {
     const company = await this.companyModel.findById(companyId);
 
     return {
-      success: true,
       data: company,
+      success: true,
     };
   }
 
@@ -51,8 +49,8 @@ class CompanyLibrary {
     const companies = await this.companyModel.findByIds(companyIds);
 
     return {
-      success: true,
       data: companies,
+      success: true,
     };
   }
 
@@ -62,14 +60,14 @@ class CompanyLibrary {
     });
 
     if (foundCompany.success && foundCompany.data === null) {
-      return { success: false, code: "GF0040042" };
+      return { code: "GF0040042", success: false };
     }
     if (!foundCompany.success) {
-      return { success: false, code: foundCompany.code };
+      return { code: foundCompany.code, success: false };
     }
     return {
-      success: true,
       data: foundCompany.data,
+      success: true,
     };
   }
 
@@ -80,8 +78,8 @@ class CompanyLibrary {
     const company = await this.companyModel.updateById(companyId, updateData);
 
     return {
-      success: true,
       data: company,
+      success: true,
     };
   }
 
@@ -95,8 +93,8 @@ class CompanyLibrary {
     );
 
     return {
-      success: true,
       data: companies,
+      success: true,
     };
   }
 
@@ -110,8 +108,8 @@ class CompanyLibrary {
     );
 
     return {
-      success: true,
       data: company,
+      success: true,
     };
   }
 
@@ -125,8 +123,8 @@ class CompanyLibrary {
     );
 
     return {
-      success: true,
       data: companies,
+      success: true,
     };
   }
 
@@ -136,8 +134,8 @@ class CompanyLibrary {
     const company = await this.companyModel.deleteById(companyId);
 
     return {
-      success: true,
       data: company,
+      success: true,
     };
   }
 
@@ -147,8 +145,8 @@ class CompanyLibrary {
     const companies = await this.companyModel.deleteByIds(companyIds);
 
     return {
-      success: true,
       data: companies,
+      success: true,
     };
   }
 
@@ -158,8 +156,8 @@ class CompanyLibrary {
     const company = await this.companyModel.deleteOne(filterConditions);
 
     return {
-      success: true,
       data: company,
+      success: true,
     };
   }
 
@@ -169,8 +167,8 @@ class CompanyLibrary {
     const companies = await this.companyModel.deleteMany(filterConditions);
 
     return {
-      success: true,
       data: companies,
+      success: true,
     };
   }
 
@@ -182,8 +180,8 @@ class CompanyLibrary {
     });
 
     return {
-      success: true,
       data: deletedCompany,
+      success: true,
     };
   }
 }

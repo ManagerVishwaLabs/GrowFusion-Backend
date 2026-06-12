@@ -68,17 +68,17 @@ class InstagramLib {
     const access_token = await this.getAccessToken();
     const response = await this.instagramGraphClient.get<UserProfile>("/me", {
       params: {
+        access_token: access_token,
         fields: selectedFields
           ? selectedFields.join(",")
           : PROFILE_FIELDS.join(","),
-        access_token: access_token,
       },
     });
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to get profile",
+        success: false,
       };
     }
 
@@ -93,29 +93,29 @@ class InstagramLib {
         },
         {
           appUserId: response.data.id,
-          instagramBusinessAccountId: response.data.user_id,
-          mediaUsername: response.data.username,
           displayName: response.data.name,
-          profilePictureUrl: response.data.profile_picture_url,
           followersCount: response.data.followers_count,
           followsCount: response.data.follows_count,
+          instagramBusinessAccountId: response.data.user_id,
           mediaCount: response.data.media_count,
+          mediaUsername: response.data.username,
+          profilePictureUrl: response.data.profile_picture_url,
         },
         { upsert: true },
       );
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -136,45 +136,45 @@ class InstagramLib {
       null,
       {
         params: {
-          image_url: imageUrl,
-          caption,
           access_token: access_token,
+          caption,
+          image_url: imageUrl,
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to get profile",
+        success: false,
       };
     }
     const socialAccountId = account._id;
 
     try {
       await this.instagramContentModel.insertOne({
-        username: "testUser",
+        caption,
         company: "testCompany",
-        socialAccountId,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "IMAGE",
         mediaUrl: imageUrl,
-        caption,
+        socialAccountId,
+        username: "testUser",
       });
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -193,45 +193,45 @@ class InstagramLib {
       null,
       {
         params: {
+          access_token,
+          caption,
           media_type: "REELS",
           video_url: videoUrl,
-          caption,
-          access_token,
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to publish media",
+        success: false,
       };
     }
 
     try {
       await this.instagramContentModel.insertOne({
-        username: "testUser",
+        caption,
         company: "testCompany",
-        socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "REELS",
         mediaUrl: videoUrl,
-        caption,
+        socialAccountId: account._id,
+        username: "testUser",
       });
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -253,15 +253,15 @@ class InstagramLib {
       const params =
         media.type === "IMAGE"
           ? {
+              access_token,
               image_url: media.url,
               is_carousel_item: true,
-              access_token,
             }
           : {
-              video_url: media.url,
-              media_type: "VIDEO",
-              is_carousel_item: true,
               access_token,
+              is_carousel_item: true,
+              media_type: "VIDEO",
+              video_url: media.url,
             };
 
       const child = await this.instagramGraphClient.post<MediaIDResponse>(
@@ -274,9 +274,9 @@ class InstagramLib {
 
       if (!child.success || !child.data) {
         return {
-          success: false,
           message:
             child.message || `Failed to create carousel item: ${media.url}`,
+          success: false,
         };
       }
 
@@ -294,44 +294,44 @@ class InstagramLib {
       null,
       {
         params: {
-          media_type: "CAROUSEL_ALBUM",
-          children: children.join(","),
-          caption,
           access_token,
+          caption,
+          children: children.join(","),
+          media_type: "CAROUSEL_ALBUM",
         },
       },
     );
 
     if (!carousel.success || !carousel.data) {
       return {
-        success: false,
         message: carousel.message || "Failed to create carousel container",
+        success: false,
       };
     }
 
     try {
       await this.instagramContentModel.insertOne({
-        username: "testUser",
+        caption,
+        childCreationIds: children,
+        childMediaUrls: mediaUrls.slice(1).map((item) => item.url),
         company: "testCompany",
-        socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: carousel.data.id,
-        childCreationIds: children,
         mediaType: "CAROUSEL_ALBUM",
-        childMediaUrls: mediaUrls.slice(1).map((item) => item.url),
-        caption,
+        socialAccountId: account._id,
+        username: "testUser",
       });
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error ? error.message : "Failed to save carousel",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: carousel.data,
+      success: true,
     };
   }
 
@@ -351,43 +351,43 @@ class InstagramLib {
       null,
       {
         params: {
-          media_type: "STORIES",
-          image_url: imageUrl,
           access_token,
+          image_url: imageUrl,
+          media_type: "STORIES",
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to publish media",
+        success: false,
       };
     }
 
     try {
       await this.instagramContentModel.insertOne({
-        username: "testUser",
         company: "testCompany",
-        socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "STORY",
         mediaUrl: imageUrl,
+        socialAccountId: account._id,
+        username: "testUser",
       });
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -407,43 +407,43 @@ class InstagramLib {
       null,
       {
         params: {
+          access_token,
           media_type: "STORIES",
           video_url: videoUrl,
-          access_token,
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to publish media",
+        success: false,
       };
     }
 
     try {
       await this.instagramContentModel.insertOne({
-        username: "testUser",
         company: "testCompany",
-        socialAccountId: account._id,
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data?.id,
         mediaType: "STORY",
         mediaUrl: videoUrl,
+        socialAccountId: account._id,
+        username: "testUser",
       });
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -457,22 +457,22 @@ class InstagramLib {
         `/${creationId}`,
         {
           params: {
-            fields: "status_code",
             access_token,
+            fields: "status_code",
           },
         },
       );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to get container status",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -498,14 +498,14 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to get media list",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -518,16 +518,16 @@ class InstagramLib {
       `/${mediaId}`,
       {
         params: {
-          fields: MEDIA_FIELDS.join(","),
           access_token,
+          fields: MEDIA_FIELDS.join(","),
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to get media",
+        success: false,
       };
     }
 
@@ -537,24 +537,24 @@ class InstagramLib {
           instagramMediaId: mediaId,
         },
         {
-          instagramMediaId: mediaId,
-          mediaType: response.data.media_type ?? undefined,
-          instagramMediaUrl: response.data.media_url,
+          caption: response.data?.caption ?? undefined,
+          commentsCount: response.data.comments_count,
           instagramChildMediaUrls: response.data?.children?.data.map(
             (item) => item.media_url,
           ),
-          permalink: response.data.permalink,
-          caption: response.data?.caption ?? undefined,
-          status: "published",
-          mediaProductType: response.data?.media_product_type,
-          thumbnailUrl: response.data?.thumbnail_url,
-          shortcode: response.data?.shortcode,
-          commentsCount: response.data.comments_count,
-          likeCount: response.data.like_count,
+          instagramMediaId: mediaId,
+          instagramMediaUrl: response.data.media_url,
           isCommentEnabled: response.data.is_comment_enabled,
+          likeCount: response.data.like_count,
+          mediaProductType: response.data?.media_product_type,
+          mediaType: response.data.media_type ?? undefined,
+          permalink: response.data.permalink,
           publishedAt: response.data.timestamp
             ? new Date(response.data.timestamp)
             : undefined,
+          shortcode: response.data?.shortcode,
+          status: "published",
+          thumbnailUrl: response.data?.thumbnail_url,
         },
         { upsert: true },
         {
@@ -563,17 +563,17 @@ class InstagramLib {
       );
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -594,16 +594,16 @@ class InstagramLib {
       null,
       {
         params: {
-          creation_id: creationId,
           access_token,
+          creation_id: creationId,
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to publish media",
+        success: false,
       };
     }
     try {
@@ -613,23 +613,23 @@ class InstagramLib {
         },
         {
           instagramMediaId: response.data.id,
-          status: "published",
           publishedAt: new Date(),
+          status: "published",
         },
       );
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -642,8 +642,8 @@ class InstagramLib {
 
       if (!status.success) {
         return {
-          success: false,
           message: status.message || "Failed to get container status",
+          success: false,
         };
       }
 
@@ -651,15 +651,15 @@ class InstagramLib {
 
       if (statusCode === "FINISHED") {
         return {
-          success: true,
           data: undefined,
+          success: true,
         };
       }
 
       if (statusCode === "ERROR" || statusCode === "EXPIRED") {
         return {
-          success: false,
           message: `Container status: ${statusCode}`,
+          success: false,
         };
       }
 
@@ -667,8 +667,8 @@ class InstagramLib {
     }
 
     return {
-      success: false,
       message: "Container processing timeout",
+      success: false,
     };
   }
 }

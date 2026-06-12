@@ -1,5 +1,6 @@
-import axios from "../../../axios";
 import { env } from "../../../../config/env";
+import DBModule from "../../../../database/db.module";
+import axios from "../../../axios";
 import {
   DEFAULT_SCOPES,
   INSTAGRAM_CODE_EXCHANGE_URL,
@@ -13,7 +14,6 @@ import {
   InstagramResponse,
   InstagramShortLivedToken,
 } from "./instagram.auth.types";
-import DBModule from "../../../../database/db.module";
 
 class InstagramLib {
   private socialAccountModel;
@@ -32,10 +32,10 @@ class InstagramLib {
 
     const params = new URLSearchParams({
       client_id: env.INSTAGRAM_CLIENT_ID,
+      force_reauth: env.INSTAGRAM_FORCE_RE_AUTH || "true",
       redirect_uri: env.INSTAGRAM_REDIRECT_URI,
       response_type: "code",
       scope: selectedScopes.join(","),
-      force_reauth: env.INSTAGRAM_FORCE_RE_AUTH || "true",
     });
 
     if (state) {
@@ -43,11 +43,11 @@ class InstagramLib {
     }
 
     return {
-      success: true,
       data: {
-        url: `${INSTAGRAM_OAUTH_URL}?${params.toString()}`,
         scopes: selectedScopes,
+        url: `${INSTAGRAM_OAUTH_URL}?${params.toString()}`,
       },
+      success: true,
     };
   }
 
@@ -57,9 +57,9 @@ class InstagramLib {
     const form = new URLSearchParams({
       client_id: env.INSTAGRAM_CLIENT_ID,
       client_secret: env.INSTAGRAM_CLIENT_SECRET,
+      code,
       grant_type: "authorization_code",
       redirect_uri: env.INSTAGRAM_REDIRECT_URI,
-      code,
     });
 
     const response = await axios.post<InstagramShortLivedToken>(
@@ -74,14 +74,14 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to exchange code for token",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -94,17 +94,17 @@ class InstagramLib {
       INSTAGRAM_GRAPH_API_URL + "/access_token",
       {
         params: {
-          grant_type: "ig_exchange_token",
-          client_secret: env.INSTAGRAM_CLIENT_SECRET,
           access_token: shortLivedToken,
+          client_secret: env.INSTAGRAM_CLIENT_SECRET,
+          grant_type: "ig_exchange_token",
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to exchange token for token",
+        success: false,
       };
     }
 
@@ -114,14 +114,14 @@ class InstagramLib {
           tokenApiUserId,
         },
         {
-          username: "testUser",
+          accessToken: response.data.access_token,
           company: "testCompany",
           mediaName: "instagram",
-          accessToken: response.data.access_token,
+          scopes: scopes,
           tokenExpiresAt: new Date(
             Date.now() + response.data.expires_in * 1000,
           ),
-          scopes: scopes,
+          username: "testUser",
         },
         {
           upsert: true,
@@ -129,17 +129,17 @@ class InstagramLib {
       );
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 
@@ -151,16 +151,16 @@ class InstagramLib {
       INSTAGRAM_GRAPH_API_URL + "/refresh_access_token",
       {
         params: {
-          grant_type: "ig_refresh_token",
           access_token: longLivedToken,
+          grant_type: "ig_refresh_token",
         },
       },
     );
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         message: response.message || "Failed to refresh token",
+        success: false,
       };
     }
 
@@ -178,17 +178,17 @@ class InstagramLib {
       );
     } catch (error) {
       return {
-        success: false,
         message:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 }

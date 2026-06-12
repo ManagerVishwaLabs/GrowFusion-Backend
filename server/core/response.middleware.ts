@@ -16,7 +16,7 @@ type ResponseHandlerType = {
 };
 
 class ResponseHandler {
-  public static send({ response, res }: ResponseHandlerType): void {
+  public static send({ res, response }: ResponseHandlerType): void {
     if (!response) {
       res.status(500).json({
         success: false,
@@ -27,11 +27,11 @@ class ResponseHandler {
 
     if (typeof response === "string") {
       res.status(400).json({
-        success: false,
         error: {
           code: response,
           message: errors[response],
         },
+        success: false,
       });
 
       return;
@@ -42,10 +42,10 @@ class ResponseHandler {
     }
 
     res.status(200).json({
-      success: true,
       code: response?.code,
-      message: response?.code ? errors[response.code] : undefined,
       data: response?.data ?? null,
+      message: response?.code ? errors[response.code] : undefined,
+      success: true,
     });
   }
 }

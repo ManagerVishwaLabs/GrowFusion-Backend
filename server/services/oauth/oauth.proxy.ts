@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 
-import OAuthValidator from "./oauth.validator";
-import OAuthController from "./oauth.controller";
-
 import { ResponseHandler } from "../../core/response.middleware";
+import OAuthController from "./oauth.controller";
+import OAuthValidator from "./oauth.validator";
 
 class OAuthProxy {
   public async instagramOauthRedirect(
@@ -19,8 +18,8 @@ class OAuthProxy {
 
     if (validationResponse) {
       ResponseHandler.send({
-        response: validationResponse,
         res,
+        response: validationResponse,
       });
 
       return;
@@ -34,8 +33,8 @@ class OAuthProxy {
     });
 
     ResponseHandler.send({
-      response: controllerResponse,
       res,
+      response: controllerResponse,
     });
   }
 
@@ -54,8 +53,8 @@ class OAuthProxy {
 
     if (validationResponse) {
       ResponseHandler.send({
-        response: validationResponse,
         res,
+        response: validationResponse,
       });
 
       return;
@@ -71,8 +70,8 @@ class OAuthProxy {
     });
 
     ResponseHandler.send({
-      response: controllerResponse,
       res,
+      response: controllerResponse,
     });
   }
 }

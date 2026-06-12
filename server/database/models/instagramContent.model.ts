@@ -1,5 +1,4 @@
-import { Types } from "mongoose";
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 enum InstagramContentStatus {
   DRAFT = "draft",
@@ -38,59 +37,59 @@ interface InstagramContentType {
 
 const InstagramContentSchema = new Schema<InstagramContentType>(
   {
-    username: {
-      type: String,
-      ref: "User",
-      required: true,
-    },
+    caption: String,
+    childCreationIds: [String],
+    childMediaUrls: [String],
+    commentsCount: Number,
     company: {
-      type: String,
       ref: "Company",
       required: true,
-    },
-    socialAccountId: {
-      type: Schema.Types.ObjectId,
-      ref: "SocialMediaAccount",
-      required: true,
+      type: String,
     },
     instagramBusinessAccountId: {
-      type: String,
-      required: true,
       index: true,
+      required: true,
+      type: String,
     },
+    instagramChildMediaUrls: [String],
     instagramCreationId: String,
     instagramMediaId: String,
-    childCreationIds: [String],
-    caption: String,
-    mediaProductType: String,
-    thumbnailUrl: String,
-    commentsCount: Number,
-    likeCount: Number,
+    instagramMediaUrl: String,
+    isActive: {
+      default: true,
+      type: Boolean,
+    },
     isCommentEnabled: Boolean,
+    likeCount: Number,
+    mediaProductType: String,
     mediaType: {
-      type: String,
       enum: ["IMAGE", "VIDEO", "REELS", "CAROUSEL_ALBUM", "STORY"],
       required: true,
-    },
-    source: {
       type: String,
-      enum: ["USER", "SYNCED"],
-      default: "USER",
-      required: true,
     },
     mediaUrl: String,
-    childMediaUrls: [String],
-    instagramMediaUrl: String,
-    instagramChildMediaUrls: [String],
     permalink: String,
-    status: {
-      type: String,
-      default: InstagramContentStatus.DRAFT,
-    },
     publishedAt: Date,
-    isActive: {
-      type: Boolean,
-      default: true,
+    socialAccountId: {
+      ref: "SocialMediaAccount",
+      required: true,
+      type: Schema.Types.ObjectId,
+    },
+    source: {
+      default: "USER",
+      enum: ["USER", "SYNCED"],
+      required: true,
+      type: String,
+    },
+    status: {
+      default: InstagramContentStatus.DRAFT,
+      type: String,
+    },
+    thumbnailUrl: String,
+    username: {
+      ref: "User",
+      required: true,
+      type: String,
     },
   },
   {
@@ -100,11 +99,11 @@ const InstagramContentSchema = new Schema<InstagramContentType>(
 
 InstagramContentSchema.index(
   {
-    username: 1,
     company: 1,
     instagramBusinessAccountId: 1,
     instagramCreationId: 1,
     instagramMediaId: 1,
+    username: 1,
   },
   {
     unique: true,

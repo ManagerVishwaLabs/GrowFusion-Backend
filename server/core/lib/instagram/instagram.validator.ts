@@ -10,8 +10,8 @@ class InstagramAuthValidator {
   public getProfile(selectedFields?: ProfileFields): InstagramResponse<void> {
     if (!selectedFields) {
       return {
-        success: true,
         data: undefined,
+        success: true,
       };
     }
 
@@ -21,99 +21,99 @@ class InstagramAuthValidator {
 
     if (hasInvalidFields) {
       return {
-        success: false,
         message: "Invalid fields",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public createImagePost(imageUrl: string): InstagramResponse<void> {
     if (!imageUrl?.trim()) {
       return {
-        success: false,
         message: "Image URL cannot be empty",
+        success: false,
       };
     }
 
     if (!isValidMediaUrl(imageUrl)) {
       return {
-        success: false,
         message: "Invalid image URL",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public createReel(videoUrl: string): InstagramResponse<void> {
     if (!videoUrl?.trim()) {
       return {
-        success: false,
         message: "Video URL cannot be empty",
+        success: false,
       };
     }
 
     if (!isValidMediaUrl(videoUrl)) {
       return {
-        success: false,
         message: "Invalid video URL",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public createCarousel(mediaUrls: CarouselItem[]): InstagramResponse<void> {
     if (!mediaUrls?.length) {
       return {
-        success: false,
         message: "Media URLs cannot be empty",
+        success: false,
       };
     }
 
     if (mediaUrls.length < 2) {
       return {
-        success: false,
         message: "Carousel must contain at least 2 media items",
+        success: false,
       };
     }
 
     if (mediaUrls.length > 10) {
       return {
-        success: false,
         message: "Cannot have more than 10 media items in a carousel",
+        success: false,
       };
     }
 
     if (mediaUrls.some((item) => !item.url?.trim())) {
       return {
-        success: false,
         message: "All media URLs must be non-empty",
+        success: false,
       };
     }
 
     if (mediaUrls.some((item) => !isValidMediaUrl(item.url))) {
       return {
-        success: false,
         message: "All media URLs must be valid",
+        success: false,
       };
     }
 
     if (mediaUrls.some((item) => !item.type)) {
       return {
-        success: false,
         message: "All media items must have a type",
+        success: false,
       };
     }
 
@@ -121,98 +121,98 @@ class InstagramAuthValidator {
       mediaUrls.some((item) => item.type !== "IMAGE" && item.type !== "VIDEO")
     ) {
       return {
-        success: false,
         message: "Media type must be IMAGE or VIDEO",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public createImageStory(imageUrl: string): InstagramResponse<void> {
     if (!imageUrl?.trim()) {
       return {
-        success: false,
         message: "Image URL cannot be empty",
+        success: false,
       };
     }
 
     if (!isValidMediaUrl(imageUrl)) {
       return {
-        success: false,
         message: "Invalid image URL",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public createVideoStory(videoUrl: string): InstagramResponse<void> {
     if (!videoUrl?.trim()) {
       return {
-        success: false,
         message: "Video URL cannot be empty",
+        success: false,
       };
     }
 
     if (!isValidMediaUrl(videoUrl)) {
       return {
-        success: false,
         message: "Invalid video URL",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public getMedia(mediaId: string): InstagramResponse<void> {
     if (!mediaId?.trim()) {
       return {
-        success: false,
         message: "Media ID cannot be empty",
+        success: false,
       };
     }
 
     if (Number.isNaN(Number(mediaId))) {
       return {
-        success: false,
         message: "Invalid media ID",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 
   public publishContent(creationId: string): InstagramResponse<void> {
     if (!creationId?.trim()) {
       return {
-        success: false,
         message: "Creation ID cannot be empty",
+        success: false,
       };
     }
 
     if (Number.isNaN(Number(creationId))) {
       return {
-        success: false,
         message: "Invalid creation ID",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: undefined,
+      success: true,
     };
   }
 }

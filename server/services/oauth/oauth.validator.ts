@@ -48,7 +48,7 @@ class OAuthValidator {
       error_description?: string;
     };
   }): ValidatorResponse {
-    const { code, state, error, error_description } = query;
+    const { code, error, error_description, state } = query;
 
     if (error) {
       if (typeof error !== "string") {

@@ -25,81 +25,81 @@ interface SocialMediaAccountType {
 
 const SocialMediaAccountSchema = new Schema<SocialMediaAccountType>(
   {
-    company: {
-      type: String,
-      ref: "Company",
+    accessToken: {
       required: true,
-      index: true,
-    },
-    username: {
       type: String,
-      ref: "User",
-      required: true,
-    },
-    mediaName: {
-      type: String,
-      enum: ["instagram"],
-      required: true,
-    },
-    tokenApiUserId: {
-      type: String,
-      required: true,
-      trim: true,
     },
     appUserId: {
-      type: String,
       trim: true,
+      type: String,
     },
-    mediaUsername: {
-      type: String,
+    company: {
+      index: true,
+      ref: "Company",
       required: true,
-      trim: true,
+      type: String,
     },
     displayName: {
-      type: String,
       trim: true,
+      type: String,
     },
     email: {
-      type: String,
-      trim: true,
       lowercase: true,
-    },
-    profilePictureUrl: {
-      type: String,
       trim: true,
+      type: String,
     },
     followersCount: {
-      type: Number,
       required: true,
+      type: Number,
     },
     followsCount: {
       type: Number,
     },
+    instagramBusinessAccountId: {
+      trim: true,
+      type: String,
+    },
+    isActive: {
+      default: true,
+      type: Boolean,
+    },
+    lastSyncedAt: {
+      type: Date,
+    },
     mediaCount: {
       type: Number,
     },
-    accessToken: {
-      type: String,
+    mediaName: {
+      enum: ["instagram"],
       required: true,
-    },
-    tokenExpiresAt: {
-      type: Date,
-    },
-    instagramBusinessAccountId: {
       type: String,
+    },
+    mediaUsername: {
+      required: true,
       trim: true,
+      type: String,
+    },
+    profilePictureUrl: {
+      trim: true,
+      type: String,
     },
     scopes: [
       {
         type: String,
       },
     ],
-    isActive: {
-      type: Boolean,
-      default: true,
+    tokenApiUserId: {
+      required: true,
+      trim: true,
+      type: String,
     },
-    lastSyncedAt: {
+    tokenExpiresAt: {
       type: Date,
+    },
+    username: {
+      ref: "User",
+      required: true,
+      type: String,
     },
   },
   {

@@ -1,5 +1,4 @@
 import instagramAuthLib from "../../core/lib/instagram/auth";
-
 import { ControllerResponse } from "../../utils/types";
 import { InstagramOauthRedirect } from "./oauth.types";
 
@@ -14,14 +13,14 @@ class OAuthController {
 
     if (!response.success || !response.data) {
       return {
-        success: false,
         code: "IG00010006",
+        success: false,
       };
     }
 
     return {
-      success: true,
       redirectUrl: response.data.url,
+      success: true,
     };
   }
 
@@ -39,16 +38,16 @@ class OAuthController {
 
     if (error) {
       return {
-        success: false,
         code: "IG00020001",
         message: error_description,
+        success: false,
       };
     }
 
     if (!code) {
       return {
-        success: false,
         code: "IG00020002",
+        success: false,
       };
     }
 
@@ -56,14 +55,14 @@ class OAuthController {
 
     if (!response.success) {
       return {
-        success: false,
         code: "IG00020012",
+        success: false,
       };
     }
 
     return {
-      success: true,
       data: response.data,
+      success: true,
     };
   }
 }

@@ -24,45 +24,45 @@ interface CompanyType {
 
 const CompanySchema = new Schema<CompanyType>(
   {
-    company: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    companyName: {
-      type: String,
-      required: true,
-    },
     aboutCompany: String,
-    country: String,
-    socialMedia: [String],
-    foundedYear: String,
-    pincode: String,
-    registrationNumber: String,
-    visionMission: String,
-    website: String,
-    industry: String,
     address: {
       type: String,
     },
-    contactEmail: {
-      type: String,
+    company: {
       required: true,
-    },
-    contactPhone: {
       type: String,
+      unique: true,
     },
     companyLogoUrl: {
       type: String,
     },
-    companySize: {
-      type: String,
+    companyName: {
       required: true,
+      type: String,
     },
+    companySize: {
+      required: true,
+      type: String,
+    },
+    contactEmail: {
+      required: true,
+      type: String,
+    },
+    contactPhone: {
+      type: String,
+    },
+    country: String,
+    foundedYear: String,
+    industry: String,
     isActive: {
-      type: Boolean,
       default: true,
+      type: Boolean,
     },
+    pincode: String,
+    registrationNumber: String,
+    socialMedia: [String],
+    visionMission: String,
+    website: String,
   },
   {
     timestamps: true,

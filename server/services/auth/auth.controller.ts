@@ -1,13 +1,11 @@
 import bcrypt from "bcryptjs";
 
-import { ControllerResponse } from "../../utils/types";
-import { RegisterType } from "./auth.types";
-
+import { env } from "../../config/env";
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
-
-import { env } from "../../config/env";
 import { UserRole } from "../../utils/constants";
+import { ControllerResponse } from "../../utils/types";
+import { RegisterType } from "./auth.types";
 class AuthController {
   public async register({
     body,
@@ -16,63 +14,63 @@ class AuthController {
   }): Promise<ControllerResponse> {
     try {
       const {
-        companyName,
-        address,
-        contactPhone,
-        companyLogoUrl,
-        companyEmail,
-        companySize,
-        website,
-        industry,
-        country,
-        pincode,
         aboutCompany,
-        visionMission,
-        foundedYear,
-        registrationNumber,
-        linkedin,
-        instagram,
-        facebook,
-        twitter,
-
-        fullName,
-        userEmail,
-        password,
-        lastName,
-        designation,
+        address,
         adminPhone,
+        companyEmail,
+        companyLogoUrl,
+        companyName,
+        companySize,
+        contactPhone,
+        country,
+        designation,
+        facebook,
+        foundedYear,
+        fullName,
+        industry,
+        instagram,
+        lastName,
+        linkedin,
+        password,
+
+        pincode,
+        registrationNumber,
+        twitter,
+        userEmail,
+        visionMission,
+        website,
       } = body;
 
       const createdCompany = await CompanyLibrary.createCompany({
-        company: companyEmail,
-        companyName,
-        address,
-        contactPhone,
-        companyLogoUrl,
-        contactEmail: companyEmail,
-        companySize,
-        website,
-        industry,
-        country,
-        pincode,
         aboutCompany,
-        visionMission,
+        address,
+        company: companyEmail,
+        companyLogoUrl,
+        companyName,
+        companySize,
+        contactEmail: companyEmail,
+        contactPhone,
+        country,
         foundedYear,
+        industry,
+        pincode,
         registrationNumber,
         socialMedia: [linkedin, instagram, facebook, twitter],
+        visionMission,
+        website,
       });
 
       if (!createdCompany.success) {
         return {
-          success: false,
           code: createdCompany.code,
+          success: false,
         };
       }
 
       if (!createdCompany.data) {
         return {
-          success: false,
           code: "GF0020004",
+          success: false,
         };
       }
 
@@ -81,44 +79,44 @@ class AuthController {
       const hashedPassword = await bcrypt.hash(password + pepper, 10);
 
       const createdUser = await UserLibrary.createUser({
+        company: companyEmail,
+        designation,
+        email: userEmail,
         fullName,
         lastName,
-        email: userEmail,
-        username: userEmail,
         passwordHash: hashedPassword,
-        company: companyEmail,
-        userRole: UserRole.ADMIN,
-        designation,
         phoneNumber: adminPhone,
+        username: userEmail,
+        userRole: UserRole.ADMIN,
       });
 
       if (!createdUser.success) {
         return {
-          success: false,
           code: createdUser.code,
+          success: false,
         };
       }
 
       if (!createdUser.data) {
         return {
-          success: false,
           code: "GF0020004",
+          success: false,
         };
       }
 
       return {
-        success: true,
         data: {
           company: createdCompany,
           user: createdUser,
         },
+        success: true,
       };
     } catch (error) {
       console.log(`[AUTH CONTROLLER] error: ${error}`);
 
       return {
-        success: false,
         code: "GF0020004",
+        success: false,
       };
     }
   }
@@ -132,14 +130,14 @@ class AuthController {
     };
   }): Promise<ControllerResponse> {
     try {
-      const { username, password } = body;
+      const { password, username } = body;
 
       const response = await UserLibrary.getUserByUsername(username);
 
       if (!response.success || !response.data) {
         return {
-          success: false,
           code: "GF0020008",
+          success: false,
         };
       }
 
@@ -149,8 +147,8 @@ class AuthController {
 
       if (!user.passwordHash) {
         return {
-          success: false,
           code: "GF0020009",
+          success: false,
         };
       }
       const isPasswordValid = await bcrypt.compare(
@@ -160,23 +158,23 @@ class AuthController {
 
       if (!isPasswordValid) {
         return {
-          success: false,
           code: "GF0020007",
+          success: false,
         };
       }
 
       return {
-        success: true,
         data: {
           user: user,
         },
+        success: true,
       };
     } catch (error) {
       console.log(`[AUTH CONTROLLER] error: ${error}`);
 
       return {
-        success: false,
         code: "GF0020009",
+        success: false,
       };
     }
   }

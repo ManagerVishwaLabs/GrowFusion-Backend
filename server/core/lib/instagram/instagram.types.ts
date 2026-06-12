@@ -71,13 +71,13 @@ type MediaDetailsResponse = {
 };
 
 export {
+  CarouselItem,
+  ContainerStatusResponse,
   InstagramResponse,
+  MediaDetailsResponse,
+  MediaIDResponse,
+  MediaListResponse,
   ProfileField,
   ProfileFields,
   UserProfile,
-  CarouselItem,
-  MediaIDResponse,
-  ContainerStatusResponse,
-  MediaListResponse,
-  MediaDetailsResponse,
 };

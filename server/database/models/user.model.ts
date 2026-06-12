@@ -20,44 +20,44 @@ interface UserType {
 
 const UserSchema = new Schema<UserType>(
   {
-    fullName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    lastName: {
-      type: String,
-      trim: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-    },
     company: {
-      type: String,
       required: true,
+      type: String,
     },
     designation: String,
-    phoneNumber: String,
     email: {
-      type: String,
-      required: true,
       lowercase: true,
+      required: true,
       trim: true,
+      type: String,
+    },
+    fullName: {
+      required: true,
+      trim: true,
+      type: String,
+    },
+    isActive: {
+      default: true,
+      type: Boolean,
+    },
+    lastName: {
+      trim: true,
+      type: String,
     },
     passwordHash: {
       type: String,
     },
-    userRole: {
+    phoneNumber: String,
+    username: {
+      lowercase: true,
+      required: true,
+      trim: true,
       type: String,
-      enum: [UserRole.ADMIN, UserRole.USER],
-      default: UserRole.USER,
     },
-    isActive: {
-      type: Boolean,
-      default: true,
+    userRole: {
+      default: UserRole.USER,
+      enum: [UserRole.ADMIN, UserRole.USER],
+      type: String,
     },
   },
   {

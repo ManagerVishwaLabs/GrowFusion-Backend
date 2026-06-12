@@ -1,8 +1,6 @@
-import validator from "./instagram.auth.validator";
-import instagramAuthLib from "./instagram.auth.lib";
-import instagramLib from "../instagram.lib";
-
 import { DEFAULT_SCOPES } from "../instagram.constants";
+import instagramLib from "../instagram.lib";
+import instagramAuthLib from "./instagram.auth.lib";
 import {
   GenerateOAuthUrlParams,
   InstagramLongLivedToken,
@@ -10,6 +8,7 @@ import {
   InstagramResponse,
   InstagramShortLivedToken,
 } from "./instagram.auth.types";
+import validator from "./instagram.auth.validator";
 
 class InstagramAuth {
   public async generateOAuthUrl({
@@ -86,8 +85,8 @@ class InstagramAuth {
 
     if (!shortTokenRes.success) {
       return {
-        success: false,
         message: shortTokenRes.message || "Failed to get short-lived token",
+        success: false,
       };
     }
 
@@ -103,26 +102,26 @@ class InstagramAuth {
 
     if (!profileRes.success) {
       return {
-        success: false,
         message: profileRes.message || "Failed to get user profile",
+        success: false,
       };
     }
 
     if (!longTokenRes.success) {
       return {
-        success: false,
         message: longTokenRes.message || "Failed to get long-lived token",
+        success: false,
       };
     }
 
     const longLived = longTokenRes.data;
 
     return {
-      success: true,
       data: {
-        shortLived,
         longLived,
+        shortLived,
       },
+      success: true,
     };
   }
 }

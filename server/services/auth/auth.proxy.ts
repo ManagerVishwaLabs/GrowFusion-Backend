@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 
-import AuthValidator from "./auth.validator";
-import AuthController from "./auth.controller";
-
 import { ResponseHandler } from "../../core/response.middleware";
+import AuthController from "./auth.controller";
+import AuthValidator from "./auth.validator";
 
 class AuthProxy {
   public async register(req: Request, res: Response): Promise<void> {
@@ -13,8 +12,8 @@ class AuthProxy {
 
     if (validationResponse) {
       ResponseHandler.send({
-        response: validationResponse,
         res,
+        response: validationResponse,
       });
 
       return;
@@ -25,8 +24,8 @@ class AuthProxy {
     });
 
     ResponseHandler.send({
-      response: controllerResponse,
       res,
+      response: controllerResponse,
     });
   }
   public async login(req: Request, res: Response): Promise<void> {
@@ -36,8 +35,8 @@ class AuthProxy {
 
     if (validationResponse) {
       ResponseHandler.send({
-        response: validationResponse,
         res,
+        response: validationResponse,
       });
 
       return;
@@ -48,8 +47,8 @@ class AuthProxy {
     });
 
     ResponseHandler.send({
-      response: controllerResponse,
       res,
+      response: controllerResponse,
     });
   }
 }
