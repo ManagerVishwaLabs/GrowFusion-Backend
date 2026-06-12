@@ -1,5 +1,6 @@
 import validator from "./instagram.auth.validator";
 import instagramAuthLib from "./instagram.auth.lib";
+import instagramLib from "../instagram.lib";
 
 import { DEFAULT_SCOPES } from "../instagram.constants";
 import {
@@ -97,6 +98,15 @@ class InstagramAuth {
       shortLived.access_token,
       shortLived.permissions,
     );
+
+    const profileRes = await instagramLib.getProfile();
+
+    if (!profileRes.success) {
+      return {
+        success: false,
+        message: profileRes.message || "Failed to get user profile",
+      };
+    }
 
     if (!longTokenRes.success) {
       return {
