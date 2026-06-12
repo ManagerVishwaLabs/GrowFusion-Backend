@@ -88,6 +88,8 @@ class AuthController {
         phoneNumber: adminPhone,
         username: userEmail,
         userRole: UserRole.ADMIN,
+        designation,
+        phoneNumber: adminPhone,
       });
 
       if (!createdUser.success) {

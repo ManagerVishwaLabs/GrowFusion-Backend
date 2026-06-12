@@ -40,10 +40,6 @@ const CompanySchema = new Schema<CompanyType>(
       required: true,
       type: String,
     },
-    companySize: {
-      required: true,
-      type: String,
-    },
     contactEmail: {
       required: true,
       type: String,
@@ -51,9 +47,6 @@ const CompanySchema = new Schema<CompanyType>(
     contactPhone: {
       type: String,
     },
-    country: String,
-    foundedYear: String,
-    industry: String,
     isActive: {
       default: true,
       type: Boolean,
