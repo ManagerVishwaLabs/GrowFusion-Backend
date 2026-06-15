@@ -6,6 +6,7 @@ import UserLibrary from "../../library/user.lib";
 import { UserRole } from "../../utils/constants";
 import { ControllerResponse } from "../../utils/types";
 import { RegisterType } from "./auth.types";
+
 class AuthController {
   public async register({
     body,

@@ -85,11 +85,7 @@ class InstagramLib {
     try {
       await this.socialAccountModel.updateOne(
         {
-          $or: [
-            { appUserId: response.data.id },
-            { instagramBusinessAccountId: response.data.user_id },
-            { accessToken: access_token },
-          ],
+          accessToken: access_token,
         },
         {
           appUserId: response.data.id,

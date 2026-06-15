@@ -1,4 +1,5 @@
 const errors = {
+  /* -------- DATABASE -------- */
   GF0010001: "Database operation failed",
   GF0010002: "Duplicate key error",
   GF0010003: "Document not found",
@@ -19,14 +20,10 @@ const errors = {
   GF0030003: "First name must be at least 2 characters",
   GF0030004: "Email is required",
   GF0030005: "Email must be a string",
-
-  /* -------- DATABASE -------- */
-
   GF0030006: "Invalid email address",
   GF0030007: "Username is required",
   GF0030008: "Username must be a string",
   GF0030009: "Username must be at least 3 characters",
-
   GF0030010: "Company is required",
   GF0030011: "Company must be a string",
   GF0030012: "Password hash is required",
@@ -36,7 +33,6 @@ const errors = {
   GF0030016: "First name must be at least 2 characters",
   GF0030017: "Email must be a string",
   GF0030018: "Invalid email address",
-
   GF0030019: "Username must be a string",
   GF0030020: "Username must be at least 3 characters",
   GF0030021: "Company must be a string",
@@ -73,7 +69,6 @@ const errors = {
   GF0040016: "Address is required",
   GF0040017: "Address must be a string",
   GF0040018: "Address must be at least 5 characters",
-
   GF0040019: "Contact email is required",
   GF0040020: "Contact email must be a string",
   GF0040021: "Invalid contact email address",
@@ -118,7 +113,6 @@ const errors = {
   IG00020009: "State must be a string",
   IG00020010: "State cannot be empty",
   IG00020011: "Instagram OAuth callback failed",
-
   IG00020012: "Failed to generate access token",
 };
 export default errors;

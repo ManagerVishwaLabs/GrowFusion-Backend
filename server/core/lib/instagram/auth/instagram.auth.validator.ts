@@ -60,20 +60,6 @@ class InstagramAuthValidator {
       success: true,
     };
   }
-
-  public getProfile(accessToken: string): InstagramResponse<void> {
-    if (!accessToken?.trim()) {
-      return {
-        message: "Access token required",
-        success: false,
-      };
-    }
-
-    return {
-      data: undefined,
-      success: true,
-    };
-  }
 }
 
 export default new InstagramAuthValidator();
