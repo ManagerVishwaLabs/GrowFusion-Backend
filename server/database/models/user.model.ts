@@ -5,15 +5,12 @@ import { UserRoleType } from "../../utils/types";
 
 interface UserType {
   fullName: string;
-  fullName: string;
   lastName?: string;
   username: string;
   company: string;
   email: string;
   designation?: string;
-  designation?: string;
   passwordHash?: string;
-  phoneNumber?: string;
   phoneNumber?: string;
   userRole?: UserRoleType;
   isActive?: boolean;
