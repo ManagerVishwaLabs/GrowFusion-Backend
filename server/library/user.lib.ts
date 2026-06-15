@@ -1,10 +1,9 @@
 import { QueryFilter } from "mongoose";
-import { DocumentId, LibraryResponse } from "../utils/types";
 
 import DBModule from "../database/db.module";
-
-import { UserType } from "../database/models/user.model";
 import { Doc } from "../database/db.types";
+import { UserType } from "../database/models/user.model";
+import { DocumentId, LibraryResponse } from "../utils/types";
 
 class UserLibrary {
   private userModel;
@@ -18,15 +17,15 @@ class UserLibrary {
 
     if (existingUsername.success && existingUsername.data) {
       return {
-        success: false,
         code: "GF0020003",
+        success: false,
       };
     }
     const user = await this.userModel.insertOne(userData);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -34,16 +33,16 @@ class UserLibrary {
     const user = await this.userModel.findById(userId);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
   public async getUsersByIds(userIds: DocumentId[]): Promise<LibraryResponse> {
     const users = await this.userModel.findByIds(userIds);
 
     return {
-      success: true,
       data: users,
+      success: true,
     };
   }
 
@@ -56,13 +55,13 @@ class UserLibrary {
 
     if (user.success) {
       return {
-        success: true,
         data: user.data,
+        success: true,
       };
     }
     return {
-      success: false,
       code: user.code,
+      success: false,
     };
   }
 
@@ -72,14 +71,14 @@ class UserLibrary {
     const user = await this.userModel.findOne({ username });
     if (user.success) {
       return {
-        success: true,
         data: user.data,
+        success: true,
       };
     }
 
     return {
-      success: false,
       code: user.code,
+      success: false,
     };
   }
 
@@ -89,8 +88,8 @@ class UserLibrary {
     });
 
     return {
-      success: true,
       data: users,
+      success: true,
     };
   }
 
@@ -101,8 +100,8 @@ class UserLibrary {
     const user = await this.userModel.updateById(userId, updateData);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -113,8 +112,8 @@ class UserLibrary {
     const users = await this.userModel.updateByIds(userIds, updateData);
 
     return {
-      success: true,
       data: users,
+      success: true,
     };
   }
 
@@ -125,8 +124,8 @@ class UserLibrary {
     const user = await this.userModel.updateOne(filterConditions, updateData);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -137,8 +136,8 @@ class UserLibrary {
     const user = await this.userModel.updateMany(filterConditions, updateData);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -146,8 +145,8 @@ class UserLibrary {
     const user = await this.userModel.deleteById(userId);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -157,8 +156,8 @@ class UserLibrary {
     const user = await this.userModel.deleteByIds(userIds);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -168,8 +167,8 @@ class UserLibrary {
     const user = await this.userModel.deleteOne(filterConditions);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -179,8 +178,8 @@ class UserLibrary {
     const user = await this.userModel.deleteMany(filterConditions);
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 
@@ -192,8 +191,8 @@ class UserLibrary {
     });
 
     return {
-      success: true,
       data: user,
+      success: true,
     };
   }
 }

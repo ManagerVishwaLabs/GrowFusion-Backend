@@ -1,19 +1,18 @@
-import express from "express";
-import helmet from "helmet";
-import cors from "cors";
-import rateLimit from "express-rate-limit";
 import compression from "compression";
+import cors from "cors";
+import express from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import hpp from "hpp";
 
-import routes from "./routes";
+import connectDB from "./config/db";
 import { env } from "./config/env";
-
 import {
   notFoundMiddleware,
   requestLogger,
   responseLogger,
 } from "./config/middlewares";
-import connectDB from "./config/db";
+import routes from "./routes";
 
 const app = express();
 
@@ -31,10 +30,10 @@ app.use(
 
 app.use(
   cors({
-    origin: [env.CLIENT_URL],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [env.CLIENT_URL, env.TEMP_CLIENT],
   }),
 );
 
@@ -51,22 +50,22 @@ app.use(responseLogger);
 
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
     legacyHeaders: false,
+    max: 100,
     message: {
-      success: false,
-
       message: "Too many requests. Please try again later.",
+
+      success: false,
     },
+    standardHeaders: true,
+    windowMs: 15 * 60 * 1000,
   }),
 );
 
 app.get("/health", (_req, res) => {
   res.status(200).json({
-    success: true,
     message: "Server healthy",
+    success: true,
   });
 });
 

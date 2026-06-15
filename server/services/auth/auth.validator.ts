@@ -1,6 +1,5 @@
-import { ValidatorResponse } from "../../utils/types";
-
 import { isEmailAddress } from "../../utils/helperFunctions";
+import { ValidatorResponse } from "../../utils/types";
 import { RegisterType } from "./auth.types";
 
 class AuthValidator {
@@ -9,7 +8,7 @@ class AuthValidator {
   }: {
     body: Partial<RegisterType>;
   }): ValidatorResponse {
-    const { companyName, companyEmail, userEmail, fullName, password } = body;
+    const { companyEmail, companyName, fullName, password, userEmail } = body;
 
     if (!companyName) {
       return "GF0040013";
@@ -79,7 +78,7 @@ class AuthValidator {
       password: string;
     };
   }): ValidatorResponse {
-    const { username, password } = body;
+    const { password, username } = body;
 
     if (!username) {
       return "GF0030029";

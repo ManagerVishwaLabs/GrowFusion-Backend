@@ -1,11 +1,9 @@
 const errors = {
   /* -------- DATABASE -------- */
-
   GF0010001: "Database operation failed",
   GF0010002: "Duplicate key error",
   GF0010003: "Document not found",
   GF0010004: "Validation failed",
-
   /* -------- AUTH -------- */
   GF0020001: "Company already exists",
   GF0020002: "User email already exists",
@@ -16,7 +14,6 @@ const errors = {
   GF0020007: "Invalid credentials",
   GF0020008: "User not found",
   GF0020009: "Login failed",
-
   /* -------- USER VALIDATION -------- */
   GF0030001: "First name is required",
   GF0030002: "First name must be a string",
@@ -53,7 +50,6 @@ const errors = {
   GF0030033: "Company must be a string",
   GF0030034: "Filter conditions are required",
   GF0030035: "Update data cannot be empty",
-
   /* -------- COMPANY VALIDATION -------- */
   GF0040001: "Company ID is required",
   GF0040002: "Invalid company ID",
@@ -97,9 +93,27 @@ const errors = {
   GF0040040: "isActive must be a boolean",
   GF0040041: "Company already exists",
   GF0040042: "Company not found",
-
   /* -------- GENERAL -------- */
   GF5000000: "Internal server error",
+  /* -------- INSTAGRAM AUTHENTICATION -------- */
+  IG00010001: "Scopes must be an array",
+  IG00010002: "Scopes array cannot be empty",
+  IG00010003: "All scopes must be strings",
+  IG00010004: "State must be a string",
+  IG00010005: "State cannot be empty",
+  IG00010006: "Instagram OAuth URL generation failed",
+  IG00020001: "Error is required",
+  IG00020002: "Error cannot be empty",
+  IG00020003: "Error description must be a string",
+  IG00020004: "Error description cannot be empty",
+  IG00020005: "Instagram OAuth callback failed",
+  IG00020006: "Code is required",
+  IG00020007: "Code must be a string",
+  IG00020008: "Code cannot be empty",
+  IG00020009: "State must be a string",
+  IG00020010: "State cannot be empty",
+  IG00020011: "Instagram OAuth callback failed",
+  IG00020012: "Failed to generate access token",
 };
 export default errors;
 export type ErrorCode = keyof typeof errors;

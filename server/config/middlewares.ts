@@ -31,7 +31,7 @@ export const responseLogger = (
 
 export const notFoundMiddleware = (_req: Request, res: Response) => {
   res.status(404).json({
-    success: false,
     message: "Route not found",
+    success: false,
   });
 };

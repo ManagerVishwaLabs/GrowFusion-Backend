@@ -4,6 +4,7 @@ import {
   QueryOptions,
   SortOrder,
 } from "mongoose";
+
 import { ErrorCode } from "../utils/errors";
 
 type ErrorResponse = {
@@ -37,4 +38,4 @@ interface FindOptions<TSchema> extends QueryOptions {
   select?: ProjectionType<TSchema>;
 }
 
-export { DBResponse, Doc, UpdateOptions, FindOptions };
+export { DBResponse, Doc, FindOptions, UpdateOptions };
