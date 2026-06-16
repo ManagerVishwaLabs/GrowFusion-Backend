@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const env = {
+const env = {
   CLIENT_URL: process.env.CLIENT_URL || "",
   COOKIE_SECRET: process.env.COOKIE_SECRET || "",
   INSTAGRAM_CLIENT_ID: process.env.INSTAGRAM_CLIENT_ID || "",
@@ -25,3 +25,5 @@ export const env = {
   PASSWORD_PEPPER: process.env.PASSWORD_PEPPER || "",
   PORT: process.env.PORT || 8000,
 };
+
+export default env;

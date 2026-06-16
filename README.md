@@ -1,4 +1,4 @@
-# GlowFusion Backend
+# GrowFusion Backend
 
 Backend application built using **Node.js**, **TypeScript**, and **Express**.
 

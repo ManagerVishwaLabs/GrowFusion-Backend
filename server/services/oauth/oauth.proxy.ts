@@ -26,7 +26,7 @@ class OAuthProxy {
     }
 
     const controllerResponse = await OAuthController.instagramOauthRedirect({
-      params: req.query as unknown as {
+      data: req.query as unknown as {
         scopes?: string[];
         state?: string;
       },
@@ -61,7 +61,7 @@ class OAuthProxy {
     }
 
     const controllerResponse = await OAuthController.instagramOauthCallback({
-      query: req.query as unknown as {
+      data: req.query as unknown as {
         code: string;
         state?: string;
         error?: string;

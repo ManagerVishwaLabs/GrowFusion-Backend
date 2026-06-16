@@ -1,14 +1,21 @@
-import instagramAuthLib from "../../core/lib/instagram/auth";
-import { ControllerResponse } from "../../utils/types";
+import { Request } from "express";
+import InstagramAuth from "../../core/lib/instagram/auth";
+import { ControllerResponse, ControllerType } from "../../utils/types";
 import { InstagramOauthRedirect } from "./oauth.types";
 
 class OAuthController {
+  private getInstagramAuth(req: Request | undefined) {
+    return new InstagramAuth(req?.user);
+  }
+
   public async instagramOauthRedirect({
-    params,
-  }: InstagramOauthRedirect): Promise<ControllerResponse> {
-    const response = await instagramAuthLib.generateOAuthUrl({
-      scopes: params.scopes,
-      state: params.state,
+    data,
+    req,
+  }: ControllerType<InstagramOauthRedirect>): Promise<ControllerResponse> {
+    const instagramAuth = this.getInstagramAuth(req);
+    const response = await instagramAuth.generateOAuthUrl({
+      scopes: data.scopes,
+      state: data.state,
     });
 
     if (!response.success) {
@@ -26,16 +33,15 @@ class OAuthController {
   }
 
   public async instagramOauthCallback({
-    query,
-  }: {
-    query: {
-      code: string;
-      state?: string;
-      error?: string;
-      error_description?: string;
-    };
-  }): Promise<ControllerResponse> {
-    const { code, error, error_description } = query;
+    data,
+    req,
+  }: ControllerType<{
+    code: string;
+    state?: string;
+    error?: string;
+    error_description?: string;
+  }>): Promise<ControllerResponse> {
+    const { code, error, error_description } = data;
 
     if (error) {
       return {
@@ -46,7 +52,9 @@ class OAuthController {
       };
     }
 
-    const response = await instagramAuthLib.exchangeCodeToLongLivedToken(code);
+    const instagramAuth = this.getInstagramAuth(req);
+
+    const response = await instagramAuth.exchangeCodeToLongLivedToken(code);
 
     if (!response.success) {
       return {

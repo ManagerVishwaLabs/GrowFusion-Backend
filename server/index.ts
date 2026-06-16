@@ -7,7 +7,7 @@ import helmet from "helmet";
 import hpp from "hpp";
 
 import connectDB from "./config/db";
-import { env } from "./config/env";
+import env from "./config/env";
 import errorMiddleware from "./config/middlewares/error.middleware";
 import {
   requestLogger,

@@ -10,7 +10,7 @@ const requestLogger = (req: Request, _res: Response, next: NextFunction) => {
 const responseLogger = (req: Request, res: Response, next: NextFunction) => {
   const originalSend = res.send;
 
-  res.send = function (data: unknown) {
+  res.send = (data: unknown) => {
     console.log(`[RES] METHOD: ${req.method}, URL: ${req.url}`);
     console.log("Response:", data);
 

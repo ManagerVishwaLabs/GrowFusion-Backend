@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { env } from "../../config/env";
+import env from "../../config/env";
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
 import { UserRole } from "../../utils/constants";

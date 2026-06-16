@@ -1,6 +1,7 @@
 import DBModule from "../../../database/db.module";
 import { Doc } from "../../../database/db.types";
 import { SocialMediaAccountType } from "../../../database/models/socialAccount.model";
+import { UserType } from "../../../database/models/user.model";
 import axios from "../../axios";
 import {
   INSTAGRAM_GRAPH_API_URL,
@@ -24,8 +25,10 @@ class InstagramLib {
   private instagramGraphClient: axios;
   private accessToken: string | null = null;
   private instagramBusinessAccountId: string | undefined = undefined;
+  private user: UserType | undefined;
 
-  constructor() {
+  constructor(user: UserType | undefined) {
+    this.user = user;
     this.socialAccountModel = DBModule.createModel("SocialMediaAccount");
     this.instagramContentModel = DBModule.createModel("InstagramContent");
     this.instagramGraphClient = axios.create(INSTAGRAM_GRAPH_API_URL);
@@ -37,7 +40,10 @@ class InstagramLib {
     }
 
     const account = await this.socialAccountModel.findOne(
-      { username: "testUser" },
+      {
+        company: this.user?.company || "",
+        username: this.user?.username || "",
+      },
       { accessToken: 1 },
     );
 
@@ -50,9 +56,10 @@ class InstagramLib {
   }
 
   private async getAccountDetails(): Promise<Doc<SocialMediaAccountType>> {
-    const account = await this.socialAccountModel.findOne(
-      { username: "testUser" }, //change to username
-    );
+    const account = await this.socialAccountModel.findOne({
+      username: this.user?.username || "",
+      company: this.user?.company || "",
+    });
 
     if (!account.success || !account.data) {
       throw new Error("Instagram account not found");
@@ -177,13 +184,13 @@ class InstagramLib {
     try {
       await this.instagramContentModel.insertOne({
         caption,
-        company: "testCompany",
+        company: this.user?.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "IMAGE",
         mediaUrl: imageUrl,
         socialAccountId,
-        username: "testUser",
+        username: this.user?.username || "",
       });
     } catch (error) {
       return {
@@ -248,13 +255,13 @@ class InstagramLib {
     try {
       await this.instagramContentModel.insertOne({
         caption,
-        company: "testCompany",
+        company: this.user?.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "REELS",
         mediaUrl: videoUrl,
         socialAccountId: account._id,
-        username: "testUser",
+        username: this.user?.username || "",
       });
     } catch (error) {
       return {
@@ -365,12 +372,12 @@ class InstagramLib {
         caption,
         childCreationIds: children,
         childMediaUrls: mediaUrls.slice(1).map((item) => item.url),
-        company: "testCompany",
+        company: this.user?.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: carousel.data.id,
         mediaType: "CAROUSEL_ALBUM",
         socialAccountId: account._id,
-        username: "testUser",
+        username: this.user?.username || "",
       });
     } catch (error) {
       return {
@@ -431,13 +438,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
-        company: "testCompany",
+        company: this.user?.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "STORY",
         mediaUrl: imageUrl,
         socialAccountId: account._id,
-        username: "testUser",
+        username: this.user?.username || "",
       });
     } catch (error) {
       return {
@@ -500,13 +507,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
-        company: "testCompany",
+        company: this.user?.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data?.id,
         mediaType: "STORY",
         mediaUrl: videoUrl,
         socialAccountId: account._id,
-        username: "testUser",
+        username: this.user?.username || "",
       });
     } catch (error) {
       return {
@@ -714,7 +721,11 @@ class InstagramLib {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
 
-    await this.waitForContainerReady(creationId);
+    const waitResult = await this.waitForContainerReady(creationId);
+
+    if (!waitResult.success) {
+      return waitResult;
+    }
 
     const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media_publish`,
@@ -806,4 +817,4 @@ class InstagramLib {
   }
 }
 
-export default new InstagramLib();
+export default InstagramLib;

@@ -1,17 +1,22 @@
 import { Request, Response } from "express";
 
-import instagramLib from "../../core/lib/instagram/";
+import Instagram from "../../core/lib/instagram/";
 import { ResponseHandler } from "../../config/middlewares/response.middleware";
 
 class TestProxy {
+  private getInstagram(req: Request) {
+    return new Instagram(req.user);
+  }
   public async getProfile(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.getProfile();
+    const instagram = this.getInstagram(req);
 
+    const controllerResponse = await instagram.getProfile();
     ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async createImagePost(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.createImagePost(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.createImagePost(
       req.body.imageUrl,
       req.body.caption,
     );
@@ -20,7 +25,8 @@ class TestProxy {
   }
 
   public async createReel(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.createReel(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.createReel(
       req.body.videoUrl,
       req.body.caption,
     );
@@ -29,7 +35,8 @@ class TestProxy {
   }
 
   public async createCarousel(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.createCarousel(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.createCarousel(
       req.body.mediaUrls,
       req.body.caption,
     );
@@ -38,7 +45,8 @@ class TestProxy {
   }
 
   public async createImageStory(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.createImageStory(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.createImageStory(
       req.body.imageUrl,
     );
 
@@ -46,7 +54,8 @@ class TestProxy {
   }
 
   public async createVideoStory(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.createVideoStory(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.createVideoStory(
       req.body.videoUrl,
     );
 
@@ -54,7 +63,8 @@ class TestProxy {
   }
 
   public async getMediaList(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.getMediaList(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.getMediaList(
       req.query.cursor as string,
     );
 
@@ -62,7 +72,8 @@ class TestProxy {
   }
 
   public async getMedia(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.getMedia(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.getMedia(
       req.query.mediaId as string,
     );
 
@@ -70,13 +81,15 @@ class TestProxy {
   }
 
   public async syncAllMedia(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.syncAllMedia();
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.syncAllMedia();
 
     ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async publishContent(req: Request, res: Response): Promise<void> {
-    const controllerResponse = await instagramLib.publishContent(
+    const instagram = this.getInstagram(req);
+    const controllerResponse = await instagram.publishContent(
       req.body.creationId,
     );
     ResponseHandler.send({ res, response: controllerResponse });

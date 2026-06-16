@@ -1,6 +1,7 @@
+import { UserType } from "../../../../database/models/user.model";
 import { DEFAULT_SCOPES } from "../instagram.constants";
-import instagramLib from "../instagram.lib";
-import instagramAuthLib from "./instagram.auth.lib";
+import InstagramLib from "../instagram.lib";
+import InstagramAuthLib from "./instagram.auth.lib";
 import {
   GenerateOAuthUrlParams,
   InstagramLongLivedToken,
@@ -11,6 +12,12 @@ import {
 import validator from "./instagram.auth.validator";
 
 class InstagramAuth {
+  private instagramAuthLib: InstagramAuthLib;
+  private instagramLib: InstagramLib;
+  constructor(user: UserType | undefined) {
+    this.instagramAuthLib = new InstagramAuthLib(user);
+    this.instagramLib = new InstagramLib(user);
+  }
   public async generateOAuthUrl({
     scopes = DEFAULT_SCOPES,
     state,
@@ -23,7 +30,7 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.generateOAuthUrl({
+    return this.instagramAuthLib.generateOAuthUrl({
       scopes,
       state,
     });
@@ -38,7 +45,7 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.exchangeCode(code);
+    return this.instagramAuthLib.exchangeCode(code);
   }
 
   public async exchangeShortLivedToken(
@@ -52,7 +59,7 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.exchangeShortLivedToken(
+    return this.instagramAuthLib.exchangeShortLivedToken(
       tokenApiUserId,
       shortLivedToken,
       scopes,
@@ -69,7 +76,7 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.refreshLongLivedToken(
+    return this.instagramAuthLib.refreshLongLivedToken(
       tokenApiUserId,
       longLivedToken,
     );
@@ -95,7 +102,7 @@ class InstagramAuth {
       shortLived.permissions,
     );
 
-    const profileRes = await instagramLib.getProfile();
+    const profileRes = await this.instagramLib.getProfile();
 
     if (!profileRes.success) {
       return profileRes;
@@ -117,4 +124,4 @@ class InstagramAuth {
   }
 }
 
-export default new InstagramAuth();
+export default InstagramAuth;

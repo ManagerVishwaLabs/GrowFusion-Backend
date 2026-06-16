@@ -1,5 +1,6 @@
-import { env } from "../../../../config/env";
+import env from "../../../../config/env";
 import DBModule from "../../../../database/db.module";
+import { UserType } from "../../../../database/models/user.model";
 import axios from "../../../axios";
 import {
   DEFAULT_SCOPES,
@@ -15,10 +16,12 @@ import {
   InstagramShortLivedToken,
 } from "./instagram.auth.types";
 
-class InstagramLib {
+class InstagramAuthLib {
   private socialAccountModel;
+  private user: UserType | undefined;
 
-  constructor() {
+  constructor(user: UserType | undefined) {
+    this.user = user;
     this.socialAccountModel = DBModule.createModel("SocialMediaAccount");
   }
 
@@ -140,13 +143,13 @@ class InstagramLib {
           },
           {
             accessToken: response.data.access_token,
-            company: "testCompany",
+            company: this.user?.company,
             mediaName: "instagram",
             scopes: scopes,
             tokenExpiresAt: new Date(
               Date.now() + response.data.expires_in * 1000,
             ),
-            username: "testUser",
+            username: this.user?.username,
           },
           {
             upsert: true,
@@ -204,6 +207,8 @@ class InstagramLib {
       try {
         this.socialAccountModel.updateOne(
           {
+            username: this.user?.username,
+            company: this.user?.company,
             tokenApiUserId,
           },
           {
@@ -239,4 +244,4 @@ class InstagramLib {
   }
 }
 
-export default new InstagramLib();
+export default InstagramAuthLib;

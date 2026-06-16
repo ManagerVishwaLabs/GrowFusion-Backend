@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import { env } from "../env";
+import env from "../env";
 import userLib from "../../library/user.lib";
 import { AccessTokenPayload } from "../../utils/types";
 
@@ -35,6 +35,13 @@ const AuthMiddleware = async (
     const userData = await userLib.getUserByUsername(decoded.username);
 
     if (!userData.success) {
+      return res.status(401).json({
+        message: "Invalid session, please login again",
+        success: false,
+      });
+    }
+
+    if (!userData.data) {
       return res.status(401).json({
         message: "Invalid session, please login again",
         success: false,
