@@ -8,7 +8,11 @@ type ResponseHandlerType = {
     | {
         code?: ErrorCode;
         data?: unknown;
+        error?: string | unknown;
+        message?: string;
         redirectUrl?: string;
+        success?: boolean;
+        statusCode?: number;
       }
     | void;
 
@@ -27,10 +31,8 @@ class ResponseHandler {
 
     if (typeof response === "string") {
       res.status(400).json({
-        error: {
-          code: response,
-          message: errors[response],
-        },
+        code: response,
+        message: errors[response],
         success: false,
       });
 
@@ -41,11 +43,16 @@ class ResponseHandler {
       return;
     }
 
-    res.status(200).json({
+    res.status((response.statusCode ?? response?.success) ? 200 : 400).json({
       code: response?.code,
-      data: response?.data ?? null,
-      message: response?.code ? errors[response.code] : undefined,
-      success: true,
+      data: response?.data ?? undefined,
+      error: response?.error ?? undefined,
+      message: response?.message
+        ? response?.message
+        : response?.code
+          ? errors[response.code]
+          : undefined,
+      success: response?.success ?? true,
     });
   }
 }

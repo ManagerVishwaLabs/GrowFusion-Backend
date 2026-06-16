@@ -12,7 +12,7 @@ TestRouter.post("/instagram/createImageStory", TestProxy.createImageStory);
 TestRouter.post("/instagram/createVideoStory", TestProxy.createVideoStory);
 TestRouter.get("/instagram/getMediaList", TestProxy.getMediaList);
 TestRouter.get("/instagram/getMedia", TestProxy.getMedia);
-TestRouter.get("/instagram/syncAllMedia", TestProxy.syncAllMedia);
+TestRouter.patch("/instagram/syncAllMedia", TestProxy.syncAllMedia);
 TestRouter.post("/instagram/publishContent", TestProxy.publishContent);
 
 export default TestRouter;

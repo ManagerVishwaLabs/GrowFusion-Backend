@@ -8,68 +8,80 @@ class AuthValidator {
   }: {
     body: Partial<RegisterType>;
   }): ValidatorResponse {
-    const { companyEmail, companyName, fullName, password, userEmail } = body;
+    const {
+      companyEmail,
+      companyName,
+      fullName,
+      password,
+      userEmail,
+      companySize,
+    } = body;
 
     if (!companyName) {
-      return "GF0040013";
+      return "GF0020001";
     }
 
     if (typeof companyName !== "string") {
-      return "GF0040014";
+      return "GF0020002";
     }
 
     if (companyName.trim().length < 2) {
-      return "GF0040015";
+      return "GF0020003";
     }
 
     if (!companyEmail) {
-      return "GF0040019";
+      return "GF0020004";
     }
 
     if (typeof companyEmail !== "string") {
-      return "GF0040020";
+      return "GF0020005";
     }
 
     if (!isEmailAddress(companyEmail)) {
-      return "GF0040021";
+      return "GF0020006";
     }
 
     if (!fullName) {
-      return "GF0030001";
+      return "GF0020007";
     }
 
     if (typeof fullName !== "string") {
-      return "GF0030002";
+      return "GF0020008";
     }
 
     if (fullName.trim().length < 2) {
-      return "GF0030003";
+      return "GF0020009";
     }
 
     if (!userEmail) {
-      return "GF0030004";
+      return "GF0020010";
     }
 
     if (typeof userEmail !== "string") {
-      return "GF0030005";
+      return "GF0020011";
     }
 
     if (!isEmailAddress(userEmail.trim())) {
-      return "GF0030006";
+      return "GF0020012";
     }
 
     if (!password) {
-      return "GF0030012";
+      return "GF0020013";
     }
 
     if (typeof password !== "string") {
-      return "GF0030013";
+      return "GF0020014";
     }
 
-    if (password.trim().length < 6) {
-      return "GF0030014";
+    if (password.trim().length < 8) {
+      return "GF0020015";
+    }
+
+    if (typeof companySize !== "string") {
+      return "GF0020019";
     }
   }
+
   public validateLogin({
     body,
   }: {
@@ -81,27 +93,27 @@ class AuthValidator {
     const { password, username } = body;
 
     if (!username) {
-      return "GF0030029";
+      return "GF0020016";
     }
 
     if (typeof username !== "string") {
-      return "GF0030030";
+      return "GF0020017";
     }
 
     if (username.trim().length < 3) {
-      return "GF0030031";
+      return "GF0020018";
     }
 
     if (!password) {
-      return "GF0030012";
+      return "GF0020013";
     }
 
     if (typeof password !== "string") {
-      return "GF0030013";
+      return "GF0020014";
     }
 
-    if (password.trim().length < 6) {
-      return "GF0030014";
+    if (password.trim().length < 8) {
+      return "GF0020015";
     }
   }
 }

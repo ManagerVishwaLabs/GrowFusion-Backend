@@ -2,11 +2,27 @@ import { InstagramResponse } from "./instagram.auth.types";
 
 class InstagramAuthValidator {
   public generateOAuthUrl(scopes?: string[]): InstagramResponse<void> {
-    if (scopes && (!Array.isArray(scopes) || !scopes.length)) {
-      return {
-        message: "Invalid scopes",
-        success: false,
-      };
+    if (scopes) {
+      if (!Array.isArray(scopes)) {
+        return {
+          code: "IG00010001",
+          success: false,
+        };
+      }
+
+      if (!scopes.length) {
+        return {
+          code: "IG00010002",
+          success: false,
+        };
+      }
+
+      if (scopes.some((scope) => !scope)) {
+        return {
+          code: "IG00010003",
+          success: false,
+        };
+      }
     }
 
     return {
@@ -16,9 +32,16 @@ class InstagramAuthValidator {
   }
 
   public exchangeCode(code: string): InstagramResponse<void> {
+    if (typeof code !== "string") {
+      return {
+        code: "IG00010004",
+        success: false,
+      };
+    }
+
     if (!code?.trim()) {
       return {
-        message: "Authorization code required",
+        code: "IG00010005",
         success: false,
       };
     }
@@ -34,7 +57,7 @@ class InstagramAuthValidator {
   ): InstagramResponse<void> {
     if (!shortLivedToken?.trim()) {
       return {
-        message: "Short lived token required",
+        code: "IG00010006",
         success: false,
       };
     }
@@ -50,7 +73,7 @@ class InstagramAuthValidator {
   ): InstagramResponse<void> {
     if (!longLivedToken?.trim()) {
       return {
-        message: "Long lived token required",
+        code: "IG00010007",
         success: false,
       };
     }

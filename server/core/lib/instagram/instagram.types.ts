@@ -1,13 +1,17 @@
+import { ErrorCode } from "../../../utils/errors";
 import { PROFILE_FIELDS } from "./instagram.constants";
 
 type InstagramResponse<T, E = string> =
   | {
       success: true;
       data: T;
+      statusCode?: number;
     }
   | {
       success: false;
-      message: E;
+      statusCode?: number;
+      error?: E;
+      code: ErrorCode;
     };
 
 type ProfileField = (typeof PROFILE_FIELDS)[number];

@@ -3,6 +3,7 @@ import {
   CarouselItem,
   InstagramResponse,
   MediaIDResponse,
+  MediaListResponse,
   ProfileFields,
   UserProfile,
 } from "./instagram.types";
@@ -84,11 +85,28 @@ class Instagram {
     return instagramLib.createVideoStory(videoUrl);
   }
 
-  public async getMediaList(cursor?: string) {
-    return instagramLib.getMediaList(cursor);
+  public async getMediaList(
+    cursor?: string,
+  ): Promise<InstagramResponse<MediaListResponse>> {
+    const mediaList = await instagramLib.getMediaList(cursor);
+
+    if (!mediaList.success) {
+      return {
+        code: "IG00040008",
+        error: mediaList.error,
+        success: false,
+      };
+    }
+
+    return {
+      data: mediaList.data,
+      success: true,
+    };
   }
 
-  public async getMedia(mediaId: string) {
+  public async getMedia(
+    mediaId: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const validation = validator.getMedia(mediaId);
 
     if (!validation.success) {
@@ -98,16 +116,28 @@ class Instagram {
     return instagramLib.getMedia(mediaId);
   }
 
-  public async syncAllMedia() {
+  public async syncAllMedia(): Promise<
+    InstagramResponse<{ syncedMediaCount: number }>
+  > {
     let syncedMediaCount = 0;
     try {
       let after: string | undefined;
       do {
         const mediaList = await this.getMediaList(after);
 
-        if (!mediaList.success || mediaList?.data?.data?.length === 0) {
+        if (!mediaList.success) {
+          return {
+            code: "IG00020007",
+            error: mediaList.error,
+            statusCode: 400,
+            success: false,
+          };
+        }
+
+        if (!mediaList.data?.data?.length) {
           break;
         }
+
         const mediaListData = mediaList?.data;
 
         for (const media of mediaListData.data) {
@@ -123,10 +153,12 @@ class Instagram {
         }
       } while (after);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       return {
-        message:
+        code: "IG00040015",
+        statusCode: 500,
+        error:
           "An error occurred while syncing media" +
           "\nSynced media count before error: " +
           String(syncedMediaCount),
@@ -135,7 +167,9 @@ class Instagram {
     }
 
     return {
-      message: "Synced media count: " + String(syncedMediaCount),
+      data: {
+        syncedMediaCount,
+      },
       success: true,
     };
   }

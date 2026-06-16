@@ -11,9 +11,10 @@ class OAuthController {
       state: params.state,
     });
 
-    if (!response.success || !response.data) {
+    if (!response.success) {
       return {
-        code: "IG00010006",
+        code: response.code,
+        error: response.error,
         success: false,
       };
     }
@@ -28,7 +29,7 @@ class OAuthController {
     query,
   }: {
     query: {
-      code?: string;
+      code: string;
       state?: string;
       error?: string;
       error_description?: string;
@@ -38,15 +39,9 @@ class OAuthController {
 
     if (error) {
       return {
-        code: "IG00020001",
+        code: "GF0030009",
+        error: error,
         message: error_description,
-        success: false,
-      };
-    }
-
-    if (!code) {
-      return {
-        code: "IG00020002",
         success: false,
       };
     }
@@ -55,7 +50,8 @@ class OAuthController {
 
     if (!response.success) {
       return {
-        code: "IG00020012",
+        code: response.code,
+        error: response.error,
         success: false,
       };
     }

@@ -21,15 +21,25 @@ class CompanyLibrary {
 
       if (existingCompany.success && existingCompany.data) {
         return {
-          code: "GF0040041",
+          code: "GF0040001",
           success: false,
         };
       }
     }
+
     const company = await this.companyModel.insertOne(companyData);
 
+    if (!company.success) {
+      return {
+        code: "GF0040002",
+        error: company.error,
+        message: company.message,
+        success: false,
+      };
+    }
+
     return {
-      data: company,
+      data: company.data,
       success: true,
     };
   }
@@ -37,8 +47,17 @@ class CompanyLibrary {
   public async getCompanyById(companyId: DocumentId): Promise<LibraryResponse> {
     const company = await this.companyModel.findById(companyId);
 
+    if (!company.success) {
+      return {
+        code: "GF0040003",
+        error: company.error,
+        message: company.message,
+        success: false,
+      };
+    }
+
     return {
-      data: company,
+      data: company.data,
       success: true,
     };
   }
@@ -48,8 +67,17 @@ class CompanyLibrary {
   ): Promise<LibraryResponse> {
     const companies = await this.companyModel.findByIds(companyIds);
 
+    if (!companies.success) {
+      return {
+        code: "GF0040003",
+        error: companies.error,
+        message: companies.message,
+        success: false,
+      };
+    }
+
     return {
-      data: companies,
+      data: companies.data,
       success: true,
     };
   }
@@ -59,12 +87,15 @@ class CompanyLibrary {
       company,
     });
 
-    if (foundCompany.success && foundCompany.data === null) {
-      return { code: "GF0040042", success: false };
-    }
     if (!foundCompany.success) {
-      return { code: foundCompany.code, success: false };
+      return {
+        code: "GF0040003",
+        error: foundCompany.error,
+        message: foundCompany.message,
+        success: false,
+      };
     }
+
     return {
       data: foundCompany.data,
       success: true,
@@ -77,8 +108,17 @@ class CompanyLibrary {
   ): Promise<LibraryResponse> {
     const company = await this.companyModel.updateById(companyId, updateData);
 
+    if (!company.success) {
+      return {
+        code: "GF0040004",
+        error: company.error,
+        message: company.message,
+        success: false,
+      };
+    }
+
     return {
-      data: company,
+      data: company.data,
       success: true,
     };
   }
@@ -92,8 +132,17 @@ class CompanyLibrary {
       updateData,
     );
 
+    if (!companies.success) {
+      return {
+        code: "GF0040004",
+        error: companies.error,
+        message: companies.message,
+        success: false,
+      };
+    }
+
     return {
-      data: companies,
+      data: companies.data,
       success: true,
     };
   }
@@ -107,8 +156,17 @@ class CompanyLibrary {
       updateData,
     );
 
+    if (!company.success) {
+      return {
+        code: "GF0040004",
+        error: company.error,
+        message: company.message,
+        success: false,
+      };
+    }
+
     return {
-      data: company,
+      data: company.data,
       success: true,
     };
   }
@@ -122,8 +180,17 @@ class CompanyLibrary {
       updateData,
     );
 
+    if (!companies.success) {
+      return {
+        code: "GF0040004",
+        error: companies.error,
+        message: companies.message,
+        success: false,
+      };
+    }
+
     return {
-      data: companies,
+      data: companies.data,
       success: true,
     };
   }
@@ -133,8 +200,17 @@ class CompanyLibrary {
   ): Promise<LibraryResponse> {
     const company = await this.companyModel.deleteById(companyId);
 
+    if (!company.success) {
+      return {
+        code: "GF0040005",
+        error: company.error,
+        message: company.message,
+        success: false,
+      };
+    }
+
     return {
-      data: company,
+      data: company.data,
       success: true,
     };
   }
@@ -144,8 +220,17 @@ class CompanyLibrary {
   ): Promise<LibraryResponse> {
     const companies = await this.companyModel.deleteByIds(companyIds);
 
+    if (!companies.success) {
+      return {
+        code: "GF0040005",
+        error: companies.error,
+        message: companies.message,
+        success: false,
+      };
+    }
+
     return {
-      data: companies,
+      data: companies.data,
       success: true,
     };
   }
@@ -155,8 +240,17 @@ class CompanyLibrary {
   ): Promise<LibraryResponse> {
     const company = await this.companyModel.deleteOne(filterConditions);
 
+    if (!company.success) {
+      return {
+        code: "GF0040005",
+        error: company.error,
+        message: company.message,
+        success: false,
+      };
+    }
+
     return {
-      data: company,
+      data: company.data,
       success: true,
     };
   }
@@ -166,8 +260,17 @@ class CompanyLibrary {
   ): Promise<LibraryResponse> {
     const companies = await this.companyModel.deleteMany(filterConditions);
 
+    if (!companies.success) {
+      return {
+        code: "GF0040005",
+        error: companies.error,
+        message: companies.message,
+        success: false,
+      };
+    }
+
     return {
-      data: companies,
+      data: companies.data,
       success: true,
     };
   }
@@ -179,8 +282,17 @@ class CompanyLibrary {
       company,
     });
 
+    if (!deletedCompany.success) {
+      return {
+        code: "GF0040005",
+        error: deletedCompany.error,
+        message: deletedCompany.message,
+        success: false,
+      };
+    }
+
     return {
-      data: deletedCompany,
+      data: deletedCompany.data,
       success: true,
     };
   }

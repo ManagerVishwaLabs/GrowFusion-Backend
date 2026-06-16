@@ -12,12 +12,15 @@ class AppError extends Error {
 interface ErrorResponse {
   success: false;
   code: ErrorCode;
+  error?: string | unknown;
+  statusCode?: number;
   message?: string;
 }
 
 interface SuccessResponse<T = unknown> {
   success: true;
   data?: T;
+  statusCode?: number;
   redirectUrl?: string;
 }
 
