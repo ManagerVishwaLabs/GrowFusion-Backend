@@ -72,6 +72,7 @@ const errors = {
   IG00020004: "Failed to get refreshed token",
   IG00020005: "Failed to save refreshed token",
   IG00020006: "Unable to perform instagram auth operation",
+  IG00020007: "Access token not found",
 
   /* -------- INSTAGRAM -------- */
   IG00030001: "Profile fields array contains invalid fields",

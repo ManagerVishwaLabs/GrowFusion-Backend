@@ -104,7 +104,9 @@ class Instagram {
     };
   }
 
-  public async getMedia(mediaId: string) {
+  public async getMedia(
+    mediaId: string,
+  ): Promise<InstagramResponse<MediaIDResponse>> {
     const validation = validator.getMedia(mediaId);
 
     if (!validation.success) {
@@ -114,7 +116,9 @@ class Instagram {
     return instagramLib.getMedia(mediaId);
   }
 
-  public async syncAllMedia() {
+  public async syncAllMedia(): Promise<
+    InstagramResponse<{ syncedMediaCount: number }>
+  > {
     let syncedMediaCount = 0;
     try {
       let after: string | undefined;
@@ -123,8 +127,9 @@ class Instagram {
 
         if (!mediaList.success) {
           return {
-            code: "GF0050001",
-            message: mediaList.error,
+            code: "IG00020007",
+            error: mediaList.error,
+            statusCode: 400,
             success: false,
           };
         }
@@ -148,10 +153,12 @@ class Instagram {
         }
       } while (after);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       return {
-        message:
+        code: "IG00040015",
+        statusCode: 500,
+        error:
           "An error occurred while syncing media" +
           "\nSynced media count before error: " +
           String(syncedMediaCount),
@@ -160,7 +167,9 @@ class Instagram {
     }
 
     return {
-      message: "Synced media count: " + String(syncedMediaCount),
+      data: {
+        syncedMediaCount,
+      },
       success: true,
     };
   }

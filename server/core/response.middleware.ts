@@ -43,7 +43,7 @@ class ResponseHandler {
       return;
     }
 
-    res.status(response.statusCode ?? 200).json({
+    res.status((response.statusCode ?? response?.success) ? 200 : 400).json({
       code: response?.code,
       data: response?.data ?? undefined,
       error: response?.error ?? undefined,

@@ -5,9 +5,11 @@ type InstagramResponse<T, E = string> =
   | {
       success: true;
       data: T;
+      statusCode?: number;
     }
   | {
       success: false;
+      statusCode?: number;
       error?: E;
       code: ErrorCode;
     };
