@@ -3,6 +3,7 @@ import {
   CarouselItem,
   InstagramResponse,
   MediaIDResponse,
+  MediaListResponse,
   ProfileFields,
   UserProfile,
 } from "./instagram.types";
@@ -84,8 +85,23 @@ class Instagram {
     return instagramLib.createVideoStory(videoUrl);
   }
 
-  public async getMediaList(cursor?: string) {
-    return instagramLib.getMediaList(cursor);
+  public async getMediaList(
+    cursor?: string,
+  ): Promise<InstagramResponse<MediaListResponse>> {
+    const mediaList = await instagramLib.getMediaList(cursor);
+
+    if (!mediaList.success) {
+      return {
+        code: "IG00040008",
+        error: mediaList.error,
+        success: false,
+      };
+    }
+
+    return {
+      data: mediaList.data,
+      success: true,
+    };
   }
 
   public async getMedia(mediaId: string) {
@@ -105,9 +121,18 @@ class Instagram {
       do {
         const mediaList = await this.getMediaList(after);
 
-        if (!mediaList.success || mediaList?.data?.data?.length === 0) {
+        if (!mediaList.success) {
+          return {
+            code: "GF0050001",
+            message: mediaList.error,
+            success: false,
+          };
+        }
+
+        if (!mediaList.data?.data?.length) {
           break;
         }
+
         const mediaListData = mediaList?.data;
 
         for (const media of mediaListData.data) {
