@@ -26,4 +26,8 @@ type RegisterType = {
   designation: string;
 };
 
-export { RegisterType };
+type LoginType = {
+  username: string;
+  password: string;
+};
+export { RegisterType, LoginType };

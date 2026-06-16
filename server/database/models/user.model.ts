@@ -12,7 +12,7 @@ interface UserType {
   designation?: string;
   passwordHash?: string;
   phoneNumber?: string;
-  userRole?: UserRoleType;
+  userRole: UserRoleType;
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

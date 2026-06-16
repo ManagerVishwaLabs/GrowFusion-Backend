@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import instagramLib from "../../core/lib/instagram/";
-import { ResponseHandler } from "../../core/response.middleware";
+import { ResponseHandler } from "../../config/middlewares/response.middleware";
 
 class TestProxy {
   public async getProfile(req: Request, res: Response): Promise<void> {

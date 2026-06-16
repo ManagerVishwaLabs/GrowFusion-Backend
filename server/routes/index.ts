@@ -3,11 +3,12 @@ import { Router } from "express";
 import authRoutes from "../services/auth/";
 import OAuthRoutes from "../services/oauth/";
 import testRoutes from "../services/test/";
+import { AuthMiddleware } from "../config/middlewares/auth.middleware";
 
 const router = Router();
 
 router.use("/auth", authRoutes);
-router.use("/oauth", OAuthRoutes);
-router.use("/test", testRoutes);
+router.use("/oauth", AuthMiddleware, OAuthRoutes);
+router.use("/test", AuthMiddleware, testRoutes);
 
 export default router;

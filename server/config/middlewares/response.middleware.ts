@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-import errors, { ErrorCode } from "../utils/errors";
+import errors, { ErrorCode } from "../../utils/errors";
 
 type ResponseHandlerType = {
   response:
