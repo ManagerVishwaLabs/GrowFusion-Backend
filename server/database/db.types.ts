@@ -11,7 +11,6 @@ type ErrorResponse = {
   success: false;
   code: ErrorCode;
   message?: string;
-
   error?: unknown;
 };
 

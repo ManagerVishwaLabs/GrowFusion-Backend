@@ -17,14 +17,24 @@ class UserLibrary {
 
     if (existingUsername.success && existingUsername.data) {
       return {
-        code: "GF0020003",
+        code: "GF0050001",
         success: false,
       };
     }
+
     const user = await this.userModel.insertOne(userData);
 
+    if (!user.success) {
+      return {
+        code: "GF0050002",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -32,16 +42,34 @@ class UserLibrary {
   public async getUserById(userId: DocumentId): Promise<LibraryResponse> {
     const user = await this.userModel.findById(userId);
 
+    if (!user.success) {
+      return {
+        code: "GF0050003",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
   public async getUsersByIds(userIds: DocumentId[]): Promise<LibraryResponse> {
     const users = await this.userModel.findByIds(userIds);
 
+    if (!users.success) {
+      return {
+        code: "GF0050003",
+        error: users.error,
+        message: users.message,
+        success: false,
+      };
+    }
+
     return {
-      data: users,
+      data: users.data,
       success: true,
     };
   }
@@ -53,15 +81,18 @@ class UserLibrary {
       username,
     });
 
-    if (user.success) {
+    if (!user.success) {
       return {
-        data: user.data,
-        success: true,
+        code: "GF0050003",
+        error: user.error,
+        message: user.message,
+        success: false,
       };
     }
+
     return {
-      code: user.code,
-      success: false,
+      data: user.data,
+      success: true,
     };
   }
 
@@ -69,16 +100,19 @@ class UserLibrary {
     username: string,
   ): Promise<LibraryResponse<Doc<UserType> | null>> {
     const user = await this.userModel.findOne({ username });
-    if (user.success) {
+
+    if (!user.success) {
       return {
-        data: user.data,
-        success: true,
+        code: "GF0050003",
+        error: user.error,
+        message: user.message,
+        success: false,
       };
     }
 
     return {
-      code: user.code,
-      success: false,
+      data: user.data,
+      success: true,
     };
   }
 
@@ -87,8 +121,17 @@ class UserLibrary {
       company,
     });
 
+    if (!users.success) {
+      return {
+        code: "GF0050003",
+        error: users.error,
+        message: users.message,
+        success: false,
+      };
+    }
+
     return {
-      data: users,
+      data: users.data,
       success: true,
     };
   }
@@ -99,8 +142,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const user = await this.userModel.updateById(userId, updateData);
 
+    if (!user.success) {
+      return {
+        code: "GF0050004",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -111,8 +163,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const users = await this.userModel.updateByIds(userIds, updateData);
 
+    if (!users.success) {
+      return {
+        code: "GF0050004",
+        error: users.error,
+        message: users.message,
+        success: false,
+      };
+    }
+
     return {
-      data: users,
+      data: users.data,
       success: true,
     };
   }
@@ -123,8 +184,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const user = await this.userModel.updateOne(filterConditions, updateData);
 
+    if (!user.success) {
+      return {
+        code: "GF0050004",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -135,8 +205,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const user = await this.userModel.updateMany(filterConditions, updateData);
 
+    if (!user.success) {
+      return {
+        code: "GF0050004",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -144,8 +223,17 @@ class UserLibrary {
   public async deleteUserById(userId: DocumentId): Promise<LibraryResponse> {
     const user = await this.userModel.deleteById(userId);
 
+    if (!user.success) {
+      return {
+        code: "GF0050005",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -155,8 +243,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const user = await this.userModel.deleteByIds(userIds);
 
+    if (!user.success) {
+      return {
+        code: "GF0050005",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -166,8 +263,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const user = await this.userModel.deleteOne(filterConditions);
 
+    if (!user.success) {
+      return {
+        code: "GF0050005",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -177,8 +283,17 @@ class UserLibrary {
   ): Promise<LibraryResponse> {
     const user = await this.userModel.deleteMany(filterConditions);
 
+    if (!user.success) {
+      return {
+        code: "GF0050005",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }
@@ -190,8 +305,17 @@ class UserLibrary {
       username: username,
     });
 
+    if (!user.success) {
+      return {
+        code: "GF0050005",
+        error: user.error,
+        message: user.message,
+        success: false,
+      };
+    }
+
     return {
-      data: user,
+      data: user.data,
       success: true,
     };
   }

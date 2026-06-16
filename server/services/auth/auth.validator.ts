@@ -8,7 +8,14 @@ class AuthValidator {
   }: {
     body: Partial<RegisterType>;
   }): ValidatorResponse {
-    const { companyEmail, companyName, fullName, password, userEmail } = body;
+    const {
+      companyEmail,
+      companyName,
+      fullName,
+      password,
+      userEmail,
+      companySize,
+    } = body;
 
     if (!companyName) {
       return "GF0020001";
@@ -68,6 +75,10 @@ class AuthValidator {
 
     if (password.trim().length < 8) {
       return "GF0020015";
+    }
+
+    if (typeof companySize !== "string") {
+      return "GF0020019";
     }
   }
 

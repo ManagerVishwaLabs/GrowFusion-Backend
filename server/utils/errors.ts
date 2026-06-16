@@ -24,10 +24,11 @@ const errors = {
   GF0020016: "Username is required",
   GF0020017: "Username must be a string",
   GF0020018: "Username must be at least 3 characters",
+  GF0020019: "Company Size is required",
+  GF0020020: "Invalid credentials",
+  GF0020500: "Could not register ",
+  GF0020501: "Could not login ",
 
-  /* -------- COMPANY -------- */
-  GF0040001: "Company already exists",
-  GF0040002: "Company not found",
   /* -------- OAUTH -------- */
   GF0030001: "Scopes must be an array",
   GF0030002: "Scopes array cannot be empty",
@@ -38,6 +39,20 @@ const errors = {
   GF0030007: "Code must be a string",
   GF0030008: "Code cannot be empty",
   GF0030009: "OAuth callback failed",
+
+  /* -------- COMPANY -------- */
+  GF0040001: "Company already exists",
+  GF0040002: "Could not create company",
+  GF0040003: "Could not get company",
+  GF0040004: "Could not update company",
+  GF0040005: "Could not delete company",
+
+  /* -------- USER -------- */
+  GF0050001: "User already exists",
+  GF0050002: "Could not create user",
+  GF0050003: "Could not get user",
+  GF0050004: "Could not update user",
+  GF0050005: "Could not delete user",
 
   /* -------- GENERAL -------- */
   GF5000000: "Internal server error",

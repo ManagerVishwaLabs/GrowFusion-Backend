@@ -8,7 +8,8 @@ type ResponseHandlerType = {
     | {
         code?: ErrorCode;
         data?: unknown;
-        error?: string;
+        error?: string | unknown;
+        message?: string;
         redirectUrl?: string;
         success?: boolean;
       }
@@ -47,7 +48,11 @@ class ResponseHandler {
       code: response?.code,
       data: response?.data ?? undefined,
       error: response?.error ?? undefined,
-      message: response?.code ? errors[response.code] : undefined,
+      message: response?.message
+        ? response?.message
+        : response?.code
+          ? errors[response.code]
+          : undefined,
       success: response?.success ?? true,
     });
   }

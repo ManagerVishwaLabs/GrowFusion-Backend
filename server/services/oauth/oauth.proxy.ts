@@ -62,7 +62,7 @@ class OAuthProxy {
 
     const controllerResponse = await OAuthController.instagramOauthCallback({
       query: req.query as unknown as {
-        code?: string;
+        code: string;
         state?: string;
         error?: string;
         error_description?: string;

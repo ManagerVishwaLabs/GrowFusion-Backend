@@ -41,6 +41,25 @@ class AuthController {
         website,
       } = body;
 
+      const existingCompany =
+        await CompanyLibrary.getCompanyByCompany(companyEmail);
+
+      if (existingCompany.success && existingCompany.data) {
+        return {
+          code: "GF0040001",
+          success: false,
+        };
+      }
+
+      const existingUsername = await UserLibrary.getUserByUsername(userEmail);
+
+      if (existingUsername.success && existingUsername.data) {
+        return {
+          code: "GF0050001",
+          success: false,
+        };
+      }
+
       const createdCompany = await CompanyLibrary.createCompany({
         aboutCompany,
         address,
@@ -63,13 +82,8 @@ class AuthController {
       if (!createdCompany.success) {
         return {
           code: createdCompany.code,
-          success: false,
-        };
-      }
-
-      if (!createdCompany.data) {
-        return {
-          code: "GF0020004",
+          message: createdCompany.message,
+          error: createdCompany.error,
           success: false,
         };
       }
@@ -93,21 +107,16 @@ class AuthController {
       if (!createdUser.success) {
         return {
           code: createdUser.code,
-          success: false,
-        };
-      }
-
-      if (!createdUser.data) {
-        return {
-          code: "GF0020004",
+          message: createdUser.message,
+          error: createdUser.error,
           success: false,
         };
       }
 
       return {
         data: {
-          company: createdCompany,
-          user: createdUser,
+          company: createdCompany.data,
+          user: createdUser.data,
         },
         success: true,
       };
@@ -115,7 +124,7 @@ class AuthController {
       console.log(`[AUTH CONTROLLER] error: ${error}`);
 
       return {
-        code: "GF0020004",
+        code: "GF0020500",
         success: false,
       };
     }
@@ -136,7 +145,7 @@ class AuthController {
 
       if (!response.success || !response.data) {
         return {
-          code: "GF0020008",
+          code: "GF0020020",
           success: false,
         };
       }
@@ -147,7 +156,7 @@ class AuthController {
 
       if (!user.passwordHash) {
         return {
-          code: "GF0020009",
+          code: "GF0020020",
           success: false,
         };
       }
@@ -158,22 +167,20 @@ class AuthController {
 
       if (!isPasswordValid) {
         return {
-          code: "GF0020007",
+          code: "GF0020020",
           success: false,
         };
       }
 
       return {
-        data: {
-          user: user,
-        },
+        data: user,
         success: true,
       };
     } catch (error) {
       console.log(`[AUTH CONTROLLER] error: ${error}`);
 
       return {
-        code: "GF0020009",
+        code: "GF0020501",
         success: false,
       };
     }
