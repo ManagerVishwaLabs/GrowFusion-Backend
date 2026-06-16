@@ -47,6 +47,7 @@ class AuthController {
       if (existingCompany.success && existingCompany.data) {
         return {
           code: "GF0040001",
+          statusCode: 409,
           success: false,
         };
       }
@@ -56,6 +57,7 @@ class AuthController {
       if (existingUsername.success && existingUsername.data) {
         return {
           code: "GF0050001",
+          statusCode: 409,
           success: false,
         };
       }
@@ -81,6 +83,7 @@ class AuthController {
 
       if (!createdCompany.success) {
         return {
+          statusCode: 422,
           code: createdCompany.code,
           message: createdCompany.message,
           error: createdCompany.error,
@@ -106,6 +109,7 @@ class AuthController {
 
       if (!createdUser.success) {
         return {
+          statusCode: 422,
           code: createdUser.code,
           message: createdUser.message,
           error: createdUser.error,
@@ -118,12 +122,14 @@ class AuthController {
           company: createdCompany.data,
           user: createdUser.data,
         },
+        statusCode: 201,
         success: true,
       };
     } catch (error) {
       console.log(`[AUTH CONTROLLER] error: ${error}`);
 
       return {
+        statusCode: 500,
         code: "GF0020500",
         success: false,
       };
@@ -146,6 +152,7 @@ class AuthController {
       if (!response.success || !response.data) {
         return {
           code: "GF0020020",
+          statusCode: 401,
           success: false,
         };
       }
@@ -157,6 +164,7 @@ class AuthController {
       if (!user.passwordHash) {
         return {
           code: "GF0020020",
+          statusCode: 401,
           success: false,
         };
       }
@@ -167,6 +175,7 @@ class AuthController {
 
       if (!isPasswordValid) {
         return {
+          statusCode: 401,
           code: "GF0020020",
           success: false,
         };
@@ -181,6 +190,7 @@ class AuthController {
 
       return {
         code: "GF0020501",
+        statusCode: 500,
         success: false,
       };
     }
