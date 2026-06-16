@@ -65,7 +65,19 @@ class InstagramLib {
   public async getProfile(
     selectedFields?: ProfileFields,
   ): Promise<InstagramResponse<UserProfile>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+
+    try {
+      access_token = await this.getAccessToken();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
+
     const response = await this.instagramGraphClient.get<UserProfile>("/me", {
       params: {
         access_token: access_token,
@@ -77,7 +89,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to get profile",
+        error: response.message || "Failed to get profile",
+        code: "IG00040001",
         success: false,
       };
     }
@@ -101,10 +114,11 @@ class InstagramLib {
       );
     } catch (error) {
       return {
-        message:
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
+        code: "IG00040002",
         success: false,
       };
     }
@@ -119,9 +133,20 @@ class InstagramLib {
     imageUrl: string,
     caption?: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+    let account: Doc<SocialMediaAccountType> | undefined;
 
-    const account = await this.getAccountDetails();
+    try {
+      access_token = await this.getAccessToken();
+      account = await this.getAccountDetails();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     if (!this.instagramBusinessAccountId) {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
@@ -141,10 +166,12 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to get profile",
+        code: "IG00040003",
+        error: response.message || "Failed to get profile",
         success: false,
       };
     }
+
     const socialAccountId = account._id;
 
     try {
@@ -160,7 +187,8 @@ class InstagramLib {
       });
     } catch (error) {
       return {
-        message:
+        code: "IG00040014",
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
@@ -178,9 +206,21 @@ class InstagramLib {
     videoUrl: string,
     caption?: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+    let account: Doc<SocialMediaAccountType> | undefined;
 
-    const account = await this.getAccountDetails();
+    try {
+      access_token = await this.getAccessToken();
+      account = await this.getAccountDetails();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
+
     if (!this.instagramBusinessAccountId) {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
@@ -199,7 +239,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to publish media",
+        code: "IG00040004",
+        error: response.message || "Failed to publish media",
         success: false,
       };
     }
@@ -217,7 +258,8 @@ class InstagramLib {
       });
     } catch (error) {
       return {
-        message:
+        code: "IG00040014",
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
@@ -235,9 +277,20 @@ class InstagramLib {
     mediaUrls: CarouselItem[],
     caption?: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+    let account: Doc<SocialMediaAccountType> | undefined;
 
-    const account = await this.getAccountDetails();
+    try {
+      access_token = await this.getAccessToken();
+      account = await this.getAccountDetails();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     if (!this.instagramBusinessAccountId) {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
@@ -270,7 +323,8 @@ class InstagramLib {
 
       if (!child.success || !child.data) {
         return {
-          message:
+          code: "IG00040005",
+          error:
             child.message || `Failed to create carousel item: ${media.url}`,
           success: false,
         };
@@ -300,7 +354,8 @@ class InstagramLib {
 
     if (!carousel.success || !carousel.data) {
       return {
-        message: carousel.message || "Failed to create carousel container",
+        code: "IG00040005",
+        error: carousel.message || "Failed to create carousel container",
         success: false,
       };
     }
@@ -319,7 +374,8 @@ class InstagramLib {
       });
     } catch (error) {
       return {
-        message:
+        code: "IG00040014",
+        error:
           error instanceof Error ? error.message : "Failed to save carousel",
         success: false,
       };
@@ -334,9 +390,20 @@ class InstagramLib {
   public async createImageStory(
     imageUrl: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+    let account: Doc<SocialMediaAccountType> | undefined;
 
-    const account = await this.getAccountDetails();
+    try {
+      access_token = await this.getAccessToken();
+      account = await this.getAccountDetails();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     if (!this.instagramBusinessAccountId) {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
@@ -356,7 +423,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to publish media",
+        code: "IG00040006",
+        error: response.message || "Failed to publish media",
         success: false,
       };
     }
@@ -373,7 +441,8 @@ class InstagramLib {
       });
     } catch (error) {
       return {
-        message:
+        code: "IG00040014",
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
@@ -390,9 +459,20 @@ class InstagramLib {
   public async createVideoStory(
     videoUrl: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+    let account: Doc<SocialMediaAccountType> | undefined;
 
-    const account = await this.getAccountDetails();
+    try {
+      access_token = await this.getAccessToken();
+      account = await this.getAccountDetails();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     if (!this.instagramBusinessAccountId) {
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
@@ -412,7 +492,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to publish media",
+        code: "IG00040007",
+        error: response.message || "Failed to publish media",
         success: false,
       };
     }
@@ -429,7 +510,8 @@ class InstagramLib {
       });
     } catch (error) {
       return {
-        message:
+        code: "IG00040014",
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
@@ -446,7 +528,18 @@ class InstagramLib {
   public async getContainerStatus(
     creationId: string,
   ): Promise<InstagramResponse<ContainerStatusResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+
+    try {
+      access_token = await this.getAccessToken();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     const response =
       await this.instagramGraphClient.get<ContainerStatusResponse>(
@@ -461,7 +554,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to get container status",
+        code: "IG00040011",
+        error: response.message || "Failed to get container status",
         success: false,
       };
     }
@@ -475,10 +569,22 @@ class InstagramLib {
   public async getMediaList(
     cursor?: string,
   ): Promise<InstagramResponse<MediaListResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+    let account: Doc<SocialMediaAccountType> | undefined;
+
+    try {
+      access_token = await this.getAccessToken();
+      account = await this.getAccountDetails();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     if (!this.instagramBusinessAccountId) {
-      const account = await this.getAccountDetails();
       this.instagramBusinessAccountId = account.instagramBusinessAccountId;
     }
 
@@ -494,7 +600,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to get media list",
+        code: "IG00040008",
+        error: response.message || "Failed to get media list",
         success: false,
       };
     }
@@ -508,7 +615,18 @@ class InstagramLib {
   public async getMedia(
     mediaId: string,
   ): Promise<InstagramResponse<MediaDetailsResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+
+    try {
+      access_token = await this.getAccessToken();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     const response = await this.instagramGraphClient.get<MediaDetailsResponse>(
       `/${mediaId}`,
@@ -522,7 +640,8 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to get media",
+        code: "IG00040009",
+        error: response.message || "Failed to get media",
         success: false,
       };
     }
@@ -559,7 +678,8 @@ class InstagramLib {
       );
     } catch (error) {
       return {
-        message:
+        code: "IG00040012",
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
@@ -576,7 +696,18 @@ class InstagramLib {
   public async publishContent(
     creationId: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    const access_token = await this.getAccessToken();
+    let access_token: string | undefined;
+
+    try {
+      access_token = await this.getAccessToken();
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Failed to get access token",
+        code: "IG00040015",
+        success: false,
+      };
+    }
 
     if (!this.instagramBusinessAccountId) {
       const account = await this.getAccountDetails();
@@ -598,10 +729,12 @@ class InstagramLib {
 
     if (!response.success || !response.data) {
       return {
-        message: response.message || "Failed to publish media",
+        code: "IG00040010",
+        error: response.message || "Failed to publish media",
         success: false,
       };
     }
+
     try {
       await this.instagramContentModel.updateOne(
         {
@@ -615,7 +748,8 @@ class InstagramLib {
       );
     } catch (error) {
       return {
-        message:
+        code: "IG00040014",
+        error:
           error instanceof Error
             ? error.message
             : "Failed to save social account",
@@ -638,7 +772,8 @@ class InstagramLib {
 
       if (!status.success) {
         return {
-          message: status.message || "Failed to get container status",
+          code: "IG00040011",
+          error: status.error || "Failed to get container status",
           success: false,
         };
       }
@@ -654,7 +789,8 @@ class InstagramLib {
 
       if (statusCode === "ERROR" || statusCode === "EXPIRED") {
         return {
-          message: `Container status: ${statusCode}`,
+          code: "IG00040011",
+          error: `Container status: ${statusCode}`,
           success: false,
         };
       }
@@ -663,7 +799,8 @@ class InstagramLib {
     }
 
     return {
-      message: "Container processing timeout",
+      code: "IG00040011",
+      error: "Container processing timeout",
       success: false,
     };
   }

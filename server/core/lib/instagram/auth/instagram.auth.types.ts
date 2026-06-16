@@ -1,3 +1,4 @@
+import { ErrorCode } from "../../../../utils/errors";
 import { INSTAGRAM_SCOPES } from "../instagram.constants";
 
 type InstagramScope = (typeof INSTAGRAM_SCOPES)[keyof typeof INSTAGRAM_SCOPES];
@@ -9,7 +10,8 @@ type InstagramResponse<T, E = string> =
     }
   | {
       success: false;
-      message: E;
+      error?: E;
+      code: ErrorCode;
     };
 
 interface InstagramOAuthUrl {

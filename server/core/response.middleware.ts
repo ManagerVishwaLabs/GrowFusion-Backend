@@ -8,7 +8,9 @@ type ResponseHandlerType = {
     | {
         code?: ErrorCode;
         data?: unknown;
+        error?: string;
         redirectUrl?: string;
+        success?: boolean;
       }
     | void;
 
@@ -43,9 +45,10 @@ class ResponseHandler {
 
     res.status(200).json({
       code: response?.code,
-      data: response?.data ?? null,
+      data: response?.data ?? undefined,
+      error: response?.error ?? undefined,
       message: response?.code ? errors[response.code] : undefined,
-      success: true,
+      success: response?.success ?? true,
     });
   }
 }

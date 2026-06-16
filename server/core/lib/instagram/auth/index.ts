@@ -84,10 +84,7 @@ class InstagramAuth {
     const shortTokenRes = await this.exchangeCode(code);
 
     if (!shortTokenRes.success) {
-      return {
-        message: shortTokenRes.message || "Failed to get short-lived token",
-        success: false,
-      };
+      return shortTokenRes;
     }
 
     const shortLived = shortTokenRes.data;
@@ -101,17 +98,11 @@ class InstagramAuth {
     const profileRes = await instagramLib.getProfile();
 
     if (!profileRes.success) {
-      return {
-        message: profileRes.message || "Failed to get user profile",
-        success: false,
-      };
+      return profileRes;
     }
 
     if (!longTokenRes.success) {
-      return {
-        message: longTokenRes.message || "Failed to get long-lived token",
-        success: false,
-      };
+      return longTokenRes;
     }
 
     const longLived = longTokenRes.data;

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 
 import instagramLib from "../../core/lib/instagram/";
+import { ResponseHandler } from "../../core/response.middleware";
 
 class TestProxy {
   public async getProfile(req: Request, res: Response): Promise<void> {
     const controllerResponse = await instagramLib.getProfile();
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async createImagePost(req: Request, res: Response): Promise<void> {
@@ -15,7 +16,7 @@ class TestProxy {
       req.body.caption,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async createReel(req: Request, res: Response): Promise<void> {
@@ -24,7 +25,7 @@ class TestProxy {
       req.body.caption,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async createCarousel(req: Request, res: Response): Promise<void> {
@@ -33,7 +34,7 @@ class TestProxy {
       req.body.caption,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async createImageStory(req: Request, res: Response): Promise<void> {
@@ -41,7 +42,7 @@ class TestProxy {
       req.body.imageUrl,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async createVideoStory(req: Request, res: Response): Promise<void> {
@@ -49,7 +50,7 @@ class TestProxy {
       req.body.videoUrl,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async getMediaList(req: Request, res: Response): Promise<void> {
@@ -57,7 +58,7 @@ class TestProxy {
       req.query.cursor as string,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async getMedia(req: Request, res: Response): Promise<void> {
@@ -65,21 +66,20 @@ class TestProxy {
       req.query.mediaId as string,
     );
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async syncAllMedia(req: Request, res: Response): Promise<void> {
     const controllerResponse = await instagramLib.syncAllMedia();
 
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 
   public async publishContent(req: Request, res: Response): Promise<void> {
     const controllerResponse = await instagramLib.publishContent(
       req.body.creationId,
     );
-
-    res.send(controllerResponse);
+    ResponseHandler.send({ res, response: controllerResponse });
   }
 }
 

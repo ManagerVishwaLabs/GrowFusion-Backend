@@ -12,6 +12,7 @@ class AppError extends Error {
 interface ErrorResponse {
   success: false;
   code: ErrorCode;
+  error?: string;
   message?: string;
 }
 

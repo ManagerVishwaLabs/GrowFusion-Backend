@@ -21,7 +21,7 @@ class InstagramAuthValidator {
 
     if (hasInvalidFields) {
       return {
-        message: "Invalid fields",
+        code: "IG00030001",
         success: false,
       };
     }
@@ -35,14 +35,14 @@ class InstagramAuthValidator {
   public createImagePost(imageUrl: string): InstagramResponse<void> {
     if (!imageUrl?.trim()) {
       return {
-        message: "Image URL cannot be empty",
+        code: "IG00030002",
         success: false,
       };
     }
 
     if (!isValidMediaUrl(imageUrl)) {
       return {
-        message: "Invalid image URL",
+        code: "IG00030003",
         success: false,
       };
     }
@@ -56,14 +56,14 @@ class InstagramAuthValidator {
   public createReel(videoUrl: string): InstagramResponse<void> {
     if (!videoUrl?.trim()) {
       return {
-        message: "Video URL cannot be empty",
+        code: "IG00030004",
         success: false,
       };
     }
 
     if (!isValidMediaUrl(videoUrl)) {
       return {
-        message: "Invalid video URL",
+        code: "IG00030005",
         success: false,
       };
     }
@@ -77,42 +77,42 @@ class InstagramAuthValidator {
   public createCarousel(mediaUrls: CarouselItem[]): InstagramResponse<void> {
     if (!mediaUrls?.length) {
       return {
-        message: "Media URLs cannot be empty",
+        code: "IG00030006",
         success: false,
       };
     }
 
     if (mediaUrls.length < 2) {
       return {
-        message: "Carousel must contain at least 2 media items",
+        code: "IG00030007",
         success: false,
       };
     }
 
     if (mediaUrls.length > 10) {
       return {
-        message: "Cannot have more than 10 media items in a carousel",
+        code: "IG00030008",
         success: false,
       };
     }
 
     if (mediaUrls.some((item) => !item.url?.trim())) {
       return {
-        message: "All media URLs must be non-empty",
+        code: "IG00030009",
         success: false,
       };
     }
 
     if (mediaUrls.some((item) => !isValidMediaUrl(item.url))) {
       return {
-        message: "All media URLs must be valid",
+        code: "IG00030010",
         success: false,
       };
     }
 
     if (mediaUrls.some((item) => !item.type)) {
       return {
-        message: "All media items must have a type",
+        code: "IG00030011",
         success: false,
       };
     }
@@ -121,7 +121,7 @@ class InstagramAuthValidator {
       mediaUrls.some((item) => item.type !== "IMAGE" && item.type !== "VIDEO")
     ) {
       return {
-        message: "Media type must be IMAGE or VIDEO",
+        code: "IG00030011",
         success: false,
       };
     }
@@ -135,14 +135,14 @@ class InstagramAuthValidator {
   public createImageStory(imageUrl: string): InstagramResponse<void> {
     if (!imageUrl?.trim()) {
       return {
-        message: "Image URL cannot be empty",
+        code: "IG00030002",
         success: false,
       };
     }
 
     if (!isValidMediaUrl(imageUrl)) {
       return {
-        message: "Invalid image URL",
+        code: "IG00030003",
         success: false,
       };
     }
@@ -156,14 +156,14 @@ class InstagramAuthValidator {
   public createVideoStory(videoUrl: string): InstagramResponse<void> {
     if (!videoUrl?.trim()) {
       return {
-        message: "Video URL cannot be empty",
+        code: "IG00030004",
         success: false,
       };
     }
 
     if (!isValidMediaUrl(videoUrl)) {
       return {
-        message: "Invalid video URL",
+        code: "IG00030005",
         success: false,
       };
     }
@@ -177,14 +177,14 @@ class InstagramAuthValidator {
   public getMedia(mediaId: string): InstagramResponse<void> {
     if (!mediaId?.trim()) {
       return {
-        message: "Media ID cannot be empty",
+        code: "IG00030012",
         success: false,
       };
     }
 
     if (Number.isNaN(Number(mediaId))) {
       return {
-        message: "Invalid media ID",
+        code: "IG00030013",
         success: false,
       };
     }
@@ -198,14 +198,14 @@ class InstagramAuthValidator {
   public publishContent(creationId: string): InstagramResponse<void> {
     if (!creationId?.trim()) {
       return {
-        message: "Creation ID cannot be empty",
+        code: "IG00030014",
         success: false,
       };
     }
 
     if (Number.isNaN(Number(creationId))) {
       return {
-        message: "Invalid creation ID",
+        code: "IG00030015",
         success: false,
       };
     }

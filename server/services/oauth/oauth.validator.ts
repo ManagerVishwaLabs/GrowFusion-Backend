@@ -13,25 +13,25 @@ class OAuthValidator {
 
     if (scopes) {
       if (!Array.isArray(scopes)) {
-        return "IG00010001";
+        return "GF0030001";
       }
 
       if (scopes.length === 0) {
-        return "IG00010002";
+        return "GF0030002";
       }
 
       if (!scopes.every((scope) => typeof scope === "string")) {
-        return "IG00010003";
+        return "GF0030003";
       }
     }
 
     if (state) {
       if (typeof state !== "string") {
-        return "IG00010004";
+        return "GF0030004";
       }
 
       if (state.trim().length === 0) {
-        return "IG00010005";
+        return "GF0030005";
       }
     }
 
@@ -48,49 +48,27 @@ class OAuthValidator {
       error_description?: string;
     };
   }): ValidatorResponse {
-    const { code, error, error_description, state } = query;
-
-    if (error) {
-      if (typeof error !== "string") {
-        return "IG00020001";
-      }
-
-      if (error.trim().length === 0) {
-        return "IG00020002";
-      }
-
-      if (error_description) {
-        if (typeof error_description !== "string") {
-          return "IG00020003";
-        }
-
-        if (error_description.trim().length === 0) {
-          return "IG00020004";
-        }
-      }
-
-      return "IG00020005";
-    }
+    const { code, state } = query;
 
     if (!code) {
-      return "IG00020006";
+      return "GF0030006";
     }
 
     if (typeof code !== "string") {
-      return "IG00020007";
+      return "GF0030007";
     }
 
     if (code.trim().length === 0) {
-      return "IG00020008";
+      return "GF0030008";
     }
 
     if (state) {
       if (typeof state !== "string") {
-        return "IG00020009";
+        return "GF0030004";
       }
 
       if (state.trim().length === 0) {
-        return "IG00020010";
+        return "GF0030005";
       }
     }
 
