@@ -42,6 +42,7 @@ const errors = {
   GF0030007: "Code must be a string",
   GF0030008: "Code cannot be empty",
   GF0030009: "OAuth callback failed",
+  GF0030010: "User not found",
 
   /* -------- COMPANY -------- */
   GF0040001: "Company already exists",
@@ -86,6 +87,8 @@ const errors = {
   IG00020005: "Failed to save refreshed token",
   IG00020006: "Unable to perform instagram auth operation",
   IG00020007: "Access token not found",
+  IG00020008: "Instagram account not found",
+  IG00020009: "User not found",
 
   /* -------- INSTAGRAM -------- */
   IG00030001: "Profile fields array contains invalid fields",

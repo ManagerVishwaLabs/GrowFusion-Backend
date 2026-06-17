@@ -2,8 +2,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import env from "../../config/env";
+import { createAccessToken, createRefreshToken } from "../../config/jwt";
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
+import userSessionLib from "../../library/userSession.lib";
 import { UserRole } from "../../utils/constants";
 import {
   ControllerResponse,
@@ -11,8 +13,6 @@ import {
   RefreshTokenPayload,
 } from "../../utils/types";
 import { LoginType, RegisterType } from "./auth.types";
-import { createAccessToken, createRefreshToken } from "../../config/jwt";
-import userSessionLib from "../../library/userSession.lib";
 
 class AuthController {
   public async register({

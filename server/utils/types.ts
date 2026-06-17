@@ -1,9 +1,9 @@
+import { Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 
 import { UserRole } from "./constants";
 import { ErrorCode } from "./errors";
-import { Request, Response } from "express";
-import { JwtPayload } from "jsonwebtoken";
 
 interface AccessTokenPayload extends JwtPayload {
   userId: string;
@@ -58,12 +58,12 @@ type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 
 export {
   AccessTokenPayload,
-  RefreshTokenPayload,
   AppError,
-  ControllerType,
   ControllerResponse,
+  ControllerType,
   DocumentId,
   LibraryResponse,
+  RefreshTokenPayload,
   UserRoleType,
   ValidatorResponse,
 };

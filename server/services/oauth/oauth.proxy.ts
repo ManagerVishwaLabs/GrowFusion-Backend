@@ -30,6 +30,7 @@ class OAuthProxy {
         scopes?: string[];
         state?: string;
       },
+      req,
     });
 
     ResponseHandler.send({
@@ -63,7 +64,7 @@ class OAuthProxy {
     const controllerResponse = await OAuthController.instagramOauthCallback({
       data: req.query as unknown as {
         code: string;
-        state?: string;
+        state: string;
         error?: string;
         error_description?: string;
       },

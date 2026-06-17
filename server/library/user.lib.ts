@@ -1,12 +1,12 @@
 import { QueryFilter } from "mongoose";
 
-import DBModule from "../database/db.module";
+import DBModule, { ModelWrapper } from "../database/db.module";
 import { Doc } from "../database/db.types";
 import { UserType } from "../database/models/user.model";
 import { DocumentId, LibraryResponse } from "../utils/types";
 
 class UserLibrary {
-  private userModel;
+  private userModel: ModelWrapper<UserType>;
 
   constructor() {
     this.userModel = DBModule.createModel("User");

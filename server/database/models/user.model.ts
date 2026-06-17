@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
 
 import { UserRole } from "../../utils/constants";
 import { UserRoleType } from "../../utils/types";

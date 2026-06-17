@@ -1,4 +1,5 @@
 import "express";
+
 import { UserType } from "../database/models/user.model";
 
 declare global {

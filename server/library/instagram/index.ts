@@ -11,10 +11,14 @@ import {
 import validator from "./instagram.validator";
 
 class Instagram {
-  private instagramLib: InstagramLib;
-  constructor(user: UserType | undefined) {
-    this.instagramLib = new InstagramLib(user);
+  private constructor(private instagramLib: InstagramLib) {}
+
+  public static async init(user: UserType | undefined): Promise<Instagram> {
+    const instagramLib = await InstagramLib.init(user);
+
+    return new Instagram(instagramLib);
   }
+
   public async getProfile(
     selectedFields?: ProfileFields,
   ): Promise<InstagramResponse<UserProfile>> {

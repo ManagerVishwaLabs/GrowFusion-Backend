@@ -1,7 +1,8 @@
 import env from "../../../config/env";
-import DBModule from "../../../database/db.module";
-import { UserType } from "../../../database/models/user.model";
 import axios from "../../../core/axios";
+import DBModule, { ModelWrapper } from "../../../database/db.module";
+import { SocialMediaAccountType } from "../../../database/models/socialAccount.model";
+import { UserType } from "../../../database/models/user.model";
 import {
   DEFAULT_SCOPES,
   INSTAGRAM_CODE_EXCHANGE_URL,
@@ -17,15 +18,37 @@ import {
 } from "./instagram.auth.types";
 
 class InstagramAuthLib {
-  private socialAccountModel;
-  private user: UserType | undefined;
+  private socialAccountModel: ModelWrapper<SocialMediaAccountType>;
+  private user: UserType;
 
-  constructor(user: UserType | undefined) {
+  constructor(
+    user: UserType,
+    socialAccountModel: ModelWrapper<SocialMediaAccountType>,
+  ) {
     this.user = user;
-    this.socialAccountModel = DBModule.createModel("SocialMediaAccount");
+    this.socialAccountModel = socialAccountModel;
   }
 
-  public async generateOAuthUrl({
+  public static async init(user: UserType | undefined) {
+    if (!user) {
+      throw new Error("IG00020009");
+    }
+
+    const socialAccountModel = DBModule.createModel("SocialMediaAccount");
+
+    const account = await socialAccountModel.findOne({
+      username: user.username,
+      company: user.company,
+    });
+
+    if (!account.success || !account.data) {
+      throw new Error("IG00020008");
+    }
+
+    return new InstagramAuthLib(user, socialAccountModel);
+  }
+
+  public static async generateOAuthUrl({
     scopes,
     state,
   }: GenerateOAuthUrlParams = {}): Promise<
@@ -65,7 +88,7 @@ class InstagramAuthLib {
     }
   }
 
-  public async exchangeCode(
+  public static async exchangeCode(
     code: string,
   ): Promise<InstagramResponse<InstagramShortLivedToken>> {
     try {
@@ -111,7 +134,8 @@ class InstagramAuthLib {
     }
   }
 
-  public async exchangeShortLivedToken(
+  public static async exchangeShortLivedToken(
+    user: UserType,
     tokenApiUserId: string,
     shortLivedToken: string,
     scopes?: string[],
@@ -137,19 +161,21 @@ class InstagramAuthLib {
       }
 
       try {
-        await this.socialAccountModel.updateOne(
+        const socialAccountModel = DBModule.createModel("SocialMediaAccount");
+
+        await socialAccountModel.updateOne(
           {
             tokenApiUserId,
           },
           {
             accessToken: response.data.access_token,
-            company: this.user?.company,
+            company: user.company,
             mediaName: "instagram",
             scopes: scopes,
             tokenExpiresAt: new Date(
               Date.now() + response.data.expires_in * 1000,
             ),
-            username: this.user?.username,
+            username: user.username,
           },
           {
             upsert: true,
@@ -207,8 +233,8 @@ class InstagramAuthLib {
       try {
         this.socialAccountModel.updateOne(
           {
-            username: this.user?.username,
-            company: this.user?.company,
+            username: this.user.username,
+            company: this.user.company,
             tokenApiUserId,
           },
           {

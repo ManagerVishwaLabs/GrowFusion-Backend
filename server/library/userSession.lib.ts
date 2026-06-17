@@ -1,12 +1,12 @@
 import { QueryFilter } from "mongoose";
 
-import DBModule from "../database/db.module";
+import DBModule, { ModelWrapper } from "../database/db.module";
 import { Doc } from "../database/db.types";
-import { DocumentId, LibraryResponse } from "../utils/types";
 import { UserSessionType } from "../database/models/userSession.mode";
+import { DocumentId, LibraryResponse } from "../utils/types";
 
 class UserSessionLibrary {
-  private sessionModel;
+  private sessionModel: ModelWrapper<UserSessionType>;
 
   constructor() {
     this.sessionModel = DBModule.createModel("UserSession");

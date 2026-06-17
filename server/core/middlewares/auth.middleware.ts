@@ -1,5 +1,6 @@
-import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+
 import env from "../../config/env";
 import userLib from "../../library/user.lib";
 import { AccessTokenPayload } from "../../utils/types";
@@ -10,17 +11,18 @@ const AuthMiddleware = async (
   next: NextFunction,
 ) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers?.authorization;
 
     if (!authHeader) {
       return res.status(401).json({
+        message: "Authorization is required",
         success: false,
       });
     }
 
     if (!authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
-        message: "Authorization is required",
+        message: "Authorization token is missing",
         success: false,
       });
     }
@@ -36,14 +38,16 @@ const AuthMiddleware = async (
 
     if (!userData.success) {
       return res.status(401).json({
-        message: "Invalid session, please login again",
+        message: "Invalid session user, please login again",
+        code: userData.code,
+        error: userData.error,
         success: false,
       });
     }
 
     if (!userData.data) {
       return res.status(401).json({
-        message: "Invalid session, please login again",
+        message: "Invalid session user, please login again",
         success: false,
       });
     }

@@ -553,3 +553,4 @@ class DBModule {
 }
 
 export default DBModule;
+export { ModelWrapper };

@@ -8,7 +8,7 @@ type ResponseHandlerType = {
     | {
         code?: ErrorCode;
         data?: unknown;
-        error?: string | unknown;
+        error?: unknown;
         message?: string;
         redirectUrl?: string;
         success?: boolean;
@@ -38,21 +38,22 @@ class ResponseHandler {
 
       return;
     }
-    if ("redirectUrl" in response && response.redirectUrl) {
+
+    if (response.redirectUrl) {
       res.redirect(response.redirectUrl);
       return;
     }
 
-    res.status((response.statusCode ?? response?.success) ? 200 : 400).json({
-      code: response?.code,
-      data: response?.data ?? undefined,
-      error: response?.error ?? undefined,
-      message: response?.message
-        ? response?.message
-        : response?.code
-          ? errors[response.code]
-          : undefined,
-      success: response?.success ?? true,
+    const statusCode =
+      response.statusCode ?? (response.success === false ? 400 : 200);
+
+    res.status(statusCode).json({
+      code: response.code,
+      data: response.data,
+      error: response.error,
+      message:
+        response.message ?? (response.code ? errors[response.code] : undefined),
+      success: response.success ?? true,
     });
   }
 }

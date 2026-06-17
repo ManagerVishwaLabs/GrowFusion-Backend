@@ -1,8 +1,9 @@
-import DBModule from "../../database/db.module";
+import axios from "../../core/axios";
+import DBModule, { ModelWrapper } from "../../database/db.module";
 import { Doc } from "../../database/db.types";
+import { InstagramContentType } from "../../database/models/instagramContent.model";
 import { SocialMediaAccountType } from "../../database/models/socialAccount.model";
 import { UserType } from "../../database/models/user.model";
-import axios from "../../core/axios";
 import {
   INSTAGRAM_GRAPH_API_URL,
   MEDIA_FIELDS,
@@ -20,74 +21,53 @@ import {
 } from "./instagram.types";
 
 class InstagramLib {
-  private socialAccountModel;
-  private instagramContentModel;
+  private socialAccountModel: ModelWrapper<SocialMediaAccountType>;
+  private instagramContentModel: ModelWrapper<InstagramContentType>;
   private instagramGraphClient: axios;
-  private accessToken: string | null = null;
-  private instagramBusinessAccountId: string | undefined = undefined;
-  private user: UserType | undefined;
+  private user: UserType;
+  private accessToken: string;
+  private instagramBusinessAccountId?: string;
+  private account: Doc<SocialMediaAccountType>;
 
-  constructor(user: UserType | undefined) {
+  constructor(
+    user: UserType,
+    account: Doc<SocialMediaAccountType>,
+    socialAccountModel: ModelWrapper<SocialMediaAccountType>,
+  ) {
     this.user = user;
-    this.socialAccountModel = DBModule.createModel("SocialMediaAccount");
+    this.account = account;
+    this.accessToken = account.accessToken;
+    this.instagramBusinessAccountId = account.instagramBusinessAccountId;
+    this.socialAccountModel = socialAccountModel;
     this.instagramContentModel = DBModule.createModel("InstagramContent");
     this.instagramGraphClient = axios.create(INSTAGRAM_GRAPH_API_URL);
   }
 
-  private async getAccessToken(): Promise<string> {
-    if (this.accessToken) {
-      return this.accessToken;
+  public static async init(user: UserType | undefined): Promise<InstagramLib> {
+    if (!user) {
+      throw new Error("IG00020009");
     }
 
-    const account = await this.socialAccountModel.findOne(
-      {
-        company: this.user?.company || "",
-        username: this.user?.username || "",
-      },
-      { accessToken: 1 },
-    );
+    const socialAccountModel = DBModule.createModel("SocialMediaAccount");
 
-    if (!account.success || !account.data) {
-      throw new Error("Instagram access token not found");
-    }
-
-    this.accessToken = account.data.accessToken;
-    return this.accessToken;
-  }
-
-  private async getAccountDetails(): Promise<Doc<SocialMediaAccountType>> {
-    const account = await this.socialAccountModel.findOne({
-      username: this.user?.username || "",
-      company: this.user?.company || "",
+    const account = await socialAccountModel.findOne({
+      username: user.username,
+      company: user.company,
     });
 
     if (!account.success || !account.data) {
-      throw new Error("Instagram account not found");
+      throw new Error("IG00020008");
     }
 
-    this.instagramBusinessAccountId = account.data.instagramBusinessAccountId;
-    return account.data;
+    return new InstagramLib(user, account.data, socialAccountModel);
   }
 
   public async getProfile(
     selectedFields?: ProfileFields,
   ): Promise<InstagramResponse<UserProfile>> {
-    let access_token: string | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
     const response = await this.instagramGraphClient.get<UserProfile>("/me", {
       params: {
-        access_token: access_token,
+        access_token: this.accessToken,
         fields: selectedFields
           ? selectedFields.join(",")
           : PROFILE_FIELDS.join(","),
@@ -105,7 +85,9 @@ class InstagramLib {
     try {
       await this.socialAccountModel.updateOne(
         {
-          accessToken: access_token,
+          accessToken: this.accessToken,
+          username: this.user.username || "",
+          company: this.user.company || "",
         },
         {
           appUserId: response.data.id,
@@ -140,31 +122,12 @@ class InstagramLib {
     imageUrl: string,
     caption?: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    let access_token: string | undefined;
-    let account: Doc<SocialMediaAccountType> | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-      account = await this.getAccountDetails();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
-
     const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
         params: {
-          access_token: access_token,
+          access_token: this.accessToken,
           caption,
           image_url: imageUrl,
         },
@@ -179,18 +142,16 @@ class InstagramLib {
       };
     }
 
-    const socialAccountId = account._id;
-
     try {
       await this.instagramContentModel.insertOne({
         caption,
-        company: this.user?.company || "",
+        company: this.user.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "IMAGE",
         mediaUrl: imageUrl,
-        socialAccountId,
-        username: this.user?.username || "",
+        socialAccountId: this.account._id,
+        username: this.user.username || "",
       });
     } catch (error) {
       return {
@@ -213,30 +174,12 @@ class InstagramLib {
     videoUrl: string,
     caption?: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    let access_token: string | undefined;
-    let account: Doc<SocialMediaAccountType> | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-      account = await this.getAccountDetails();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
     const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           caption,
           media_type: "REELS",
           video_url: videoUrl,
@@ -255,13 +198,13 @@ class InstagramLib {
     try {
       await this.instagramContentModel.insertOne({
         caption,
-        company: this.user?.company || "",
+        company: this.user.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "REELS",
         mediaUrl: videoUrl,
-        socialAccountId: account._id,
-        username: this.user?.username || "",
+        socialAccountId: this.account._id,
+        username: this.user.username || "",
       });
     } catch (error) {
       return {
@@ -284,37 +227,18 @@ class InstagramLib {
     mediaUrls: CarouselItem[],
     caption?: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    let access_token: string | undefined;
-    let account: Doc<SocialMediaAccountType> | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-      account = await this.getAccountDetails();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
-
     const children: string[] = [];
 
     for (const media of mediaUrls) {
       const params =
         media.type === "IMAGE"
           ? {
-              access_token,
+              access_token: this.accessToken,
               image_url: media.url,
               is_carousel_item: true,
             }
           : {
-              access_token,
+              access_token: this.accessToken,
               is_carousel_item: true,
               media_type: "VIDEO",
               video_url: media.url,
@@ -351,7 +275,7 @@ class InstagramLib {
       null,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           caption,
           children: children.join(","),
           media_type: "CAROUSEL_ALBUM",
@@ -372,12 +296,12 @@ class InstagramLib {
         caption,
         childCreationIds: children,
         childMediaUrls: mediaUrls.slice(1).map((item) => item.url),
-        company: this.user?.company || "",
+        company: this.user.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: carousel.data.id,
         mediaType: "CAROUSEL_ALBUM",
-        socialAccountId: account._id,
-        username: this.user?.username || "",
+        socialAccountId: this.account._id,
+        username: this.user.username || "",
       });
     } catch (error) {
       return {
@@ -397,31 +321,12 @@ class InstagramLib {
   public async createImageStory(
     imageUrl: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    let access_token: string | undefined;
-    let account: Doc<SocialMediaAccountType> | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-      account = await this.getAccountDetails();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
-
     const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           image_url: imageUrl,
           media_type: "STORIES",
         },
@@ -438,13 +343,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
-        company: this.user?.company || "",
+        company: this.user.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data.id,
         mediaType: "STORY",
         mediaUrl: imageUrl,
-        socialAccountId: account._id,
-        username: this.user?.username || "",
+        socialAccountId: this.account._id,
+        username: this.user.username || "",
       });
     } catch (error) {
       return {
@@ -466,31 +371,12 @@ class InstagramLib {
   public async createVideoStory(
     videoUrl: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    let access_token: string | undefined;
-    let account: Doc<SocialMediaAccountType> | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-      account = await this.getAccountDetails();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
-
     const response = await this.instagramGraphClient.post<MediaIDResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       null,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           media_type: "STORIES",
           video_url: videoUrl,
         },
@@ -507,13 +393,13 @@ class InstagramLib {
 
     try {
       await this.instagramContentModel.insertOne({
-        company: this.user?.company || "",
+        company: this.user.company || "",
         instagramBusinessAccountId: this.instagramBusinessAccountId!,
         instagramCreationId: response.data?.id,
         mediaType: "STORY",
         mediaUrl: videoUrl,
-        socialAccountId: account._id,
-        username: this.user?.username || "",
+        socialAccountId: this.account._id,
+        username: this.user.username || "",
       });
     } catch (error) {
       return {
@@ -535,25 +421,12 @@ class InstagramLib {
   public async getContainerStatus(
     creationId: string,
   ): Promise<InstagramResponse<ContainerStatusResponse>> {
-    let access_token: string | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
     const response =
       await this.instagramGraphClient.get<ContainerStatusResponse>(
         `/${creationId}`,
         {
           params: {
-            access_token,
+            access_token: this.accessToken,
             fields: "status_code",
           },
         },
@@ -576,30 +449,11 @@ class InstagramLib {
   public async getMediaList(
     cursor?: string,
   ): Promise<InstagramResponse<MediaListResponse>> {
-    let access_token: string | undefined;
-    let account: Doc<SocialMediaAccountType> | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-      account = await this.getAccountDetails();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
-
     const response = await this.instagramGraphClient.get<MediaListResponse>(
       `/${this.instagramBusinessAccountId}/media`,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           cursor,
         },
       },
@@ -622,24 +476,11 @@ class InstagramLib {
   public async getMedia(
     mediaId: string,
   ): Promise<InstagramResponse<MediaDetailsResponse>> {
-    let access_token: string | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
     const response = await this.instagramGraphClient.get<MediaDetailsResponse>(
       `/${mediaId}`,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           fields: MEDIA_FIELDS.join(","),
         },
       },
@@ -703,24 +544,6 @@ class InstagramLib {
   public async publishContent(
     creationId: string,
   ): Promise<InstagramResponse<MediaIDResponse>> {
-    let access_token: string | undefined;
-
-    try {
-      access_token = await this.getAccessToken();
-    } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Failed to get access token",
-        code: "IG00040015",
-        success: false,
-      };
-    }
-
-    if (!this.instagramBusinessAccountId) {
-      const account = await this.getAccountDetails();
-      this.instagramBusinessAccountId = account.instagramBusinessAccountId;
-    }
-
     const waitResult = await this.waitForContainerReady(creationId);
 
     if (!waitResult.success) {
@@ -732,7 +555,7 @@ class InstagramLib {
       null,
       {
         params: {
-          access_token,
+          access_token: this.accessToken,
           creation_id: creationId,
         },
       },

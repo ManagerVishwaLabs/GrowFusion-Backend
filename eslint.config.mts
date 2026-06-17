@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 
 import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 import { defineConfig } from "eslint/config";
 
@@ -23,6 +24,7 @@ export default defineConfig([
 
     plugins: {
       prettier: prettierPlugin,
+      "simple-import-sort": simpleImportSort,
     },
 
     languageOptions: {
@@ -32,7 +34,6 @@ export default defineConfig([
     },
 
     rules: {
-    
       "prettier/prettier": "warn",
 
       "@typescript-eslint/no-unused-vars": [
@@ -42,13 +43,8 @@ export default defineConfig([
           varsIgnorePattern: "^_",
         },
       ],
-
-      "sort-imports": [
-        "warn",
-        {
-          ignoreDeclarationSort: true,
-        },
-      ],
+      "simple-import-sort/exports": "error",
+      "simple-import-sort/imports": "error",
 
       "no-console": "off",
     },

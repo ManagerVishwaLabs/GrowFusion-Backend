@@ -14,7 +14,6 @@ import {
   responseLogger,
 } from "./core/middlewares/logger.middleware";
 import notFoundMiddleware from "./core/middlewares/not-found.middleware";
-
 import routes from "./routes";
 
 const app = express();
@@ -31,11 +30,8 @@ app.use(
 app.use(
   cors({
     origin: [env.CLIENT_URL, env.TEMP_CLIENT],
-
     credentials: true,
-
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
@@ -71,7 +67,6 @@ app.use(responseLogger);
 app.get("/health", (_req, res) => {
   res.status(200).json({
     success: true,
-
     message: "Server healthy",
   });
 });
@@ -89,7 +84,6 @@ const start = async () => {
     });
   } catch (error) {
     console.error("[SERVER]", error);
-
     process.exit(1);
   }
 };
