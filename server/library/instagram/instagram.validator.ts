@@ -1,4 +1,4 @@
-import { isValidMediaUrl } from "../../../utils/helperFunctions";
+import { isValidMediaUrl } from "../../utils/helperFunctions";
 import { PROFILE_FIELDS } from "./instagram.constants";
 import {
   CarouselItem,

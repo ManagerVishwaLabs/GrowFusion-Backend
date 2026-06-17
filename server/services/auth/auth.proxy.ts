@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { ResponseHandler } from "../../config/middlewares/response.middleware";
+import { ResponseHandler } from "../../core/middlewares/response.middleware";
 import AuthController from "./auth.controller";
 import AuthValidator from "./auth.validator";
 

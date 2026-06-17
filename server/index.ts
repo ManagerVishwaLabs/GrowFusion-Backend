@@ -8,12 +8,12 @@ import hpp from "hpp";
 
 import connectDB from "./config/db";
 import env from "./config/env";
-import errorMiddleware from "./config/middlewares/error.middleware";
+import errorMiddleware from "./core/middlewares/error.middleware";
 import {
   requestLogger,
   responseLogger,
-} from "./config/middlewares/logger.middleware";
-import notFoundMiddleware from "./config/middlewares/not-found.middleware";
+} from "./core/middlewares/logger.middleware";
+import notFoundMiddleware from "./core/middlewares/not-found.middleware";
 
 import routes from "./routes";
 

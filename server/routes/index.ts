@@ -3,7 +3,7 @@ import { Router } from "express";
 import authRoutes from "../services/auth/";
 import OAuthRoutes from "../services/oauth/";
 import testRoutes from "../services/test/";
-import { AuthMiddleware } from "../config/middlewares/auth.middleware";
+import { AuthMiddleware } from "../core/middlewares/auth.middleware";
 
 const router = Router();
 

@@ -1,4 +1,4 @@
-import { UserType } from "../../../database/models/user.model";
+import { UserType } from "../../database/models/user.model";
 import InstagramLib from "./instagram.lib";
 import {
   CarouselItem,

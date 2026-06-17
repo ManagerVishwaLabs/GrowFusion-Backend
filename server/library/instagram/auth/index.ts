@@ -1,4 +1,4 @@
-import { UserType } from "../../../../database/models/user.model";
+import { UserType } from "../../../database/models/user.model";
 import { DEFAULT_SCOPES } from "../instagram.constants";
 import InstagramLib from "../instagram.lib";
 import InstagramAuthLib from "./instagram.auth.lib";

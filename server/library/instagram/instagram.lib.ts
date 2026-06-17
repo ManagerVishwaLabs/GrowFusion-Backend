@@ -1,8 +1,8 @@
-import DBModule from "../../../database/db.module";
-import { Doc } from "../../../database/db.types";
-import { SocialMediaAccountType } from "../../../database/models/socialAccount.model";
-import { UserType } from "../../../database/models/user.model";
-import axios from "../../axios";
+import DBModule from "../../database/db.module";
+import { Doc } from "../../database/db.types";
+import { SocialMediaAccountType } from "../../database/models/socialAccount.model";
+import { UserType } from "../../database/models/user.model";
+import axios from "../../core/axios";
 import {
   INSTAGRAM_GRAPH_API_URL,
   MEDIA_FIELDS,

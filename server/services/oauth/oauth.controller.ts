@@ -1,5 +1,5 @@
 import { Request } from "express";
-import InstagramAuth from "../../core/lib/instagram/auth";
+import InstagramAuth from "../../library/instagram/auth";
 import { ControllerResponse, ControllerType } from "../../utils/types";
 import { InstagramOauthRedirect } from "./oauth.types";
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { ResponseHandler } from "../../config/middlewares/response.middleware";
+import { ResponseHandler } from "../../core/middlewares/response.middleware";
 import OAuthController from "./oauth.controller";
 import OAuthValidator from "./oauth.validator";
 

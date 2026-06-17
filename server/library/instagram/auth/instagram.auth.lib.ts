@@ -1,7 +1,7 @@
-import env from "../../../../config/env";
-import DBModule from "../../../../database/db.module";
-import { UserType } from "../../../../database/models/user.model";
-import axios from "../../../axios";
+import env from "../../../config/env";
+import DBModule from "../../../database/db.module";
+import { UserType } from "../../../database/models/user.model";
+import axios from "../../../core/axios";
 import {
   DEFAULT_SCOPES,
   INSTAGRAM_CODE_EXCHANGE_URL,
