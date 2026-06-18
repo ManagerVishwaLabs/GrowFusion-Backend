@@ -210,9 +210,10 @@ class AuthController {
 
       res?.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
       });
 
       if (!sessionResponse.success) {
@@ -325,8 +326,10 @@ class AuthController {
 
       res?.cookie("refreshToken", newRefresh, {
         httpOnly: true,
-        secure: env.NODE_ENV === "production",
-        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
       });
 
       return {
@@ -366,8 +369,10 @@ class AuthController {
 
       res?.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: env.NODE_ENV === "production",
-        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
       });
 
       return {
@@ -376,8 +381,10 @@ class AuthController {
     } catch {
       res?.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: env.NODE_ENV === "production",
-        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
       });
 
       return {
