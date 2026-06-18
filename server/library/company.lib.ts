@@ -1,11 +1,11 @@
 import { QueryFilter } from "mongoose";
 
-import DBModule from "../database/db.module";
+import DBModule, { ModelWrapper } from "../database/db.module";
 import { CompanyType } from "../database/models/company.model";
 import { DocumentId, LibraryResponse } from "../utils/types";
 
 class CompanyLibrary {
-  private companyModel;
+  private companyModel: ModelWrapper<CompanyType>;
 
   constructor() {
     this.companyModel = DBModule.createModel("Company");

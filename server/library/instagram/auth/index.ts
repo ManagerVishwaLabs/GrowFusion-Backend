@@ -1,6 +1,6 @@
+import { UserType } from "../../../database/models/user.model";
 import { DEFAULT_SCOPES } from "../instagram.constants";
-import instagramLib from "../instagram.lib";
-import instagramAuthLib from "./instagram.auth.lib";
+import InstagramAuthLib from "./instagram.auth.lib";
 import {
   GenerateOAuthUrlParams,
   InstagramLongLivedToken,
@@ -11,7 +11,15 @@ import {
 import validator from "./instagram.auth.validator";
 
 class InstagramAuth {
-  public async generateOAuthUrl({
+  constructor(private instagramAuthLib: InstagramAuthLib) {}
+
+  public static async init(user: UserType | undefined) {
+    const instagramAuthLib = await InstagramAuthLib.init(user);
+
+    return new InstagramAuth(instagramAuthLib);
+  }
+
+  public static async generateOAuthUrl({
     scopes = DEFAULT_SCOPES,
     state,
   }: GenerateOAuthUrlParams = {}): Promise<
@@ -23,13 +31,13 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.generateOAuthUrl({
+    return InstagramAuthLib.generateOAuthUrl({
       scopes,
       state,
     });
   }
 
-  public async exchangeCode(
+  public static async exchangeCode(
     code: string,
   ): Promise<InstagramResponse<InstagramShortLivedToken>> {
     const validation = validator.exchangeCode(code);
@@ -38,10 +46,11 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.exchangeCode(code);
+    return InstagramAuthLib.exchangeCode(code);
   }
 
-  public async exchangeShortLivedToken(
+  public static async exchangeShortLivedToken(
+    user: UserType,
     tokenApiUserId: string,
     shortLivedToken: string,
     scopes?: string[],
@@ -52,7 +61,8 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.exchangeShortLivedToken(
+    return InstagramAuthLib.exchangeShortLivedToken(
+      user,
       tokenApiUserId,
       shortLivedToken,
       scopes,
@@ -69,52 +79,11 @@ class InstagramAuth {
       return validation;
     }
 
-    return instagramAuthLib.refreshLongLivedToken(
+    return this.instagramAuthLib.refreshLongLivedToken(
       tokenApiUserId,
       longLivedToken,
     );
   }
-
-  public async exchangeCodeToLongLivedToken(code: string): Promise<
-    InstagramResponse<{
-      shortLived: InstagramShortLivedToken;
-      longLived: InstagramLongLivedToken;
-    }>
-  > {
-    const shortTokenRes = await this.exchangeCode(code);
-
-    if (!shortTokenRes.success) {
-      return shortTokenRes;
-    }
-
-    const shortLived = shortTokenRes.data;
-
-    const longTokenRes = await this.exchangeShortLivedToken(
-      shortLived.user_id,
-      shortLived.access_token,
-      shortLived.permissions,
-    );
-
-    const profileRes = await instagramLib.getProfile();
-
-    if (!profileRes.success) {
-      return profileRes;
-    }
-
-    if (!longTokenRes.success) {
-      return longTokenRes;
-    }
-
-    const longLived = longTokenRes.data;
-
-    return {
-      data: {
-        longLived,
-        shortLived,
-      },
-      success: true,
-    };
-  }
 }
 
-export default new InstagramAuth();
+export default InstagramAuth;

@@ -1,4 +1,5 @@
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
@@ -6,20 +7,19 @@ import helmet from "helmet";
 import hpp from "hpp";
 
 import connectDB from "./config/db";
-import { env } from "./config/env";
+import env from "./config/env";
+import errorMiddleware from "./core/middlewares/error.middleware";
 import {
-  notFoundMiddleware,
   requestLogger,
   responseLogger,
-} from "./config/middlewares";
+} from "./core/middlewares/logger.middleware";
+import notFoundMiddleware from "./core/middlewares/not-found.middleware";
 import routes from "./routes";
 
 const app = express();
 
 app.disable("x-powered-by");
-
 app.set("trust proxy", 1);
-
 app.use(
   helmet({
     crossOriginResourcePolicy: {
@@ -27,54 +27,67 @@ app.use(
     },
   }),
 );
-
 app.use(
   cors({
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [env.CLIENT_URL, env.TEMP_CLIENT],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    origin: [env.CLIENT_URL, env.TEMP_CLIENT],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
-connectDB();
-
+app.use(cookieParser(env.COOKIE_SECRET));
 app.use(hpp());
 app.use(compression());
-
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
-
+app.use(
+  express.json({
+    limit: "10kb",
+  }),
+);
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "10kb",
+  }),
+);
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      success: false,
+      message: "Too many requests. Please try again later.",
+    },
+  }),
+);
 app.use(requestLogger);
 app.use(responseLogger);
 
-app.use(
-  rateLimit({
-    legacyHeaders: false,
-    max: 100,
-    message: {
-      message: "Too many requests. Please try again later.",
-
-      success: false,
-    },
-    standardHeaders: true,
-    windowMs: 15 * 60 * 1000,
-  }),
-);
-
 app.get("/health", (_req, res) => {
   res.status(200).json({
-    message: "Server healthy",
     success: true,
+    message: "Server healthy",
   });
 });
 
 app.use("/api", routes);
-
+app.use(errorMiddleware);
 app.use(notFoundMiddleware);
 
-const PORT = env.PORT;
+const start = async () => {
+  try {
+    await connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    app.listen(env.PORT, () => {
+      console.log(`Server running on port ${env.PORT}`);
+    });
+  } catch (error) {
+    console.error("[SERVER]", error);
+    process.exit(1);
+  }
+};
+
+void start();
+
+export default app;

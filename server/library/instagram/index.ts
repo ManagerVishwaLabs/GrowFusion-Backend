@@ -1,4 +1,5 @@
-import instagramLib from "./instagram.lib";
+import { UserType } from "../../database/models/user.model";
+import InstagramLib from "./instagram.lib";
 import {
   CarouselItem,
   InstagramResponse,
@@ -10,6 +11,14 @@ import {
 import validator from "./instagram.validator";
 
 class Instagram {
+  private constructor(private instagramLib: InstagramLib) {}
+
+  public static async init(user: UserType | undefined): Promise<Instagram> {
+    const instagramLib = await InstagramLib.init(user);
+
+    return new Instagram(instagramLib);
+  }
+
   public async getProfile(
     selectedFields?: ProfileFields,
   ): Promise<InstagramResponse<UserProfile>> {
@@ -19,7 +28,7 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.getProfile(selectedFields);
+    return this.instagramLib.getProfile(selectedFields);
   }
 
   public async createImagePost(
@@ -32,7 +41,7 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.createImagePost(imageUrl, caption);
+    return this.instagramLib.createImagePost(imageUrl, caption);
   }
 
   public async createReel(
@@ -45,7 +54,7 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.createReel(videoUrl, caption);
+    return this.instagramLib.createReel(videoUrl, caption);
   }
 
   public async createCarousel(
@@ -58,7 +67,7 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.createCarousel(mediaUrls, caption);
+    return this.instagramLib.createCarousel(mediaUrls, caption);
   }
 
   public async createImageStory(
@@ -70,7 +79,7 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.createImageStory(imageUrl);
+    return this.instagramLib.createImageStory(imageUrl);
   }
 
   public async createVideoStory(
@@ -82,13 +91,13 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.createVideoStory(videoUrl);
+    return this.instagramLib.createVideoStory(videoUrl);
   }
 
   public async getMediaList(
     cursor?: string,
   ): Promise<InstagramResponse<MediaListResponse>> {
-    const mediaList = await instagramLib.getMediaList(cursor);
+    const mediaList = await this.instagramLib.getMediaList(cursor);
 
     if (!mediaList.success) {
       return {
@@ -113,7 +122,7 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.getMedia(mediaId);
+    return this.instagramLib.getMedia(mediaId);
   }
 
   public async syncAllMedia(): Promise<
@@ -141,7 +150,7 @@ class Instagram {
         const mediaListData = mediaList?.data;
 
         for (const media of mediaListData.data) {
-          await instagramLib.getMedia(media.id);
+          await this.instagramLib.getMedia(media.id);
           syncedMediaCount++;
         }
 
@@ -183,8 +192,8 @@ class Instagram {
       return validation;
     }
 
-    return instagramLib.publishContent(creationId);
+    return this.instagramLib.publishContent(creationId);
   }
 }
 
-export default new Instagram();
+export default Instagram;

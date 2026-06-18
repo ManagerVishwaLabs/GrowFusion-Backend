@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { ResponseHandler } from "../../core/response.middleware";
+import { ResponseHandler } from "../../core/middlewares/response.middleware";
 import OAuthController from "./oauth.controller";
 import OAuthValidator from "./oauth.validator";
 
@@ -26,10 +26,11 @@ class OAuthProxy {
     }
 
     const controllerResponse = await OAuthController.instagramOauthRedirect({
-      params: req.query as unknown as {
+      data: req.query as unknown as {
         scopes?: string[];
         state?: string;
       },
+      req,
     });
 
     ResponseHandler.send({
@@ -61,9 +62,9 @@ class OAuthProxy {
     }
 
     const controllerResponse = await OAuthController.instagramOauthCallback({
-      query: req.query as unknown as {
+      data: req.query as unknown as {
         code: string;
-        state?: string;
+        state: string;
         error?: string;
         error_description?: string;
       },

@@ -1,12 +1,12 @@
 import { QueryFilter } from "mongoose";
 
-import DBModule from "../database/db.module";
+import DBModule, { ModelWrapper } from "../database/db.module";
 import { Doc } from "../database/db.types";
 import { UserType } from "../database/models/user.model";
 import { DocumentId, LibraryResponse } from "../utils/types";
 
 class UserLibrary {
-  private userModel;
+  private userModel: ModelWrapper<UserType>;
 
   constructor() {
     this.userModel = DBModule.createModel("User");
@@ -39,7 +39,9 @@ class UserLibrary {
     };
   }
 
-  public async getUserById(userId: DocumentId): Promise<LibraryResponse> {
+  public async getUserById(
+    userId: DocumentId,
+  ): Promise<LibraryResponse<Doc<UserType>>> {
     const user = await this.userModel.findById(userId);
 
     if (!user.success) {
@@ -51,12 +53,21 @@ class UserLibrary {
       };
     }
 
+    if (!user.data) {
+      return {
+        code: "GF0050003",
+        success: false,
+      };
+    }
+
     return {
       data: user.data,
       success: true,
     };
   }
-  public async getUsersByIds(userIds: DocumentId[]): Promise<LibraryResponse> {
+  public async getUsersByIds(
+    userIds: DocumentId[],
+  ): Promise<LibraryResponse<Doc<UserType>[]>> {
     const users = await this.userModel.findByIds(userIds);
 
     if (!users.success) {
@@ -64,6 +75,13 @@ class UserLibrary {
         code: "GF0050003",
         error: users.error,
         message: users.message,
+        success: false,
+      };
+    }
+
+    if (!users.data) {
+      return {
+        code: "GF0050003",
         success: false,
       };
     }
@@ -76,7 +94,7 @@ class UserLibrary {
 
   public async getUserByUsername(
     username: string,
-  ): Promise<LibraryResponse<Doc<UserType> | null>> {
+  ): Promise<LibraryResponse<Doc<UserType>>> {
     const user = await this.userModel.findOne({
       username,
     });
@@ -86,6 +104,13 @@ class UserLibrary {
         code: "GF0050003",
         error: user.error,
         message: user.message,
+        success: false,
+      };
+    }
+
+    if (!user.data) {
+      return {
+        code: "GF0050003",
         success: false,
       };
     }

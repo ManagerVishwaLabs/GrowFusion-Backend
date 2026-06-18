@@ -1,7 +1,23 @@
+import { Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 import mongoose from "mongoose";
 
 import { UserRole } from "./constants";
 import { ErrorCode } from "./errors";
+
+interface AccessTokenPayload extends JwtPayload {
+  userId: string;
+  username: string;
+  role: string;
+  company: string;
+  jti: string;
+}
+
+interface RefreshTokenPayload extends JwtPayload {
+  sub: string;
+  exp: number;
+  jti: string;
+}
 
 class AppError extends Error {
   constructor(public code: ErrorCode) {
@@ -24,6 +40,12 @@ interface SuccessResponse<T = unknown> {
   redirectUrl?: string;
 }
 
+type ControllerType<T> = {
+  data: T;
+  req?: Request;
+  res?: Response;
+};
+
 type ControllerResponse<T = unknown> = ErrorResponse | SuccessResponse<T>;
 
 type LibraryResponse<T = unknown> = ErrorResponse | SuccessResponse<T>;
@@ -35,10 +57,13 @@ type DocumentId = string | mongoose.Types.ObjectId;
 type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 
 export {
+  AccessTokenPayload,
   AppError,
   ControllerResponse,
+  ControllerType,
   DocumentId,
   LibraryResponse,
+  RefreshTokenPayload,
   UserRoleType,
   ValidatorResponse,
 };

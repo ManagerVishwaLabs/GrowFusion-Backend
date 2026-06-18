@@ -26,8 +26,11 @@ const errors = {
   GF0020018: "Username must be at least 3 characters",
   GF0020019: "Company Size is required",
   GF0020020: "Invalid credentials",
-  GF0020500: "Could not register ",
-  GF0020501: "Could not login ",
+  GF0020021: "Refresh token is missing",
+  GF0020022: "Session is expired",
+  GF0020023: "Invalid session",
+  GF0020500: "Could not register",
+  GF0020501: "Could not login",
 
   /* -------- OAUTH -------- */
   GF0030001: "Scopes must be an array",
@@ -39,6 +42,7 @@ const errors = {
   GF0030007: "Code must be a string",
   GF0030008: "Code cannot be empty",
   GF0030009: "OAuth callback failed",
+  GF0030010: "User not found",
 
   /* -------- COMPANY -------- */
   GF0040001: "Company already exists",
@@ -53,6 +57,16 @@ const errors = {
   GF0050003: "Could not get user",
   GF0050004: "Could not update user",
   GF0050005: "Could not delete user",
+
+  /* -------- USER SESSION -------- */
+  GF0060001: "Could not create session",
+  GF0060002: "Could not get session",
+  GF0060003: "Could not get session by token id",
+  GF0060004: "Could not get user sessions",
+  GF0060005: "Could not revoke session",
+  GF0060006: "Could not revoke all user sessions",
+  GF0060007: "Could not delete expired sessions",
+  GF0060008: "Could not update session",
 
   /* -------- GENERAL -------- */
   GF5000000: "Internal server error",
@@ -73,6 +87,8 @@ const errors = {
   IG00020005: "Failed to save refreshed token",
   IG00020006: "Unable to perform instagram auth operation",
   IG00020007: "Access token not found",
+  IG00020008: "Instagram account not found",
+  IG00020009: "User not found",
 
   /* -------- INSTAGRAM -------- */
   IG00030001: "Profile fields array contains invalid fields",

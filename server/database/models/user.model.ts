@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
 
 import { UserRole } from "../../utils/constants";
 import { UserRoleType } from "../../utils/types";
@@ -12,7 +12,7 @@ interface UserType {
   designation?: string;
   passwordHash?: string;
   phoneNumber?: string;
-  userRole?: UserRoleType;
+  userRole: UserRoleType;
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

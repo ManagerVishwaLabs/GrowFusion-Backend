@@ -1,4 +1,4 @@
-import { ErrorCode } from "../../../utils/errors";
+import { ErrorCode } from "../../utils/errors";
 import { PROFILE_FIELDS } from "./instagram.constants";
 
 type InstagramResponse<T, E = string> =

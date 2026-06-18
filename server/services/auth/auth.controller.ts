@@ -1,18 +1,23 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-import { env } from "../../config/env";
+import env from "../../config/env";
+import { createAccessToken, createRefreshToken } from "../../config/jwt";
 import CompanyLibrary from "../../library/company.lib";
 import UserLibrary from "../../library/user.lib";
+import userSessionLib from "../../library/userSession.lib";
 import { UserRole } from "../../utils/constants";
-import { ControllerResponse } from "../../utils/types";
-import { RegisterType } from "./auth.types";
+import {
+  ControllerResponse,
+  ControllerType,
+  RefreshTokenPayload,
+} from "../../utils/types";
+import { LoginType, RegisterType } from "./auth.types";
 
 class AuthController {
   public async register({
-    body,
-  }: {
-    body: RegisterType;
-  }): Promise<ControllerResponse> {
+    data,
+  }: ControllerType<RegisterType>): Promise<ControllerResponse> {
     try {
       const {
         aboutCompany,
@@ -39,7 +44,7 @@ class AuthController {
         userEmail,
         visionMission,
         website,
-      } = body;
+      } = data;
 
       const existingCompany =
         await CompanyLibrary.getCompanyByCompany(companyEmail);
@@ -137,15 +142,12 @@ class AuthController {
   }
 
   public async login({
-    body,
-  }: {
-    body: {
-      username: string;
-      password: string;
-    };
-  }): Promise<ControllerResponse> {
+    data,
+    req,
+    res,
+  }: ControllerType<LoginType>): Promise<ControllerResponse> {
     try {
-      const { password, username } = body;
+      const { password, username } = data;
 
       const response = await UserLibrary.getUserByUsername(username);
 
@@ -181,8 +183,50 @@ class AuthController {
         };
       }
 
+      const accessToken = createAccessToken({
+        userId: user.id,
+        username: user.username,
+        role: user.userRole,
+        company: user.company,
+      });
+
+      const refreshToken = createRefreshToken({
+        userId: user.id,
+      });
+
+      const decoded = jwt.decode(refreshToken) as {
+        jti: string;
+        exp: number;
+      };
+
+      const sessionResponse = await userSessionLib.createSession({
+        userId: user._id,
+        tokenId: decoded.jti,
+        refreshTokenHash: await bcrypt.hash(refreshToken, 10),
+        expiresAt: new Date(decoded.exp * 1000),
+        userAgent: req?.headers["user-agent"],
+        ipAddress: req?.ip,
+      });
+
+      res?.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+      });
+
+      if (!sessionResponse.success) {
+        return {
+          code: sessionResponse.code,
+          error: sessionResponse.error,
+          statusCode: 401,
+          success: false,
+        };
+      }
+
       return {
-        data: user,
+        data: { accessToken },
         success: true,
       };
     } catch (error) {
@@ -192,6 +236,159 @@ class AuthController {
         code: "GF0020501",
         statusCode: 500,
         success: false,
+      };
+    }
+  }
+
+  public async refresh({
+    req,
+    res,
+  }: ControllerType<void>): Promise<ControllerResponse> {
+    try {
+      const refreshToken = req?.cookies?.refreshToken;
+
+      if (!refreshToken) {
+        return {
+          success: false,
+          code: "GF0020021",
+          statusCode: 401,
+        };
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        env.JWT_REFRESH_SECRET,
+      ) as RefreshTokenPayload;
+
+      const session = await userSessionLib.getSessionByTokenId(decoded.jti);
+
+      if (!session.success || !session.data) {
+        return {
+          success: false,
+          code: "GF0020022",
+          statusCode: 401,
+        };
+      }
+
+      if (session.data.isRevoked) {
+        return {
+          success: false,
+          code: "GF0020023",
+          statusCode: 401,
+        };
+      }
+
+      const valid = await bcrypt.compare(
+        refreshToken,
+        session.data.refreshTokenHash,
+      );
+
+      if (!valid) {
+        return {
+          success: false,
+          code: "GF0020023",
+          statusCode: 401,
+        };
+      }
+
+      await userSessionLib.revokeSession(decoded.jti);
+      const user = await UserLibrary.getUserById(decoded?.sub);
+
+      if (!user.success || !user.data) {
+        return {
+          success: false,
+          code: "GF0020023",
+          statusCode: 401,
+        };
+      }
+
+      const accessToken = createAccessToken({
+        userId: user.data.id,
+        username: user.data.username,
+        role: user.data.userRole,
+        company: user.data.company,
+      });
+
+      const newRefresh = createRefreshToken({
+        userId: user.data.id,
+      });
+
+      const newDecoded = jwt.decode(newRefresh) as RefreshTokenPayload;
+
+      await userSessionLib.createSession({
+        userId: user.data._id,
+        tokenId: newDecoded.jti,
+        refreshTokenHash: await bcrypt.hash(newRefresh, 10),
+        expiresAt: new Date(newDecoded.exp * 1000),
+        userAgent: req.headers["user-agent"],
+        ipAddress: req.ip,
+      });
+
+      res?.cookie("refreshToken", newRefresh, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+      });
+
+      return {
+        success: true,
+        data: {
+          accessToken,
+        },
+      };
+    } catch {
+      return {
+        success: false,
+        code: "GF0020023",
+        statusCode: 401,
+      };
+    }
+  }
+
+  public async logout({
+    req,
+    res,
+  }: ControllerType<void>): Promise<ControllerResponse> {
+    try {
+      const refreshToken = req?.cookies?.refreshToken;
+
+      if (!refreshToken) {
+        return {
+          success: true,
+        };
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        env.JWT_REFRESH_SECRET,
+      ) as RefreshTokenPayload;
+
+      await userSessionLib.revokeSession(decoded.jti);
+
+      res?.clearCookie("refreshToken", {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+      });
+
+      return {
+        success: true,
+      };
+    } catch {
+      res?.clearCookie("refreshToken", {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+      });
+
+      return {
+        success: true,
       };
     }
   }

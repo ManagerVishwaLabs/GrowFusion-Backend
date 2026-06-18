@@ -116,6 +116,26 @@ class AuthValidator {
       return "GF0020015";
     }
   }
+
+  public validateRefresh({
+    cookies,
+  }: {
+    cookies: { refreshToken: string };
+  }): ValidatorResponse {
+    const { refreshToken } = cookies;
+
+    if (!refreshToken) {
+      return "GF0020021";
+    }
+
+    if (typeof refreshToken !== "string") {
+      return "GF0020021";
+    }
+
+    if (refreshToken.trim().length === 0) {
+      return "GF0020021";
+    }
+  }
 }
 
 export default new AuthValidator();

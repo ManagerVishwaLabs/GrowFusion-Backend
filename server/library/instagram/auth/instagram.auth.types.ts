@@ -1,4 +1,4 @@
-import { ErrorCode } from "../../../../utils/errors";
+import { ErrorCode } from "../../../utils/errors";
 import { INSTAGRAM_SCOPES } from "../instagram.constants";
 
 type InstagramScope = (typeof INSTAGRAM_SCOPES)[keyof typeof INSTAGRAM_SCOPES];
