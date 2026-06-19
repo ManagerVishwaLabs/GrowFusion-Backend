@@ -14,19 +14,6 @@ class CompanyLibrary {
   public async createCompany(
     companyData: CompanyType,
   ): Promise<LibraryResponse> {
-    if (companyData.company) {
-      const existingCompany = await this.getCompanyByCompany(
-        companyData.company,
-      );
-
-      if (existingCompany.success && existingCompany.data) {
-        return {
-          code: "GF0040001",
-          success: false,
-        };
-      }
-    }
-
     const company = await this.companyModel.insertOne(companyData);
 
     if (!company.success) {
@@ -136,14 +123,6 @@ class CompanyLibrary {
         code: "GF0040004",
         error: company.error,
         message: company.message,
-        success: false,
-      };
-    }
-
-    if (!company.data) {
-      return {
-        code: "GF0040004",
-        message: "Company not found",
         success: false,
       };
     }
