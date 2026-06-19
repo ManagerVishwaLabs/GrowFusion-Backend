@@ -8,7 +8,8 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["--inspect-brk", "--import", "tsx", "server/index.ts"],
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/**/*.(m|c|)js", "!**/node_modules/**"]
     }
   ]
 }

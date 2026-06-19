@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import env from "../../config/env";
 import { createAccessToken, createRefreshToken } from "../../config/jwt";
 import CompanyLibrary from "../../library/company.lib";
+import invitationLibrary from "../../library/invitation.lib";
 import UserLibrary from "../../library/user.lib";
 import userSessionLib from "../../library/userSession.lib";
 import { UserRole } from "../../utils/constants";
@@ -12,7 +13,7 @@ import {
   ControllerType,
   RefreshTokenPayload,
 } from "../../utils/types";
-import { LoginType, RegisterType } from "./auth.types";
+import { LoginType, RegisterType, RegisterUserType } from "./auth.types";
 
 class AuthController {
   public async register({
@@ -35,7 +36,6 @@ class AuthController {
         fullName,
         industry,
         instagram,
-        lastName,
         linkedin,
         password,
         pincode,
@@ -105,7 +105,6 @@ class AuthController {
         designation,
         email: userEmail,
         fullName,
-        lastName,
         passwordHash: hashedPassword,
         phoneNumber: adminPhone,
         username: userEmail,
@@ -127,6 +126,82 @@ class AuthController {
           company: createdCompany.data,
           user: createdUser.data,
         },
+        statusCode: 201,
+        success: true,
+      };
+    } catch (error) {
+      console.log(`[AUTH CONTROLLER] error: ${error}`);
+
+      return {
+        statusCode: 500,
+        code: "GF0020500",
+        success: false,
+      };
+    }
+  }
+
+  public async registerUser({
+    data,
+  }: ControllerType<RegisterUserType>): Promise<ControllerResponse> {
+    try {
+      const {
+        inviteCode,
+        fullName,
+        email,
+        phoneNumber,
+        designation,
+        password,
+      } = data;
+
+      const existingUsername = await UserLibrary.getUserByUsername(email);
+
+      if (existingUsername.success && existingUsername.data) {
+        return {
+          code: "GF0050001",
+          statusCode: 409,
+          success: false,
+        };
+      }
+
+      const invitation =
+        await invitationLibrary.getInvitationByCode(inviteCode);
+
+      if (!invitation.success) {
+        return {
+          code: invitation.code,
+          error: invitation.error,
+          statusCode: 400,
+          success: false,
+        };
+      }
+
+      const pepper = env.PASSWORD_PEPPER;
+
+      const hashedPassword = await bcrypt.hash(password + pepper, 10);
+
+      const createdUser = await UserLibrary.createUser({
+        company: invitation.data.company,
+        designation,
+        email,
+        fullName,
+        passwordHash: hashedPassword,
+        phoneNumber,
+        username: email,
+        userRole: UserRole.USER,
+      });
+
+      if (!createdUser.success) {
+        return {
+          statusCode: 422,
+          code: createdUser.code,
+          message: createdUser.message,
+          error: createdUser.error,
+          success: false,
+        };
+      }
+
+      return {
+        data: createdUser.data,
         statusCode: 201,
         success: true,
       };
@@ -356,6 +431,7 @@ class AuthController {
 
       if (!refreshToken) {
         return {
+          data: null,
           success: true,
         };
       }
@@ -376,6 +452,7 @@ class AuthController {
       });
 
       return {
+        data: null,
         success: true,
       };
     } catch {
@@ -388,6 +465,7 @@ class AuthController {
       });
 
       return {
+        data: null,
         success: true,
       };
     }

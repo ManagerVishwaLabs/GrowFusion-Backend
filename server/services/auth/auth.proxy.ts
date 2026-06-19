@@ -29,6 +29,30 @@ class AuthProxy {
     });
   }
 
+  public async registerUser(req: Request, res: Response): Promise<void> {
+    const validationResponse = AuthValidator.validateRegisterUser({
+      body: req.body,
+    });
+
+    if (validationResponse) {
+      ResponseHandler.send({
+        res,
+        response: validationResponse,
+      });
+
+      return;
+    }
+
+    const controllerResponse = await AuthController.registerUser({
+      data: req.body,
+    });
+
+    ResponseHandler.send({
+      res,
+      response: controllerResponse,
+    });
+  }
+
   public async login(req: Request, res: Response): Promise<void> {
     const validationResponse = AuthValidator.validateLogin({
       body: req.body,

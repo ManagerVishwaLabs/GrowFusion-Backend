@@ -15,7 +15,7 @@ class OAuthController {
   }: ControllerType<InstagramOauthRedirect>): Promise<ControllerResponse> {
     if (!req?.user) {
       return {
-        code: "GF0030010",
+        code: "GF0090006",
         error: "User not found",
         success: false,
       };
@@ -45,6 +45,7 @@ class OAuthController {
     }
 
     return {
+      data: null,
       redirectUrl: response.data.url,
       success: true,
     };

@@ -35,7 +35,7 @@ interface ErrorResponse {
 
 interface SuccessResponse<T = unknown> {
   success: true;
-  data?: T;
+  data: T;
   statusCode?: number;
   redirectUrl?: string;
 }

@@ -26,8 +26,18 @@ type RegisterType = {
   designation: string;
 };
 
+type RegisterUserType = {
+  inviteCode: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  designation: string;
+  password: string;
+};
+
 type LoginType = {
   username: string;
   password: string;
 };
-export { LoginType, RegisterType };
+
+export { LoginType, RegisterType, RegisterUserType };
