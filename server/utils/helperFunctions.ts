@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { Types } from "mongoose";
 
 import { DocumentId } from "./types";
@@ -64,4 +65,19 @@ const isValidMediaUrl = (url: string): boolean => {
   }
 };
 
-export { isEmailAddress, isObjectId, isValidMediaUrl, isValidUrl };
+const generateRandomString = async (length: number = 10): Promise<string> => {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  return Array.from(
+    crypto.randomBytes(length),
+    (byte) => chars[byte % chars.length],
+  ).join("");
+};
+
+export {
+  generateRandomString,
+  isEmailAddress,
+  isObjectId,
+  isValidMediaUrl,
+  isValidUrl,
+};

@@ -5,7 +5,7 @@ const errors = {
   GF0010003: "Document not found",
   GF0010004: "Validation failed",
 
-  /* -------- AUTH -------- */
+  /* -------- AUTH SERVICE -------- */
   GF0020001: "Company Name is required",
   GF0020002: "Company Name must be a string",
   GF0020003: "Company Name must be at least 2 characters",
@@ -29,10 +29,12 @@ const errors = {
   GF0020021: "Refresh token is missing",
   GF0020022: "Session is expired",
   GF0020023: "Invalid session",
+  GF0020024: "Invite code is missing",
+  GF0020025: "Invalid invite code",
   GF0020500: "Could not register",
   GF0020501: "Could not login",
 
-  /* -------- OAUTH -------- */
+  /* -------- OAUTH SERVICE -------- */
   GF0030001: "Scopes must be an array",
   GF0030002: "Scopes array cannot be empty",
   GF0030003: "All scopes must be strings",
@@ -42,23 +44,24 @@ const errors = {
   GF0030007: "Code must be a string",
   GF0030008: "Code cannot be empty",
   GF0030009: "OAuth callback failed",
-  GF0030010: "User not found",
 
-  /* -------- COMPANY -------- */
+  /* -------- COMPANY LIBRARY -------- */
   GF0040001: "Company already exists",
   GF0040002: "Could not create company",
   GF0040003: "Could not get company",
-  GF0040004: "Could not update company",
-  GF0040005: "Could not delete company",
+  GF0040004: "Company not found",
+  GF0040005: "Could not update company",
+  GF0040006: "Could not delete company",
 
-  /* -------- USER -------- */
+  /* -------- USER LIBRARY -------- */
   GF0050001: "User already exists",
   GF0050002: "Could not create user",
   GF0050003: "Could not get user",
-  GF0050004: "Could not update user",
-  GF0050005: "Could not delete user",
+  GF0050004: "User not found",
+  GF0050005: "Could not update user",
+  GF0050006: "Could not delete user",
 
-  /* -------- USER SESSION -------- */
+  /* -------- USER SESSION LIBRARY -------- */
   GF0060001: "Could not create session",
   GF0060002: "Could not get session",
   GF0060003: "Could not get session by token id",
@@ -68,10 +71,37 @@ const errors = {
   GF0060007: "Could not delete expired sessions",
   GF0060008: "Could not update session",
 
+  /* -------- USER INVITATION LIBRARY -------- */
+  GF0070001: "Could not create invitation",
+  GF0070002: "Could not get invitation",
+  GF0070003: "Could not get pending invitation",
+  GF0070004: "Could not get company invitations",
+  GF0070005: "Could not revoke invitation",
+  GF0070006: "Could not accept invitation",
+  GF0070007: "Could not reject invitation",
+  GF0070008: "Could not expire invitations",
+  GF0070009: "Could not update invitation",
+  GF0070010: "Invitation not found",
+  GF0070011: "No pending invitations found",
+  GF0070500: "Could not perform invitation operation",
+
+  /* -------- INVITATION SERVICE -------- */
+  GF0080001: "Invitee name is required",
+  GF0080002: "Invitee email is required",
+  GF0080003: "Invitee email must be a valid email address",
+  GF0080004: "Invitation already exists",
+  GF0080005: "Invitation not found",
+  GF0080006: "Invite code is required",
+  GF0080007: "Invalid invite code",
+  GF0080500: "Could not perform invitation operation",
+
+  /* -------- USER SERVICE -------- */
+  GF0090006: "User not found",
+
   /* -------- GENERAL -------- */
   GF5000000: "Internal server error",
 
-  /* -------- INSTAGRAM AUTH -------- */
+  /* -------- INSTAGRAM AUTH LIBRARY -------- */
   IG00010001: "Scopes must be an array",
   IG00010002: "Scopes array cannot be empty",
   IG00010003: "All scopes must be strings",
@@ -90,7 +120,7 @@ const errors = {
   IG00020008: "Instagram account not found",
   IG00020009: "User not found",
 
-  /* -------- INSTAGRAM -------- */
+  /* -------- INSTAGRAM LIBRARY -------- */
   IG00030001: "Profile fields array contains invalid fields",
   IG00030002: "Image URL is required",
   IG00030003: "Image URL must be a valid URL",

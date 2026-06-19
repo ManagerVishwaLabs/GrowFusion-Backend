@@ -3,6 +3,7 @@ import Company, { CompanyType } from "./company.model";
 import InstagramContent, {
   InstagramContentType,
 } from "./instagramContent.model";
+import Invitation, { InvitationType } from "./invitation.model";
 import SocialMediaAccount, {
   SocialMediaAccountType,
 } from "./socialAccount.model";
@@ -14,6 +15,7 @@ const models = {
   SocialMediaAccount,
   User,
   UserSession,
+  Invitation,
 };
 
 interface ModelRegistry {
@@ -22,6 +24,7 @@ interface ModelRegistry {
   SocialMediaAccount: SocialMediaAccountType;
   InstagramContent: InstagramContentType;
   UserSession: UserSessionType;
+  Invitation: InvitationType;
 }
 
 export { ModelRegistry, models };

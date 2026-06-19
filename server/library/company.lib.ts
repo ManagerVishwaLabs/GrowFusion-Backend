@@ -14,19 +14,6 @@ class CompanyLibrary {
   public async createCompany(
     companyData: CompanyType,
   ): Promise<LibraryResponse> {
-    if (companyData.company) {
-      const existingCompany = await this.getCompanyByCompany(
-        companyData.company,
-      );
-
-      if (existingCompany.success && existingCompany.data) {
-        return {
-          code: "GF0040001",
-          success: false,
-        };
-      }
-    }
-
     const company = await this.companyModel.insertOne(companyData);
 
     if (!company.success) {
@@ -56,6 +43,14 @@ class CompanyLibrary {
       };
     }
 
+    if (!company.data) {
+      return {
+        code: "GF0040004",
+        message: "Company not found",
+        success: false,
+      };
+    }
+
     return {
       data: company.data,
       success: true,
@@ -76,12 +71,19 @@ class CompanyLibrary {
       };
     }
 
+    if (!companies.data?.length) {
+      return {
+        code: "GF0040004",
+        message: "Companies not found",
+        success: false,
+      };
+    }
+
     return {
       data: companies.data,
       success: true,
     };
   }
-
   public async getCompanyByCompany(company: string): Promise<LibraryResponse> {
     const foundCompany = await this.companyModel.findOne({
       company,
@@ -92,6 +94,14 @@ class CompanyLibrary {
         code: "GF0040003",
         error: foundCompany.error,
         message: foundCompany.message,
+        success: false,
+      };
+    }
+
+    if (!foundCompany.data) {
+      return {
+        code: "GF0040004",
+        message: "Company not found",
         success: false,
       };
     }
@@ -117,6 +127,13 @@ class CompanyLibrary {
       };
     }
 
+    if (!company.data) {
+      return {
+        code: "GF0040004",
+        message: "Company not found",
+        success: false,
+      };
+    }
     return {
       data: company.data,
       success: true,
@@ -137,6 +154,14 @@ class CompanyLibrary {
         code: "GF0040004",
         error: companies.error,
         message: companies.message,
+        success: false,
+      };
+    }
+
+    if (!companies.data) {
+      return {
+        code: "GF0040004",
+        message: "Company not found",
         success: false,
       };
     }
@@ -165,6 +190,14 @@ class CompanyLibrary {
       };
     }
 
+    if (!company.data) {
+      return {
+        code: "GF0040004",
+        message: "Company not found",
+        success: false,
+      };
+    }
+
     return {
       data: company.data,
       success: true,
@@ -185,6 +218,14 @@ class CompanyLibrary {
         code: "GF0040004",
         error: companies.error,
         message: companies.message,
+        success: false,
+      };
+    }
+
+    if (!companies.data) {
+      return {
+        code: "GF0040004",
+        message: "Company not found",
         success: false,
       };
     }

@@ -13,15 +13,6 @@ class UserLibrary {
   }
 
   public async createUser(userData: UserType): Promise<LibraryResponse> {
-    const existingUsername = await this.getUserByUsername(userData.username);
-
-    if (existingUsername.success && existingUsername.data) {
-      return {
-        code: "GF0050001",
-        success: false,
-      };
-    }
-
     const user = await this.userModel.insertOne(userData);
 
     if (!user.success) {
@@ -55,7 +46,8 @@ class UserLibrary {
 
     if (!user.data) {
       return {
-        code: "GF0050003",
+        code: "GF0050004",
+        message: "User not found",
         success: false,
       };
     }
@@ -65,6 +57,7 @@ class UserLibrary {
       success: true,
     };
   }
+
   public async getUsersByIds(
     userIds: DocumentId[],
   ): Promise<LibraryResponse<Doc<UserType>[]>> {
@@ -79,9 +72,10 @@ class UserLibrary {
       };
     }
 
-    if (!users.data) {
+    if (!users.data?.length) {
       return {
-        code: "GF0050003",
+        code: "GF0050004",
+        message: "Users not found",
         success: false,
       };
     }
@@ -110,7 +104,8 @@ class UserLibrary {
 
     if (!user.data) {
       return {
-        code: "GF0050003",
+        code: "GF0050004",
+        message: "User not found",
         success: false,
       };
     }
@@ -135,6 +130,14 @@ class UserLibrary {
       };
     }
 
+    if (!user.data) {
+      return {
+        code: "GF0050004",
+        message: "User not found",
+        success: false,
+      };
+    }
+
     return {
       data: user.data,
       success: true,
@@ -151,6 +154,14 @@ class UserLibrary {
         code: "GF0050003",
         error: users.error,
         message: users.message,
+        success: false,
+      };
+    }
+
+    if (!users.data?.length) {
+      return {
+        code: "GF0050004",
+        message: "Users not found",
         success: false,
       };
     }
@@ -176,6 +187,14 @@ class UserLibrary {
       };
     }
 
+    if (!user.data) {
+      return {
+        code: "GF0050004",
+        message: "User not found",
+        success: false,
+      };
+    }
+
     return {
       data: user.data,
       success: true,
@@ -193,6 +212,14 @@ class UserLibrary {
         code: "GF0050004",
         error: users.error,
         message: users.message,
+        success: false,
+      };
+    }
+
+    if (!users.data) {
+      return {
+        code: "GF0050004",
+        message: "Users not found",
         success: false,
       };
     }
@@ -218,6 +245,14 @@ class UserLibrary {
       };
     }
 
+    if (!user.data) {
+      return {
+        code: "GF0050004",
+        message: "User not found",
+        success: false,
+      };
+    }
+
     return {
       data: user.data,
       success: true,
@@ -228,19 +263,27 @@ class UserLibrary {
     filterConditions: QueryFilter<UserType>,
     updateData: Partial<UserType>,
   ): Promise<LibraryResponse> {
-    const user = await this.userModel.updateMany(filterConditions, updateData);
+    const users = await this.userModel.updateMany(filterConditions, updateData);
 
-    if (!user.success) {
+    if (!users.success) {
       return {
         code: "GF0050004",
-        error: user.error,
-        message: user.message,
+        error: users.error,
+        message: users.message,
+        success: false,
+      };
+    }
+
+    if (!users.data) {
+      return {
+        code: "GF0050004",
+        message: "User not found",
         success: false,
       };
     }
 
     return {
-      data: user.data,
+      data: users.data,
       success: true,
     };
   }

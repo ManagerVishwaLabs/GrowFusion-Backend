@@ -1,6 +1,6 @@
 import { isEmailAddress } from "../../utils/helperFunctions";
 import { ValidatorResponse } from "../../utils/types";
-import { RegisterType } from "./auth.types";
+import { RegisterType, RegisterUserType } from "./auth.types";
 
 class AuthValidator {
   public validateRegister({
@@ -79,6 +79,62 @@ class AuthValidator {
 
     if (typeof companySize !== "string") {
       return "GF0020019";
+    }
+  }
+
+  public validateRegisterUser({
+    body,
+  }: {
+    body: Partial<RegisterUserType>;
+  }): ValidatorResponse {
+    const { inviteCode, fullName, email, password } = body;
+
+    if (!inviteCode) {
+      return "GF0020024";
+    }
+
+    if (typeof inviteCode !== "string") {
+      return "GF0020025";
+    }
+
+    if (inviteCode.trim().length < 2) {
+      return "GF0020025";
+    }
+
+    if (!fullName) {
+      return "GF0020007";
+    }
+
+    if (typeof fullName !== "string") {
+      return "GF0020008";
+    }
+
+    if (fullName.trim().length < 2) {
+      return "GF0020009";
+    }
+
+    if (!email) {
+      return "GF0020010";
+    }
+
+    if (typeof email !== "string") {
+      return "GF0020011";
+    }
+
+    if (!isEmailAddress(email.trim())) {
+      return "GF0020012";
+    }
+
+    if (!password) {
+      return "GF0020013";
+    }
+
+    if (typeof password !== "string") {
+      return "GF0020014";
+    }
+
+    if (password.trim().length < 8) {
+      return "GF0020015";
     }
   }
 

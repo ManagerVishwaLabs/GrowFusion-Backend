@@ -57,7 +57,6 @@ class ModelWrapper<TSchema extends object> {
       error,
       message:
         error instanceof Error ? error.message : "Database operation failed",
-
       success: false,
     };
   }
@@ -291,12 +290,9 @@ class ModelWrapper<TSchema extends object> {
       return {
         data: {
           matchedCount: data.matchedCount,
-
           modifiedCount: data.modifiedCount,
-
           upsertedCount: data.upsertedCount,
         },
-
         success: true,
       };
     } catch (error) {
@@ -334,9 +330,7 @@ class ModelWrapper<TSchema extends object> {
       return {
         data: {
           matchedCount: data.matchedCount,
-
           modifiedCount: data.modifiedCount,
-
           upsertedCount: data.upsertedCount,
         },
         success: true,
@@ -396,7 +390,6 @@ class ModelWrapper<TSchema extends object> {
         data: {
           deletedCount: data.modifiedCount,
         },
-
         success: true,
       };
     } catch (error) {
@@ -471,7 +464,6 @@ class ModelWrapper<TSchema extends object> {
         data: {
           deletedCount: data.deletedCount,
         },
-
         success: true,
       };
     } catch (error) {
@@ -491,7 +483,6 @@ class ModelWrapper<TSchema extends object> {
         data: {
           deletedCount: data.deletedCount,
         },
-
         success: true,
       };
     } catch (error) {

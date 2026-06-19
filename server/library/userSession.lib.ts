@@ -76,7 +76,6 @@ class UserSessionLibrary {
   public async getUserSessions(userId: DocumentId): Promise<LibraryResponse> {
     const sessions = await this.sessionModel.find({
       userId,
-
       isRevoked: false,
     });
 
@@ -117,7 +116,6 @@ class UserSessionLibrary {
 
     return {
       data: session.data,
-
       success: true,
     };
   }
@@ -128,7 +126,6 @@ class UserSessionLibrary {
     const sessions = await this.sessionModel.updateMany(
       {
         userId,
-
         isRevoked: false,
       },
       {
